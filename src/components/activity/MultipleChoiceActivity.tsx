@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRef, useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
+import { ActivityResult } from '@/components/activity/ActivityResult';
 import {
   AudioButton,
   useActivityAudio,
@@ -109,25 +110,8 @@ export function MultipleChoiceActivity({
   }
 
   if (isFinished) {
-    const isAllCorrect = correctCount === total;
-
     return (
-      <View className="items-center gap-3 rounded-xl bg-gray-50 p-5">
-        <Ionicons
-          name={isAllCorrect ? 'trophy' : 'ribbon-outline'}
-          size={36}
-          color={isAllCorrect ? colors.green : colors.gray}
-        />
-        <Text className="text-center font-poppins-bold text-lg text-gray-900">
-          Você acertou {correctCount} de {total}
-        </Text>
-        <Text className="text-center font-poppins text-sm text-gray-600">
-          {isAllCorrect
-            ? 'Parabéns! Atividade concluída.'
-            : 'Acerte todas as perguntas para concluir a atividade.'}
-        </Text>
-        <Button variant="link" label="Tentar de novo" onPress={reset} />
-      </View>
+      <ActivityResult correct={correctCount} total={total} onRetry={reset} />
     );
   }
 

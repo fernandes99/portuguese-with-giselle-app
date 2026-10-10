@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
+import { SentenceText } from '@/components/activity/SentenceText';
 import { Button } from '@/components/Button';
 import { colors } from '@/constants/theme';
 import type { SentenceActivity } from '@/services/lesson';
@@ -147,18 +148,8 @@ export function FillBlankActivity({
             <View className="flex-1 flex-row flex-wrap items-center gap-x-1.5 gap-y-2">
               {exercise.parts.map((part, partIndex) => {
                 if (part.type === 'text') {
-                  return part.text
-                    .split(/\s+/)
-                    .filter(Boolean)
-                    .map((word, wordIndex) => (
-                      <Text
-                        // biome-ignore lint/suspicious/noArrayIndexKey: as palavras de uma frase não mudam de ordem
-                        key={`${partIndex}-${wordIndex}`}
-                        className="font-poppins text-base text-gray-900"
-                      >
-                        {word}
-                      </Text>
-                    ));
+                  // biome-ignore lint/suspicious/noArrayIndexKey: as partes de uma frase não mudam de ordem
+                  return <SentenceText key={partIndex} text={part.text} />;
                 }
 
                 const value = userAnswers[exercise.id]?.[part.index] ?? '';

@@ -2,7 +2,13 @@ export type SentencePart =
   | { type: 'text'; text: string }
   | { type: 'blank'; index: number; answer: string };
 
+// Pedaço de texto de uma frase: palavra comum ou termo com tradução
+export type TextToken =
+  { type: 'word'; text: string } | { type: 'tip'; text: string; tip: string };
+
 const BLANK_REGEX = /\{\{(.*?)\}\}/g;
+// Mesma sintaxe de tooltip do site: \\termo==tradução\\
+const TIP_REGEX = /\\\\(.*?)==(.*?)\\\\/g;
 
 const ENTITIES: Record<string, string> = {
   '&nbsp;': ' ',
@@ -46,11 +52,37 @@ export function parseSentence(sentence: string): SentencePart[] {
   return parts;
 }
 
+function toWords(text: string): TextToken[] {
+  return text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => ({ type: 'word', text: word }));
+}
+
+// Quebra o texto em palavras, para a frase poder quebrar de linha em volta
+// das lacunas, mantendo cada termo com tradução inteiro.
+export function tokenizeText(text: string): TextToken[] {
+  const tokens: TextToken[] = [];
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(TIP_REGEX)) {
+    tokens.push(...toWords(text.slice(lastIndex, match.index)));
+    tokens.push({ type: 'tip', text: match[1].trim(), tip: match[2].trim() });
+    lastIndex = match.index + match[0].length;
+  }
+
+  tokens.push(...toWords(text.slice(lastIndex)));
+  return tokens;
+}
+
 export function getAnswers(parts: SentencePart[]) {
   return parts.flatMap((part) => (part.type === 'blank' ? [part.answer] : []));
 }
 
 // Como no site: ignora maiúsculas e espaços nas pontas, mas não acentos
-export function isSameAnswer(given: string | undefined, expected: string) {
+export function isSameAnswer(
+  given: string | null | undefined,
+  expected: string
+) {
   return (given ?? '').trim().toLowerCase() === expected.trim().toLowerCase();
 }
