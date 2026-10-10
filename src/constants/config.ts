@@ -21,6 +21,9 @@ export const API_ROUTES = {
   google: '/api/mobile/auth/google',
   me: '/api/mobile/auth/me',
   dashboard: '/api/mobile/dashboard',
+  courses: '/api/mobile/courses',
+  course: (courseSlug: string) =>
+    `/api/mobile/courses/${encodeURIComponent(courseSlug)}`,
   lesson: (courseSlug: string, lessonSlug: string) =>
     `/api/mobile/courses/${encodeURIComponent(courseSlug)}/lessons/${encodeURIComponent(lessonSlug)}`,
   lessonComplete: (lessonId: string) =>
