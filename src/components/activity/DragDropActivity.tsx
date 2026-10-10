@@ -42,7 +42,7 @@ function getSlotClassName(
     return 'border-gray-900 bg-white';
   }
   return isActive
-    ? 'border-2 border-dashed border-gray-900 bg-gray-100'
+    ? 'border-dashed border-gray-900 bg-gray-100'
     : 'border-dashed border-gray-300 bg-gray-50';
 }
 
