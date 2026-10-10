@@ -1,16 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Text, View } from 'react-native';
 
+import { ProgressBar } from '@/components/ProgressBar';
 import { colors } from '@/constants/theme';
 import type { CourseOutline } from '@/services/lesson';
+import { formatLessons, getCourseProgress } from '@/utils/course';
 
-// Título do curso, total de aulas e barra de progresso. Aparece na barra
-// fixa da aula e no topo da lista de aulas.
+// Título do curso, total de aulas e barra de progresso, no topo da lista
+// de aulas.
 export function CourseProgressHeader({ course }: { course: CourseOutline }) {
-  const percentage =
-    course.totalLessons > 0
-      ? Math.round((course.completedLessons / course.totalLessons) * 100)
-      : 0;
+  const { percentage } = getCourseProgress(course);
 
   return (
     <View className="gap-2">
@@ -22,19 +21,14 @@ export function CourseProgressHeader({ course }: { course: CourseOutline }) {
         >
           {course.title}
         </Text>
-        <Text className="font-poppins text-xs text-gray-400">
-          {course.totalLessons} aulas
+        <Text className="font-poppins text-xs text-gray-500">
+          {formatLessons(course.totalLessons)}
         </Text>
       </View>
 
-      <View className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
-        <View
-          className="h-full rounded-full bg-blue-500"
-          style={{ width: `${percentage}%` }}
-        />
-      </View>
+      <ProgressBar percentage={percentage} />
 
-      <Text className="text-right font-poppins text-xs text-gray-400">
+      <Text className="text-right font-poppins text-xs text-gray-500">
         {percentage}%
       </Text>
     </View>

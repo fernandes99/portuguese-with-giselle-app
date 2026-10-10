@@ -26,6 +26,7 @@ export interface CourseOutline {
   id: string;
   slug: string;
   title: string;
+  imageUrl: string | null;
   totalLessons: number;
   completedLessons: number;
   modules: OutlineModule[];

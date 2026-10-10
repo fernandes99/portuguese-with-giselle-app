@@ -27,11 +27,12 @@ const STYLES = `
   p { margin: 0 0 20px; min-height: 16px; }
   ul, ol { margin: 0 0 16px; padding-left: 28px; }
   li { margin-bottom: 8px; padding-left: 8px; line-height: 1.75; }
-  a { color: #2563eb; }
+  a { color: #00a63e; }
   img, video, iframe { max-width: 100%; height: auto; border-radius: 8px; }
   table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin-bottom: 16px; }
   th, td { border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left; }
-  blockquote { margin: 0 0 16px; padding-left: 16px; border-left: 4px solid #e5e7eb; color: #4b5563; }
+  blockquote { margin: 0 0 20px; padding: 14px 16px; border-left: 4px solid #00a63e; border-radius: 12px; background: #f0fdf4; color: #111827; font-weight: 600; }
+  blockquote p:last-child { margin-bottom: 0; }
   #content > :first-child { margin-top: 0; }
   #content > :last-child { margin-bottom: 0; }
   .tip { position: relative; display: inline-block; color: #0e7490; text-decoration: underline; }

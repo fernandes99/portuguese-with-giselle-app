@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { type ComponentProps, type ReactNode, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -15,13 +15,40 @@ import {
 
 import { Button } from '@/components/Button';
 import { CourseOutlineSheet } from '@/components/lesson/CourseOutlineSheet';
-import { CourseProgressHeader } from '@/components/lesson/CourseProgressHeader';
-import { DurationBadge } from '@/components/lesson/DurationBadge';
+import { EmptyState } from '@/components/lesson/EmptyState';
+import { LessonContent } from '@/components/lesson/LessonContent';
+import { LessonMaterials } from '@/components/lesson/LessonMaterials';
 import { LessonMedia } from '@/components/lesson/LessonMedia';
-import { LessonTabs } from '@/components/lesson/LessonTabs';
+import {
+  LessonTabBar,
+  type LessonTabKey,
+} from '@/components/lesson/LessonTabBar';
 import { colors } from '@/constants/theme';
 import { useLesson } from '@/hooks/useLesson';
 import { getErrorMessage } from '@/lib/api';
+import { findLessonPosition, formatLessonNumber } from '@/utils/lesson';
+
+function HeaderButton({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: ComponentProps<typeof Ionicons>['name'];
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      hitSlop={8}
+      className="h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white active:bg-gray-100"
+    >
+      <Ionicons name={icon} size={20} color={colors.gray} />
+    </Pressable>
+  );
+}
 
 export default function LessonScreen() {
   const router = useRouter();
@@ -35,6 +62,7 @@ export default function LessonScreen() {
     courseSlug,
     lessonSlug
   );
+  const [activeTab, setActiveTab] = useState<LessonTabKey>('content');
   const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [actionError, setActionError] = useState('');
@@ -57,57 +85,52 @@ export default function LessonScreen() {
       return;
     }
 
-    const completed = !data.lesson.isCompleted;
     setActionError('');
     setIsSaving(true);
     try {
-      await setCompleted(completed);
-      // Como no site, concluir a aula já leva para a próxima
-      if (completed && data.nextLesson) {
-        openLesson(data.nextLesson.slug);
-      }
+      await setCompleted(!data.lesson.isCompleted);
     } catch (err) {
       setActionError(
-        getErrorMessage(err, 'Error completing lesson. Please try again.')
+        getErrorMessage(err, 'Erro ao concluir a aula. Tente novamente.')
       );
     } finally {
       setIsSaving(false);
     }
   }
 
-  const header = (
-    <View className="flex-row items-center gap-2 px-3 py-2">
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Back"
-        onPress={() => router.back()}
-        hitSlop={8}
-        className="h-10 w-10 items-center justify-center rounded-full active:bg-gray-100"
-      >
-        <Ionicons name="chevron-back" size={24} color={colors.gray} />
-      </Pressable>
-      <Text
-        numberOfLines={1}
-        className="flex-1 font-poppins-medium text-sm text-gray-600"
-      >
-        {data ? data.course.title : 'My courses'}
-      </Text>
-    </View>
-  );
+  function renderHeader(title: string, right?: ReactNode) {
+    return (
+      <View className="flex-row items-center gap-3 px-4 py-2">
+        <HeaderButton
+          icon="arrow-back"
+          label="Voltar"
+          onPress={() => router.back()}
+        />
+        <Text
+          numberOfLines={1}
+          className="flex-1 text-center font-poppins-semibold text-sm text-gray-900"
+        >
+          {title}
+        </Text>
+        {/* Mantém o título centralizado quando não há botão à direita */}
+        {right ?? <View className="w-10" />}
+      </View>
+    );
+  }
 
   if (!data) {
     return (
       <SafeAreaView className="flex-1 bg-cream">
-        {header}
+        {renderHeader('')}
         <View className="flex-1 items-center justify-center gap-4 px-6">
           {locked ? (
             <>
               <Ionicons name="lock-closed" size={40} color={colors.gray} />
               <Text className="text-center font-poppins-bold text-xl text-gray-900">
-                Students Only Content
+                Conteúdo exclusivo para alunos
               </Text>
               <Text className="text-center font-poppins text-base text-gray-600">
-                This lesson is available only for enrolled students.
+                Esta aula está disponível apenas para alunos matriculados.
               </Text>
             </>
           ) : error ? (
@@ -115,7 +138,7 @@ export default function LessonScreen() {
               <Text className="text-center font-poppins text-base text-red-700">
                 {error}
               </Text>
-              <Button variant="link" label="Try again" onPress={reload} />
+              <Button variant="link" label="Tentar de novo" onPress={reload} />
             </>
           ) : (
             <ActivityIndicator size="large" color={colors.green} />
@@ -125,88 +148,75 @@ export default function LessonScreen() {
     );
   }
 
-  const { course, lesson } = data;
+  const { course, lesson, nextLesson } = data;
+  const position = findLessonPosition(course, lesson.slug);
+  const nextPosition = nextLesson
+    ? findLessonPosition(course, nextLesson.slug)
+    : null;
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-cream">
-      {header}
+      {renderHeader(
+        course.title,
+        <HeaderButton
+          icon="list"
+          label="Ver todas as aulas do curso"
+          onPress={() => setIsOutlineOpen(true)}
+        />
+      )}
 
       <ScrollView
-        contentContainerClassName="gap-5 px-4 pt-2"
-        // Espaço para a barra do curso, que fica por cima do conteúdo
-        contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
+        // A barra de abas gruda no topo enquanto o conteúdo rola
+        stickyHeaderIndices={[1]}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
       >
-        <LessonMedia key={lesson.id} lesson={lesson} />
-
-        <View className="gap-3 rounded-xl border border-gray-100 bg-white p-5">
-          <Text className="font-poppins-semibold text-2xl text-gray-900">
-            {lesson.title}
-          </Text>
-          {lesson.description ? (
-            <Text className="font-poppins text-base text-gray-600">
-              {lesson.description}
-            </Text>
-          ) : null}
-          {lesson.duration ? <DurationBadge minutes={lesson.duration} /> : null}
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ busy: isSaving }}
-            onPress={handleToggleCompleted}
-            disabled={isSaving}
-            className={`mt-2 flex-row items-center gap-1.5 self-start rounded-lg px-3 py-2 ${lesson.isCompleted ? 'bg-green-100' : 'bg-blue-600'} ${isSaving ? 'opacity-60' : ''}`}
-          >
-            {isSaving ? (
-              <ActivityIndicator
-                size="small"
-                color={lesson.isCompleted ? colors.darkGreen : colors.white}
-              />
-            ) : (
-              <Ionicons
-                name="checkmark-circle-outline"
-                size={18}
-                color={lesson.isCompleted ? colors.darkGreen : colors.white}
-              />
-            )}
-            <Text
-              className={`font-poppins-medium text-sm ${lesson.isCompleted ? 'text-green-700' : 'text-white'}`}
-            >
-              {lesson.isCompleted ? 'Lesson Completed' : 'Complete Lesson'}
-            </Text>
-          </Pressable>
-
-          {actionError ? (
-            <Text className="font-poppins text-sm text-red-700">
-              {actionError}
-            </Text>
-          ) : null}
-        </View>
-
-        <LessonTabs
+        <LessonMedia
           key={lesson.id}
           lesson={lesson}
-          prevLesson={data.prevLesson}
-          nextLesson={data.nextLesson}
-          onOpenLesson={(target) => openLesson(target.slug)}
+          label={position ? formatLessonNumber(position.number) : null}
+          fallbackImageUrl={course.imageUrl}
         />
-      </ScrollView>
 
-      <View
-        className="absolute inset-x-0 bottom-0 px-3"
-        style={{ paddingBottom: insets.bottom + 12 }}
-      >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Open lessons panel"
-          onPress={() => setIsOutlineOpen(true)}
-          className="flex-row items-center gap-4 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-lg"
-        >
-          <View className="flex-1">
-            <CourseProgressHeader course={course} />
-          </View>
-          <Ionicons name="chevron-up" size={20} color={colors.placeholder} />
-        </Pressable>
-      </View>
+        <LessonTabBar active={activeTab} onChange={setActiveTab} />
+
+        <View className="px-5 pt-5">
+          {activeTab === 'content' ? (
+            <LessonContent
+              lesson={lesson}
+              moduleTitle={position?.moduleTitle ?? null}
+              nextLesson={nextLesson}
+              nextLessonInfo={nextPosition}
+              isSaving={isSaving}
+              error={actionError}
+              onToggleCompleted={handleToggleCompleted}
+              onOpenNextLesson={() => nextLesson && openLesson(nextLesson.slug)}
+            />
+          ) : null}
+
+          {activeTab === 'materials' ? (
+            <LessonMaterials materials={lesson.materials} />
+          ) : null}
+
+          {/* Atividades e discussões ainda não foram portadas para o app */}
+          {activeTab === 'activities' ? (
+            lesson.activitiesCount === 0 ? (
+              <EmptyState title="Nenhuma atividade disponível" />
+            ) : (
+              <EmptyState
+                title={`Esta aula tem ${lesson.activitiesCount} ${lesson.activitiesCount === 1 ? 'atividade' : 'atividades'}`}
+                text="As atividades ainda não estão disponíveis no app. Por enquanto, faça pelo site."
+              />
+            )
+          ) : null}
+
+          {activeTab === 'discussions' ? (
+            <EmptyState
+              title="Discussões em breve"
+              text="Por enquanto, participe da discussão pelo site."
+            />
+          ) : null}
+        </View>
+      </ScrollView>
 
       <CourseOutlineSheet
         visible={isOutlineOpen}

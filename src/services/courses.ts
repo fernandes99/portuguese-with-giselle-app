@@ -4,7 +4,6 @@ import type { CourseOutline, LessonLink } from '@/services/lesson';
 
 export interface Course extends CourseOutline {
   description: string | null;
-  imageUrl: string | null;
   // O aluno já abriu ou concluiu alguma aula do curso
   isStarted: boolean;
   // Primeira aula ainda não concluída; null se o curso não tem aulas

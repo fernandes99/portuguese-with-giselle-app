@@ -23,7 +23,7 @@ function LessonIcon({
   isCompleted: boolean;
 }) {
   if (isCurrent) {
-    return <Ionicons name="play-circle" size={22} color={colors.blue} />;
+    return <Ionicons name="play-circle" size={22} color={colors.green} />;
   }
   if (isCompleted) {
     return <Ionicons name="checkmark-circle" size={22} color={colors.green} />;
@@ -32,8 +32,8 @@ function LessonIcon({
 }
 
 function getLessonClassNames(isCurrent: boolean, isCompleted: boolean) {
-  if (isCurrent) return { row: 'bg-blue-50', title: 'text-blue-700' };
-  if (isCompleted) return { row: '', title: 'text-green-700' };
+  if (isCurrent) return { row: 'bg-green-50', title: 'text-green-700' };
+  if (isCompleted) return { row: '', title: 'text-gray-500' };
   return { row: '', title: 'text-gray-600' };
 }
 
@@ -82,7 +82,7 @@ export function CourseOutlineSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Close lessons panel"
+          accessibilityLabel="Fechar a lista de aulas"
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -93,11 +93,11 @@ export function CourseOutlineSheet({
         >
           <View className="mb-3 flex-row items-center justify-between">
             <Text className="font-poppins-semibold text-base text-gray-900">
-              Lessons
+              Aulas
             </Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Close lessons panel"
+              accessibilityLabel="Fechar a lista de aulas"
               onPress={onClose}
               hitSlop={12}
             >

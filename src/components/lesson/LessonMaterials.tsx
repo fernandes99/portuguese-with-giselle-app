@@ -52,8 +52,8 @@ export function LessonMaterials({
   if (materials.length === 0) {
     return (
       <EmptyState
-        title="No supporting material available"
-        text="The supporting materials for this lesson will be added soon."
+        title="Nenhum material de apoio disponível"
+        text="Os materiais de apoio desta aula serão adicionados em breve."
       />
     );
   }
@@ -71,11 +71,11 @@ export function LessonMaterials({
             onPress={() => open(material.url)}
             className="flex-row items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 active:bg-gray-50"
           >
-            <View className="h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
+            <View className="h-10 w-10 items-center justify-center rounded-lg bg-green-50">
               <Ionicons
                 name={getIcon(material)}
                 size={20}
-                color={colors.blue}
+                color={colors.green}
               />
             </View>
             <View className="flex-1">

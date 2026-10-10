@@ -33,7 +33,9 @@ export function useLesson(courseSlug: string, lessonSlug: string) {
         setLocked(true);
         return;
       }
-      setError(getErrorMessage(err, 'Error loading lesson. Please try again.'));
+      setError(
+        getErrorMessage(err, 'Erro ao carregar a aula. Tente novamente.')
+      );
     }
   }, [token, courseSlug, lessonSlug, signOut]);
 
