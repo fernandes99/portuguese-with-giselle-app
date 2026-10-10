@@ -87,7 +87,7 @@ export default function CourseScreen() {
 
   if (!course) {
     return (
-      <View className="flex-1 items-center justify-center gap-4 bg-cream px-6">
+      <View className="flex-1 items-center justify-center gap-4 bg-background px-6">
         {error ? (
           <>
             <Text className="text-center font-poppins text-base text-red-700">
@@ -107,7 +107,7 @@ export default function CourseScreen() {
   const { nextLesson } = course;
 
   return (
-    <View className="flex-1 bg-cream">
+    <View className="flex-1 bg-background">
       <ScrollView
         // Espaço para o botão fixo no rodapé
         contentContainerStyle={{ paddingBottom: insets.bottom + 96 }}

@@ -26,7 +26,7 @@ import {
 import { colors } from '@/constants/theme';
 import { useLesson } from '@/hooks/useLesson';
 import { getErrorMessage } from '@/lib/api';
-import { findLessonPosition, formatLessonNumber } from '@/utils/lesson';
+import { findLessonPosition } from '@/utils/lesson';
 
 function HeaderButton({
   icon,
@@ -120,7 +120,7 @@ export default function LessonScreen() {
 
   if (!data) {
     return (
-      <SafeAreaView className="flex-1 bg-cream">
+      <SafeAreaView className="flex-1 bg-background">
         {renderHeader('')}
         <View className="flex-1 items-center justify-center gap-4 px-6">
           {locked ? (
@@ -155,7 +155,7 @@ export default function LessonScreen() {
     : null;
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-cream">
+    <SafeAreaView edges={['top']} className="flex-1 bg-background">
       {renderHeader(
         course.title,
         <HeaderButton
@@ -170,12 +170,10 @@ export default function LessonScreen() {
         stickyHeaderIndices={[1]}
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
       >
-        <LessonMedia
-          key={lesson.id}
-          lesson={lesson}
-          label={position ? formatLessonNumber(position.number) : null}
-          fallbackImageUrl={course.imageUrl}
-        />
+        {/* Sempre um View: os índices dos filhos definem a barra que gruda */}
+        <View>
+          <LessonMedia key={lesson.id} lesson={lesson} />
+        </View>
 
         <LessonTabBar active={activeTab} onChange={setActiveTab} />
 

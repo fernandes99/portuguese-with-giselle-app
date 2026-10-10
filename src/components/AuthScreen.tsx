@@ -28,7 +28,7 @@ export function AuthScreen({
   footer,
 }: AuthScreenProps) {
   return (
-    <SafeAreaView className="flex-1 bg-cream">
+    <SafeAreaView className="flex-1 bg-background">
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

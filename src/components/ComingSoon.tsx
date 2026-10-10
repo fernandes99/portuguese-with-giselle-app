@@ -13,7 +13,7 @@ interface ComingSoonProps {
 // Conteúdo provisório das abas que ainda não foram construídas
 export function ComingSoon({ title, icon }: ComingSoonProps) {
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-cream">
+    <SafeAreaView edges={['top']} className="flex-1 bg-background">
       <View className="flex-1 items-center justify-center gap-3 px-6">
         <Ionicons name={icon} size={48} color={colors.green} />
         <Text className="font-poppins-bold text-2xl text-gray-900">

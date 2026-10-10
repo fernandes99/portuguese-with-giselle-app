@@ -37,7 +37,7 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.cream },
+        contentStyle: { backgroundColor: colors.background },
       }}
     >
       <Stack.Protected guard={isAuthenticated}>

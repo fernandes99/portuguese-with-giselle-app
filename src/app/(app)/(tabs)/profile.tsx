@@ -10,7 +10,7 @@ export default function ProfileScreen() {
   const initial = (user?.name || user?.email || '?').charAt(0).toUpperCase();
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-cream">
+    <SafeAreaView edges={['top']} className="flex-1 bg-background">
       <View className="flex-1 items-center justify-center gap-2 px-6">
         <View className="mb-2 h-20 w-20 items-center justify-center rounded-full bg-green-100">
           <Text className="font-poppins-bold text-3xl text-green-700">

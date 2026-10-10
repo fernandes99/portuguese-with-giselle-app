@@ -1,7 +1,7 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
 const APP_ID = 'com.portuguesewithgiselle.app';
-const CREAM = '#fffbf5';
+const BACKGROUND = '#f9fafb';
 
 // O plugin do Google Sign-In só é necessário no iOS, e precisa do client ID
 // de iOS invertido como URL scheme. Sem a variável, o plugin fica de fora.
@@ -24,7 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
-  backgroundColor: CREAM,
+  backgroundColor: BACKGROUND,
   ios: {
     bundleIdentifier: APP_ID,
     supportsTablet: true,
@@ -32,7 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: APP_ID,
     adaptiveIcon: {
-      backgroundColor: CREAM,
+      backgroundColor: BACKGROUND,
       foregroundImage: './assets/android-icon-foreground.png',
     },
   },
@@ -44,7 +44,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        backgroundColor: CREAM,
+        backgroundColor: BACKGROUND,
         image: './assets/splash-icon.png',
         imageWidth: 160,
       },

@@ -50,7 +50,7 @@ export default function DashboardScreen() {
   const greeting = data?.hasStarted ? GREETING.started : GREETING.notStarted;
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-cream">
+    <SafeAreaView edges={['top']} className="flex-1 bg-background">
       <ScrollView
         contentContainerClassName="flex-grow gap-6 px-5 pb-8 pt-6"
         refreshControl={

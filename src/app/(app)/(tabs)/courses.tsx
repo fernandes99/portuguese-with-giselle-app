@@ -24,7 +24,7 @@ export default function CoursesScreen() {
   } = useApiQuery(getCourses, 'Erro ao carregar os cursos.');
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-cream">
+    <SafeAreaView edges={['top']} className="flex-1 bg-background">
       <ScrollView
         contentContainerClassName="flex-grow gap-5 px-5 pb-8 pt-6"
         refreshControl={

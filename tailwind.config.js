@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        cream: '#fffbf5',
+        background: '#f9fafb',
         // Tons de verde do site (paleta do Tailwind 4)
         green: {
           50: '#f0fdf4',

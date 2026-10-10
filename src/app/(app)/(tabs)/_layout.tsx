@@ -33,7 +33,7 @@ export default function TabsLayout() {
           backgroundColor: colors.white,
           borderTopColor: colors.border,
         },
-        sceneStyle: { backgroundColor: colors.cream },
+        sceneStyle: { backgroundColor: colors.background },
       }}
     >
       <Tabs.Screen

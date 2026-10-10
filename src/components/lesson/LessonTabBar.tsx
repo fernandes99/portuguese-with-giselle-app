@@ -19,7 +19,7 @@ export function LessonTabBar({ active, onChange }: LessonTabBarProps) {
   return (
     <View
       accessibilityRole="tablist"
-      className="flex-row border-b border-gray-200 bg-cream px-2"
+      className="flex-row border-b border-gray-200 bg-background px-2"
     >
       {TABS.map((tab) => {
         const isActive = tab.key === active;
