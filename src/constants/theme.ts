@@ -6,6 +6,8 @@ export const colors = {
   white: '#ffffff',
   placeholder: '#9ca3af',
   gray: '#6b7280',
+  lightGray: '#e5e5e5',
+  darkGreen: '#008236',
   border: '#e5e7eb',
   blue: '#2563eb',
   purple: '#9333ea',

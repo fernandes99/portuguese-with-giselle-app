@@ -21,6 +21,10 @@ export const API_ROUTES = {
   google: '/api/mobile/auth/google',
   me: '/api/mobile/auth/me',
   dashboard: '/api/mobile/dashboard',
+  lesson: (courseSlug: string, lessonSlug: string) =>
+    `/api/mobile/courses/${encodeURIComponent(courseSlug)}/lessons/${encodeURIComponent(lessonSlug)}`,
+  lessonComplete: (lessonId: string) =>
+    `/api/mobile/lessons/${encodeURIComponent(lessonId)}/complete`,
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

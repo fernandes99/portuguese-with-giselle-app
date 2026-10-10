@@ -14,6 +14,7 @@ import { StatCard } from '@/components/StatCard';
 import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboard } from '@/hooks/useDashboard';
+import type { DashboardCourse } from '@/services/dashboard';
 import { formatStreak, formatStudyTime, getFirstName } from '@/utils/format';
 
 const GREETING = {
@@ -33,6 +34,17 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { data, error, refreshing, refresh } = useDashboard();
+
+  function openLesson(course: DashboardCourse | null) {
+    if (!course) {
+      return;
+    }
+
+    router.push({
+      pathname: '/lesson/[courseSlug]/[lessonSlug]',
+      params: { courseSlug: course.slug, lessonSlug: course.lesson.slug },
+    });
+  }
 
   const firstName = getFirstName(user?.name);
   const greeting = data?.hasStarted ? GREETING.started : GREETING.notStarted;
@@ -76,8 +88,7 @@ export default function DashboardScreen() {
               <CourseProgressCard
                 course={data.course}
                 actionLabel={greeting.action}
-                // A tela da aula ainda não existe; por enquanto leva aos cursos
-                onPress={() => router.navigate('/courses')}
+                onPress={() => openLesson(data.course)}
               />
             ) : null}
 
