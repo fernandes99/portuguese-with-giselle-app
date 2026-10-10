@@ -24,6 +24,17 @@ function getInputClassName(status: Status, isCorrect: boolean) {
     : 'border-red-500 bg-red-50 text-red-700';
 }
 
+const INPUT_MIN_WIDTH = 96;
+const INPUT_PADDING = 32;
+const CHARACTER_WIDTH = 10.5;
+
+function getInputWidth(value: string) {
+  return Math.max(
+    INPUT_MIN_WIDTH,
+    Math.ceil(value.length * CHARACTER_WIDTH) + INPUT_PADDING
+  );
+}
+
 // Todas as frases em lista, com um campo de texto no lugar de cada lacuna
 export function FillBlankActivity({
   activity,
@@ -178,7 +189,13 @@ export function FillBlankActivity({
                       }
                     }}
                     placeholderTextColor={colors.placeholder}
-                    className={`h-10 min-w-24 rounded-lg border px-3 text-center font-poppins-medium text-base ${getInputClassName(status, isSameAnswer(value, part.answer))}`}
+                    textAlignVertical="center"
+                    // A largura acompanha o texto digitado; o campo não cresce
+                    // sozinho no Android e cortava respostas longas.
+                    style={{ width: getInputWidth(value), maxWidth: '100%' }}
+                    // text-[16px] em vez de text-base: a altura de linha fixa
+                    // cortava a Poppins, que é alta, dentro do campo.
+                    className={`h-11 rounded-lg border px-3 py-0 text-center font-poppins-medium text-[16px] ${getInputClassName(status, isSameAnswer(value, part.answer))}`}
                   />
                 );
               })}
