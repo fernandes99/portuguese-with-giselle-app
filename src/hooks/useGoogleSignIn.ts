@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { getErrorMessage } from '@/lib/api';
-import { getGoogleIdToken } from '@/lib/google';
+import { getGoogleIdToken, GoogleUnavailableError } from '@/lib/google';
 import { loginWithGoogle } from '@/services/auth';
 
 // Login e cadastro usam o mesmo fluxo do Google: o backend cria a conta
@@ -21,6 +21,11 @@ export function useGoogleSignIn(onError: (message: string) => void) {
         await signIn(await loginWithGoogle(idToken));
       }
     } catch (error) {
+      if (error instanceof GoogleUnavailableError) {
+        onError(error.message);
+        return;
+      }
+
       console.error('Google sign-in error:', error);
       onError(getErrorMessage(error, 'Erro ao fazer login com Google'));
     } finally {

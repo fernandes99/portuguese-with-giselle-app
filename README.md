@@ -21,6 +21,18 @@ No Windows só dá para gerar o Android localmente. Para iOS, ou sem Android Stu
 npx eas-cli@latest build --profile development --platform android
 ```
 
+### Sem Android Studio: Expo Go
+
+Para testar só email e senha, sem build nativo, instale o Expo Go no celular e rode:
+
+```bash
+yarn start:go
+```
+
+O comando abre um túnel e mostra um QR code. No Expo Go o login com Google fica desligado e a splash e o ícone são os do próprio Expo Go.
+
+O túnel só expõe o bundle do app. Para o celular alcançar o site local, use o IP da máquina na rede em `EXPO_PUBLIC_API_URL` (mesmo Wi-Fi) ou aponte para o site em produção.
+
 ## Variáveis de ambiente
 
 Ficam em `.env`, que não é versionado. Veja `.env.example`.
