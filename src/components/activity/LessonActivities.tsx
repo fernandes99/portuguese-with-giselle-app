@@ -2,6 +2,7 @@ import { Text, View } from 'react-native';
 
 import { ActivityAudioProvider } from '@/components/activity/ActivityAudio';
 import { ActivityCard } from '@/components/activity/ActivityCard';
+import { FillBlankActivity } from '@/components/activity/FillBlankActivity';
 import { MultipleChoiceActivity } from '@/components/activity/MultipleChoiceActivity';
 import { EmptyState } from '@/components/lesson/EmptyState';
 import type { Activity } from '@/services/lesson';
@@ -43,6 +44,11 @@ export function LessonActivities({
           >
             {activity.type === 'multiple_choice' ? (
               <MultipleChoiceActivity
+                activity={activity}
+                onProgress={(completed) => onProgress(activity.id, completed)}
+              />
+            ) : activity.type === 'fill_blank' ? (
+              <FillBlankActivity
                 activity={activity}
                 onProgress={(completed) => onProgress(activity.id, completed)}
               />

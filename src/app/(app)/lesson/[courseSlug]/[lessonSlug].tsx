@@ -167,6 +167,9 @@ export default function LessonScreen() {
       <ScrollView
         // A barra de abas gruda no topo enquanto o conteúdo rola
         stickyHeaderIndices={[1]}
+        // Para os campos das atividades não ficarem atrás do teclado
+        automaticallyAdjustKeyboardInsets
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
       >
         {/* Sempre um View: os índices dos filhos definem a barra que gruda */}
