@@ -6,7 +6,7 @@ import { HtmlContent } from '@/components/lesson/HtmlContent';
 import { colors } from '@/constants/theme';
 import type { Activity } from '@/services/lesson';
 
-const TYPE_LABELS: Record<Activity['type'], string> = {
+export const ACTIVITY_TYPE_LABELS: Record<Activity['type'], string> = {
   multiple_choice: 'MÚLTIPLA ESCOLHA',
   true_or_false: 'VERDADEIRO OU FALSO',
   fill_blank: 'PREENCHER LACUNAS',
@@ -36,7 +36,7 @@ export function ActivityCard({
           </Text>
         </View>
         <Text className="flex-1 font-poppins-semibold text-xs tracking-widest text-gray-500">
-          {TYPE_LABELS[activity.type]}
+          {ACTIVITY_TYPE_LABELS[activity.type]}
         </Text>
         {activity.isCompleted ? (
           <View className="flex-row items-center gap-1 rounded-full bg-green-100 px-2.5 py-1">

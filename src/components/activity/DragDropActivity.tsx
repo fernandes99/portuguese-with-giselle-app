@@ -12,6 +12,8 @@ interface DragDropActivityProps {
   activity: SentenceActivity;
   // false ao começar ou errar; true quando o aluno acerta todas as lacunas
   onProgress: (completed: boolean) => void;
+  // Avisa quando a atividade chega ao resultado, e quando o aluno recomeça
+  onFinishedChange: (finished: boolean) => void;
 }
 
 type Slots = (string | null)[];
@@ -58,6 +60,7 @@ function getSlotTextClassName(isChecked: boolean, isCorrect: boolean) {
 export function DragDropActivity({
   activity,
   onProgress,
+  onFinishedChange,
 }: DragDropActivityProps) {
   const exercises = useMemo(
     () =>
@@ -114,6 +117,7 @@ export function DragDropActivity({
     setActiveSlot(0);
     setCheckedIds([]);
     setIsFinished(false);
+    onFinishedChange(false);
   }
 
   if (isFinished) {
@@ -184,6 +188,7 @@ export function DragDropActivity({
     }
 
     setIsFinished(true);
+    onFinishedChange(true);
     onProgress(correctBlanks === totalBlanks);
   }
 

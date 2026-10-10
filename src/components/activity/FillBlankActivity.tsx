@@ -11,6 +11,8 @@ interface FillBlankActivityProps {
   activity: SentenceActivity;
   // false ao começar ou errar; true quando o aluno acerta todas as lacunas
   onProgress: (completed: boolean) => void;
+  // Avisa quando a atividade chega ao resultado, e quando o aluno recomeça
+  onFinishedChange: (finished: boolean) => void;
 }
 
 // editing: digitando; checked: corrigido; revealed: mostrando as respostas
@@ -40,6 +42,7 @@ function getInputWidth(value: string) {
 export function FillBlankActivity({
   activity,
   onProgress,
+  onFinishedChange,
 }: FillBlankActivityProps) {
   const exercises = useMemo(
     () =>
@@ -99,6 +102,7 @@ export function FillBlankActivity({
 
   function handleCheck() {
     setStatus('checked');
+    onFinishedChange(true);
     onProgress(correctCount === totalBlanks);
   }
 
@@ -106,6 +110,7 @@ export function FillBlankActivity({
   // Com tudo certo ou com as respostas reveladas, recomeça do zero.
   function handleRetry() {
     setStatus('editing');
+    onFinishedChange(false);
 
     if (status === 'revealed' || correctCount === totalBlanks) {
       setUserAnswers({});

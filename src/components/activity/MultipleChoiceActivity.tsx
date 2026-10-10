@@ -19,6 +19,8 @@ interface MultipleChoiceActivityProps {
   activity: ChoiceActivity;
   // false ao começar ou errar; true quando o aluno acerta todas as perguntas
   onProgress: (completed: boolean) => void;
+  // Avisa quando a atividade chega ao resultado, e quando o aluno recomeça
+  onFinishedChange: (finished: boolean) => void;
 }
 
 const LETTERS = 'ABCDEFGHIJ';
@@ -82,6 +84,7 @@ function getAlternativeStyle(
 export function MultipleChoiceActivity({
   activity,
   onProgress,
+  onFinishedChange,
 }: MultipleChoiceActivityProps) {
   const { exercises } = activity;
   const audio = useActivityAudio();
@@ -107,6 +110,7 @@ export function MultipleChoiceActivity({
     setSelections({});
     setCheckedIds([]);
     setIsFinished(false);
+    onFinishedChange(false);
   }
 
   if (isFinished) {
@@ -155,6 +159,7 @@ export function MultipleChoiceActivity({
     }
 
     setIsFinished(true);
+    onFinishedChange(true);
     onProgress(correctCount === total);
   }
 
