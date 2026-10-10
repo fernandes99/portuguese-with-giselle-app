@@ -25,6 +25,8 @@ function shuffle<T>(items: T[]) {
   return shuffled;
 }
 
+// Verde e vermelho só aparecem depois de verificar; enquanto o aluno
+// preenche, o destaque é em cinza escuro para não parecer um acerto.
 function getSlotClassName(
   value: string | null,
   isActive: boolean,
@@ -37,11 +39,18 @@ function getSlotClassName(
       : 'border-red-500 bg-red-50';
   }
   if (value) {
-    return 'border-green-600 bg-green-50';
+    return 'border-gray-900 bg-white';
   }
   return isActive
-    ? 'border-dashed border-green-600 bg-green-50'
+    ? 'border-2 border-dashed border-gray-900 bg-gray-100'
     : 'border-dashed border-gray-300 bg-gray-50';
+}
+
+function getSlotTextClassName(isChecked: boolean, isCorrect: boolean) {
+  if (!isChecked) {
+    return 'text-gray-900';
+  }
+  return isCorrect ? 'text-green-700' : 'text-red-700';
 }
 
 // Versão para toque do "arrastar e soltar" do site: uma frase por vez, e o
@@ -214,7 +223,7 @@ export function DragDropActivity({
             >
               {value ? (
                 <Text
-                  className={`text-center font-poppins-medium text-sm ${isChecked && !isCorrect ? 'text-red-700' : 'text-green-700'}`}
+                  className={`text-center font-poppins-medium text-sm ${getSlotTextClassName(isChecked, isCorrect)}`}
                 >
                   {value}
                 </Text>
@@ -253,7 +262,7 @@ export function DragDropActivity({
                 key={option}
                 accessibilityRole="button"
                 onPress={() => handleOptionPress(option)}
-                className="max-w-full rounded-full border border-gray-200 bg-white px-3.5 py-2 active:border-green-600 active:bg-green-50"
+                className="max-w-full rounded-full border border-gray-200 bg-white px-3.5 py-2 active:border-gray-900 active:bg-gray-100"
               >
                 <Text className="font-poppins-medium text-sm text-gray-900">
                   {option}
