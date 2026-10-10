@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.4.1",
+    "@expo/vector-icons": "^15.0.2",
     "@react-native-google-signin/google-signin": "^16.1.5",
     "expo": "~57.0.27",
     "expo-constants": "~57.0.21",

@@ -5,4 +5,9 @@ export const colors = {
   green: '#00a63e',
   white: '#ffffff',
   placeholder: '#9ca3af',
+  gray: '#6b7280',
+  border: '#e5e7eb',
+  blue: '#2563eb',
+  purple: '#9333ea',
+  orange: '#ea580c',
 };

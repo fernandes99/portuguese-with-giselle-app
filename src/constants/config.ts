@@ -20,6 +20,7 @@ export const API_ROUTES = {
   login: '/api/mobile/auth/login',
   google: '/api/mobile/auth/google',
   me: '/api/mobile/auth/me',
+  dashboard: '/api/mobile/dashboard',
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

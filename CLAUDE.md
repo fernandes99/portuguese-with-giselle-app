@@ -31,7 +31,7 @@ O terminal é PowerShell no Windows; use `;` para encadear comandos, não `&&`.
 ## Estrutura
 
 - `src/app/`: rotas. `_layout.tsx` carrega fontes, segura a splash e separa `(auth)` de `(app)` com `Stack.Protected`.
-- `src/app/(auth)/`: login e cadastro. `src/app/(app)/`: área logada.
+- `src/app/(auth)/`: login e cadastro. `src/app/(app)/`: área logada. As abas de baixo (Dashboard, Cursos, Progresso, Perfil) ficam em `src/app/(app)/(tabs)/`; telas que abrem por cima das abas entram direto em `(app)/`.
 - `src/components/`, `src/hooks/`, `src/utils/`, `src/constants/`.
 - `src/contexts/AuthContext.tsx`: sessão (`status`, `user`, `token`, `signIn`, `signOut`).
 - `src/lib/`: `api` (fetch com Bearer e `ApiError`), `storage` (SecureStore), `google`.
