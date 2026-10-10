@@ -5,3 +5,5 @@ android
 ios
 yarn.lock
 expo-env.d.ts
+# reescrito pelo NativeWind a cada execução
+tsconfig.json
