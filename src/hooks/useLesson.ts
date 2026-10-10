@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ApiError, getErrorMessage } from '@/lib/api';
 import {
   getLesson,
+  setActivityProgress,
   type LessonDetail,
   setLessonCompleted,
 } from '@/services/lesson';
@@ -83,5 +84,49 @@ export function useLesson(courseSlug: string, lessonSlug: string) {
     [token, data]
   );
 
-  return { data, error, locked, reload: load, setCompleted };
+  // Salva o progresso de uma atividade. Uma falha aqui não interrompe o
+  // aluno: o resultado continua na tela e só o registro se perde.
+  const saveActivityProgress = useCallback(
+    async (activityId: string, completed: boolean) => {
+      if (!token) {
+        return;
+      }
+
+      try {
+        const { isCompleted } = await setActivityProgress(
+          token,
+          activityId,
+          completed
+        );
+
+        setData((current) =>
+          current
+            ? {
+                ...current,
+                lesson: {
+                  ...current.lesson,
+                  activities: current.lesson.activities.map((activity) =>
+                    activity.id === activityId
+                      ? { ...activity, isCompleted }
+                      : activity
+                  ),
+                },
+              }
+            : current
+        );
+      } catch (err) {
+        console.error('Activity progress error:', err);
+      }
+    },
+    [token]
+  );
+
+  return {
+    data,
+    error,
+    locked,
+    reload: load,
+    setCompleted,
+    saveActivityProgress,
+  };
 }

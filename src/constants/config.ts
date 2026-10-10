@@ -26,6 +26,8 @@ export const API_ROUTES = {
     `/api/mobile/courses/${encodeURIComponent(courseSlug)}`,
   lesson: (courseSlug: string, lessonSlug: string) =>
     `/api/mobile/courses/${encodeURIComponent(courseSlug)}/lessons/${encodeURIComponent(lessonSlug)}`,
+  activityProgress: (activityId: string) =>
+    `/api/mobile/activities/${encodeURIComponent(activityId)}/progress`,
   lessonComplete: (lessonId: string) =>
     `/api/mobile/lessons/${encodeURIComponent(lessonId)}/complete`,
   sendCode: '/api/email/send',

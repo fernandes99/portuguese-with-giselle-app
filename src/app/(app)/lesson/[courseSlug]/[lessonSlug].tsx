@@ -13,6 +13,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
+import { LessonActivities } from '@/components/activity/LessonActivities';
 import { Button } from '@/components/Button';
 import { CourseOutlineSheet } from '@/components/lesson/CourseOutlineSheet';
 import { EmptyState } from '@/components/lesson/EmptyState';
@@ -58,10 +59,8 @@ export default function LessonScreen() {
     lessonSlug: string;
   }>();
 
-  const { data, error, locked, reload, setCompleted } = useLesson(
-    courseSlug,
-    lessonSlug
-  );
+  const { data, error, locked, reload, setCompleted, saveActivityProgress } =
+    useLesson(courseSlug, lessonSlug);
   const [activeTab, setActiveTab] = useState<LessonTabKey>('content');
   const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -195,18 +194,17 @@ export default function LessonScreen() {
             <LessonMaterials materials={lesson.materials} />
           ) : null}
 
-          {/* Atividades e discussões ainda não foram portadas para o app */}
-          {activeTab === 'activities' ? (
-            lesson.activitiesCount === 0 ? (
-              <EmptyState title="Nenhuma atividade disponível" />
-            ) : (
-              <EmptyState
-                title={`Esta aula tem ${lesson.activitiesCount} ${lesson.activitiesCount === 1 ? 'atividade' : 'atividades'}`}
-                text="As atividades ainda não estão disponíveis no app. Por enquanto, faça pelo site."
-              />
-            )
-          ) : null}
+          {/* Fica montada mesmo com outra aba aberta, para o aluno não
+              perder as respostas ao consultar o conteúdo */}
+          <View className={activeTab === 'activities' ? '' : 'hidden'}>
+            <LessonActivities
+              key={lesson.id}
+              activities={lesson.activities}
+              onProgress={saveActivityProgress}
+            />
+          </View>
 
+          {/* As discussões ainda não foram portadas para o app */}
           {activeTab === 'discussions' ? (
             <EmptyState
               title="Discussões em breve"

@@ -42,6 +42,43 @@ export interface LessonMaterial {
   size: number | null;
 }
 
+// Imagem ou áudio anexado a uma pergunta ou alternativa
+export interface ActivityFile {
+  url: string;
+  mimeType: string;
+}
+
+interface ActivityBase {
+  id: string;
+  title: string;
+  // HTML com o enunciado
+  content: string | null;
+  isCompleted: boolean;
+}
+
+export interface ChoiceActivity extends ActivityBase {
+  type: 'multiple_choice' | 'true_or_false';
+  exercises: {
+    id: string;
+    question: string;
+    file: ActivityFile | null;
+    alternatives: {
+      id: string;
+      title: string;
+      isCorrect: boolean;
+      file: ActivityFile | null;
+    }[];
+  }[];
+}
+
+export interface SentenceActivity extends ActivityBase {
+  type: 'fill_blank' | 'drag_drop';
+  // Frases com as respostas marcadas como {{resposta}}
+  exercises: { id: string; sentence: string }[];
+}
+
+export type Activity = ChoiceActivity | SentenceActivity;
+
 export interface Lesson {
   id: string;
   slug: string;
@@ -55,7 +92,7 @@ export interface Lesson {
   // HTML, com tooltips no formato \\termo==tradução\\
   content: string | null;
   materials: LessonMaterial[];
-  activitiesCount: number;
+  activities: Activity[];
   isCompleted: boolean;
 }
 
@@ -85,4 +122,20 @@ export function setLessonCompleted(
     method: completed ? 'POST' : 'DELETE',
     token,
   });
+}
+
+// completed: false ao começar ou errar, true ao acertar tudo
+export function setActivityProgress(
+  token: string,
+  activityId: string,
+  completed: boolean
+) {
+  return api<{ isCompleted: boolean }>(
+    API_ROUTES.activityProgress(activityId),
+    {
+      method: 'POST',
+      body: { completed },
+      token,
+    }
+  );
 }
