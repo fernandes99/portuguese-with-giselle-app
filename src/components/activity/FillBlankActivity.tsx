@@ -42,6 +42,16 @@ export function FillBlankActivity({
   const [status, setStatus] = useState<Status>('editing');
   const hasStarted = useRef(false);
 
+  // Campos na ordem em que aparecem, para o Enter pular para o próximo
+  const inputs = useRef<Record<string, TextInput | null>>({});
+  const blankKeys = useMemo(
+    () =>
+      exercises.flatMap((exercise) =>
+        exercise.answers.map((_, index) => `${exercise.id}:${index}`)
+      ),
+    [exercises]
+  );
+
   const totalBlanks = exercises.reduce(
     (acc, exercise) => acc + exercise.answers.length,
     0
@@ -141,6 +151,8 @@ export function FillBlankActivity({
                 }
 
                 const value = userAnswers[exercise.id]?.[part.index] ?? '';
+                const blankKey = `${exercise.id}:${part.index}`;
+                const nextKey = blankKeys[blankKeys.indexOf(blankKey) + 1];
 
                 return (
                   <TextInput
@@ -154,6 +166,17 @@ export function FillBlankActivity({
                     autoCapitalize="none"
                     autoCorrect={false}
                     spellCheck={false}
+                    ref={(input) => {
+                      inputs.current[blankKey] = input;
+                    }}
+                    // No último campo o Enter só fecha o teclado
+                    returnKeyType={nextKey ? 'next' : 'done'}
+                    submitBehavior={nextKey ? 'submit' : 'blurAndSubmit'}
+                    onSubmitEditing={() => {
+                      if (nextKey) {
+                        inputs.current[nextKey]?.focus();
+                      }
+                    }}
                     placeholderTextColor={colors.placeholder}
                     className={`h-10 min-w-24 rounded-lg border px-3 text-center font-poppins-medium text-base ${getInputClassName(status, isSameAnswer(value, part.answer))}`}
                   />
