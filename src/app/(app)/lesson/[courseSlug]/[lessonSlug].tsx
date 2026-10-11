@@ -16,8 +16,8 @@ import {
 import { LessonActivities } from '@/components/activity/LessonActivities';
 import { Button } from '@/components/Button';
 import { CourseOutlineSheet } from '@/components/lesson/CourseOutlineSheet';
-import { EmptyState } from '@/components/lesson/EmptyState';
 import { LessonContent } from '@/components/lesson/LessonContent';
+import { LessonDiscussions } from '@/components/lesson/LessonDiscussions';
 import { LessonMaterials } from '@/components/lesson/LessonMaterials';
 import { LessonMedia } from '@/components/lesson/LessonMedia';
 import {
@@ -207,12 +207,8 @@ export default function LessonScreen() {
             />
           </View>
 
-          {/* As discussões ainda não foram portadas para o app */}
           {activeTab === 'discussions' ? (
-            <EmptyState
-              title="Discussões em breve"
-              text="Por enquanto, participe da discussão pelo site."
-            />
+            <LessonDiscussions key={lesson.id} lessonId={lesson.id} />
           ) : null}
         </View>
       </ScrollView>

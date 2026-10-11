@@ -2,7 +2,7 @@ import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
 
 export type Role =
-  'FREE_STUDENT' | 'BASIC_STUDENT' | 'PREMIUM_STUDENT' | 'ADMIN';
+  'FREE_STUDENT' | 'BASIC_STUDENT' | 'PREMIUM_STUDENT' | 'ADMIN' | 'TEACHER';
 
 export interface User {
   id: string;

@@ -28,6 +28,8 @@ export const API_ROUTES = {
     `/api/mobile/courses/${encodeURIComponent(courseSlug)}/lessons/${encodeURIComponent(lessonSlug)}`,
   activityProgress: (activityId: string) =>
     `/api/mobile/activities/${encodeURIComponent(activityId)}/progress`,
+  lessonDiscussions: (lessonId: string) =>
+    `/api/mobile/lessons/${encodeURIComponent(lessonId)}/discussions`,
   lessonComplete: (lessonId: string) =>
     `/api/mobile/lessons/${encodeURIComponent(lessonId)}/complete`,
   sendCode: '/api/email/send',
