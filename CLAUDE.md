@@ -52,4 +52,4 @@ O terminal é PowerShell no Windows; use `;` para encadear comandos, não `&&`.
 
 Mesmo padrão do site: `feat:`, `fix:` ou `chore:`, frase curta em inglês, minúsculas, imperativo, sem escopo e sem ponto final. Um commit por assunto. Documentação em português.
 
-A branch principal é a `production`, e o trabalho vai direto nela. No site a branch principal continua sendo a `main`.
+A branch principal é a `main`, como no site, e o trabalho vai direto nela.
