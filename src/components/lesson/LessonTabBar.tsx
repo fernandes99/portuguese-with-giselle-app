@@ -10,6 +10,12 @@ const TABS: { key: LessonTabKey; label: string }[] = [
   { key: 'discussions', label: 'Discussão' },
 ];
 
+// Aba vizinha na ordem da barra; nas pontas, continua na mesma
+export function getAdjacentTab(tab: LessonTabKey, direction: 1 | -1) {
+  const index = TABS.findIndex((item) => item.key === tab);
+  return TABS[index + direction]?.key ?? tab;
+}
+
 interface LessonTabBarProps {
   active: LessonTabKey;
   onChange: (tab: LessonTabKey) => void;

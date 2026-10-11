@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { type ComponentProps, type ReactNode, useState } from 'react';
+import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -21,6 +22,7 @@ import { LessonDiscussions } from '@/components/lesson/LessonDiscussions';
 import { LessonMaterials } from '@/components/lesson/LessonMaterials';
 import { LessonMedia } from '@/components/lesson/LessonMedia';
 import {
+  getAdjacentTab,
   LessonTabBar,
   type LessonTabKey,
 } from '@/components/lesson/LessonTabBar';
@@ -51,6 +53,9 @@ function HeaderButton({
   );
 }
 
+// Quanto o dedo precisa andar para os lados para trocar de aba
+const SWIPE_DISTANCE = 60;
+
 export default function LessonScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -62,6 +67,25 @@ export default function LessonScreen() {
   const { data, error, locked, reload, setCompleted, saveActivityProgress } =
     useLesson(courseSlug, lessonSlug);
   const [activeTab, setActiveTab] = useState<LessonTabKey>('content');
+
+  // Deslizar para os lados troca de aba. Só reage a um gesto claramente
+  // horizontal, para não brigar com a rolagem vertical da tela.
+  const swipe = useMemo(
+    () =>
+      Gesture.Pan()
+        .runOnJS(true)
+        .activeOffsetX([-30, 30])
+        .failOffsetY([-20, 20])
+        .onEnd((event) => {
+          if (Math.abs(event.translationX) < SWIPE_DISTANCE) {
+            return;
+          }
+
+          const direction = event.translationX < 0 ? 1 : -1;
+          setActiveTab((current) => getAdjacentTab(current, direction));
+        }),
+    []
+  );
   const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [actionError, setActionError] = useState('');
@@ -179,38 +203,43 @@ export default function LessonScreen() {
 
         <LessonTabBar active={activeTab} onChange={setActiveTab} />
 
-        <View className="px-5 pt-5">
-          {activeTab === 'content' ? (
-            <LessonContent
-              lesson={lesson}
-              moduleTitle={position?.moduleTitle ?? null}
-              nextLesson={nextLesson}
-              nextLessonInfo={nextPosition}
-              isSaving={isSaving}
-              error={actionError}
-              onToggleCompleted={handleToggleCompleted}
-              onOpenNextLesson={() => nextLesson && openLesson(nextLesson.slug)}
-            />
-          ) : null}
+        <GestureDetector gesture={swipe}>
+          {/* Altura mínima para o gesto funcionar também em abas curtas */}
+          <View collapsable={false} className="min-h-[420px] px-5 pt-5">
+            {activeTab === 'content' ? (
+              <LessonContent
+                lesson={lesson}
+                moduleTitle={position?.moduleTitle ?? null}
+                nextLesson={nextLesson}
+                nextLessonInfo={nextPosition}
+                isSaving={isSaving}
+                error={actionError}
+                onToggleCompleted={handleToggleCompleted}
+                onOpenNextLesson={() =>
+                  nextLesson && openLesson(nextLesson.slug)
+                }
+              />
+            ) : null}
 
-          {activeTab === 'materials' ? (
-            <LessonMaterials materials={lesson.materials} />
-          ) : null}
+            {activeTab === 'materials' ? (
+              <LessonMaterials materials={lesson.materials} />
+            ) : null}
 
-          {/* Fica montada mesmo com outra aba aberta, para o aluno não
+            {/* Fica montada mesmo com outra aba aberta, para o aluno não
               perder as respostas ao consultar o conteúdo */}
-          <View className={activeTab === 'activities' ? '' : 'hidden'}>
-            <LessonActivities
-              key={lesson.id}
-              activities={lesson.activities}
-              onProgress={saveActivityProgress}
-            />
-          </View>
+            <View className={activeTab === 'activities' ? '' : 'hidden'}>
+              <LessonActivities
+                key={lesson.id}
+                activities={lesson.activities}
+                onProgress={saveActivityProgress}
+              />
+            </View>
 
-          {activeTab === 'discussions' ? (
-            <LessonDiscussions key={lesson.id} lessonId={lesson.id} />
-          ) : null}
-        </View>
+            {activeTab === 'discussions' ? (
+              <LessonDiscussions key={lesson.id} lessonId={lesson.id} />
+            ) : null}
+          </View>
+        </GestureDetector>
       </ScrollView>
 
       <CourseOutlineSheet

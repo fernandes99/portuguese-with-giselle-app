@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
+import { ActivityResult } from '@/components/activity/ActivityResult';
 import { SentenceText } from '@/components/activity/SentenceText';
 import { Button } from '@/components/Button';
 import { colors } from '@/constants/theme';
@@ -86,6 +87,9 @@ export function FillBlankActivity({
   const hasAnyAnswer = Object.values(userAnswers).some((answers) =>
     answers.some((answer) => answer?.trim())
   );
+
+  // Conferiu e acertou todas (revelar as respostas não conta)
+  const isAllCorrect = status === 'checked' && correctCount === totalBlanks;
 
   function handleChange(exerciseId: string, index: number, value: string) {
     if (!hasStarted.current) {
@@ -200,13 +204,18 @@ export function FillBlankActivity({
         ))}
       </View>
 
-      {status === 'checked' ? (
-        <Text
-          className={`font-poppins-semibold text-sm ${correctCount === totalBlanks ? 'text-green-700' : 'text-gray-900'}`}
-        >
-          {correctCount === totalBlanks
-            ? 'Parabéns! Atividade concluída.'
-            : `Você acertou ${correctCount} de ${totalBlanks}.`}
+      {isAllCorrect ? (
+        <ActivityResult
+          correct={correctCount}
+          total={totalBlanks}
+          unit={totalBlanks === 1 ? 'lacuna' : 'lacunas'}
+          onRetry={handleRetry}
+        />
+      ) : null}
+
+      {status === 'checked' && !isAllCorrect ? (
+        <Text className="font-poppins-semibold text-sm text-gray-900">
+          Você acertou {correctCount} de {totalBlanks}.
         </Text>
       ) : null}
 
@@ -216,10 +225,12 @@ export function FillBlankActivity({
           onPress={handleCheck}
           disabled={!hasAnyAnswer}
         />
-      ) : (
+      ) : null}
+
+      {status !== 'editing' && !isAllCorrect ? (
         <View>
           <Button label="Tentar de novo" onPress={handleRetry} />
-          {status === 'checked' && correctCount < totalBlanks ? (
+          {status === 'checked' ? (
             <Button
               variant="link"
               label="Ver respostas"
@@ -227,7 +238,7 @@ export function FillBlankActivity({
             />
           ) : null}
         </View>
-      )}
+      ) : null}
     </View>
   );
 }

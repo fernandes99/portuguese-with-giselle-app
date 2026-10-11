@@ -11,6 +11,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { colors } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
@@ -59,9 +60,11 @@ export default function RootLayout() {
   });
 
   return (
-    <AuthProvider>
-      <StatusBar style="dark" />
-      <RootNavigator fontsReady={fontsLoaded || fontError !== null} />
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <StatusBar style="dark" />
+        <RootNavigator fontsReady={fontsLoaded || fontError !== null} />
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
