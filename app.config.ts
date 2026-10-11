@@ -51,6 +51,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     ...googleSignInPlugin(),
   ],
+  extra: {
+    eas: {
+      projectId: '3d86602a-d3a4-4a02-9a1b-3edf73c18314',
+    },
+  },
   experiments: {
     typedRoutes: true,
   },
