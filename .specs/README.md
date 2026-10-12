@@ -13,11 +13,12 @@ A convenção é a mesma do site (`portuguese-with-giselle`, em `.specs/README.m
 
 Iniciativas atuais:
 
-| Iniciativa                                  | Assunto                                    |
-| ------------------------------------------- | ------------------------------------------ |
-| [guided-lesson](guided-lesson/)             | Aula em etapas, com parabéns e desbloqueio |
-| [practice-chat](practice-chat/)             | Aba Praticar e chat de texto com IA        |
-| [practice-flashcards](practice-flashcards/) | Flashcards do site na aba Praticar         |
+| Iniciativa                                    | Assunto                                                                    |
+| --------------------------------------------- | -------------------------------------------------------------------------- |
+| [guided-lesson](guided-lesson/)               | Aula em etapas, com parabéns e desbloqueio                                 |
+| [practice-chat](practice-chat/)               | Aba Praticar e chat de texto com IA                                        |
+| [practice-flashcards](practice-flashcards/)   | Flashcards do site na aba Praticar                                         |
+| [study-progress](study-progress/)             | Dias de estudo, gráfico de 7 dias, sequência e conquistas na aba Progresso |
 
 ## Modelo de spec
 

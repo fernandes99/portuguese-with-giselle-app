@@ -39,13 +39,6 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: tabIcon('home', 'home-outline'),
-        }}
-      />
-      <Tabs.Screen
-        name="learn"
-        options={{
           title: 'Aprender',
           tabBarIcon: tabIcon('school', 'school-outline'),
         }}

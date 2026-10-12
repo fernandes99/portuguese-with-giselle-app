@@ -56,7 +56,7 @@ export function GuidedLesson({
     // dismissTo desempilha a aula: voltar, já no Aprender, não a reabre
     // Ao refazer uma aula, o caminho não tem conclusão nova para animar
     router.dismissTo({
-      pathname: '/learn',
+      pathname: '/',
       params: isReview
         ? { course: courseSlug }
         : { course: courseSlug, completed: lesson.id },
