@@ -31,12 +31,28 @@ O terminal é PowerShell no Windows; use `;` para encadear comandos, não `&&`.
 ## Estrutura
 
 - `src/app/`: rotas. `_layout.tsx` carrega fontes, segura a splash e separa `(auth)` de `(app)` com `Stack.Protected`.
-- `src/app/(auth)/`: login e cadastro. `src/app/(app)/`: área logada. As abas de baixo (Dashboard, Cursos, Progresso, Perfil) ficam em `src/app/(app)/(tabs)/`; telas que abrem por cima das abas entram direto em `(app)/`.
+- `src/app/(auth)/`: login e cadastro. `src/app/(app)/`: área logada. As abas de baixo (Dashboard, Aprender, Cursos, Progresso, Perfil) ficam em `src/app/(app)/(tabs)/`; telas que abrem por cima das abas entram direto em `(app)/`.
+- Aba Aprender (`(tabs)/learn.tsx`, `src/components/learn/`, `src/utils/learn.ts`): caminho de módulos e aulas do curso selecionado, com os dados de `getCourses`. As aulas depois da primeira não concluída aparecem trancadas. Esse bloqueio é só visual e só dessa aba: o backend, o site e a aba Cursos abrem qualquer aula.
+- Tela de aula (`(app)/lesson/[courseSlug]/[lessonSlug].tsx`): a rota carrega a aula e escolhe, uma vez por abertura, entre duas telas. Aula não concluída abre o fluxo em etapas (`src/components/lesson-flow/GuidedLesson.tsx`, etapas calculadas em `src/utils/lessonFlow.ts`), que termina na tela de parabéns; aula concluída abre a tela com abas (`src/components/lesson/ClassicLesson.tsx`). Vale para qualquer lugar que abra uma aula.
+- O parabéns volta para a aba Aprender com os parâmetros `course` (slug do curso) e `completed` (id da aula). A aba seleciona o curso, rola até a aula, anima a conclusão e o desbloqueio da próxima e limpa os parâmetros.
+- `scripts/generate-lesson-complete-sound.js` gera `assets/sounds/lesson-complete.wav`, o som do parabéns.
+- `src/components/WelcomeScreen.tsx`: introdução da primeira abertura (slides com fotos de `assets/onboarding/`). Não é uma rota: o `_layout.tsx` raiz a mostra no lugar da navegação enquanto a marca `pwg.welcomeSeen` do SecureStore não existe e não há sessão.
 - `src/components/`, `src/hooks/`, `src/utils/`, `src/constants/`.
 - `src/contexts/AuthContext.tsx`: sessão (`status`, `user`, `token`, `signIn`, `signOut`).
 - `src/lib/`: `api` (fetch com Bearer e `ApiError`), `storage` (SecureStore), `google`.
 - `src/services/`: chamadas ao backend, uma função por rota.
+- `.specs/`: specs das iniciativas, uma pasta por entrega.
 - `app.config.ts`: configuração nativa. As pastas `android/` e `ios/` são geradas e não são versionadas; nunca edite à mão.
+
+## Specs
+
+Entregas grandes são planejadas em `.specs/<iniciativa>/` antes do código. A convenção e o modelo estão em `.specs/README.md`.
+
+- Antes de implementar uma fase, leia o `README.md` da iniciativa, o `architecture.md` e a spec da fase.
+- Implemente uma fase por vez. Ao terminar, marque as tarefas e atualize o status na spec e na tabela da iniciativa, no mesmo commit.
+- Se a implementação precisar divergir da spec, atualize a spec junto e registre o motivo. O que a spec não decide vai para "Dúvidas em aberto" e é perguntado, não presumido.
+
+Iniciativa em andamento: `.specs/guided-lesson/` (aula em etapas, com tela de parabéns e desbloqueio animado na aba Aprender).
 
 ## Cuidados
 
