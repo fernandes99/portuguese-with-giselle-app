@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { ApiError } from '@/lib/api';
+import { ApiError, setUnauthorizedHandler } from '@/lib/api';
 import { signOutFromGoogle } from '@/lib/google';
 import { clearSession, loadSession, saveSession } from '@/lib/storage';
 import { me, type Session, type User } from '@/services/auth';
@@ -28,6 +28,18 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>('loading');
   const [session, setSession] = useState<Session | null>(null);
+
+  // Qualquer chamada recusada por sessão inválida derruba o login, em
+  // qualquer tela, e o app volta para a tela de entrada.
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      clearSession();
+      setSession(null);
+      setStatus('unauthenticated');
+    });
+
+    return () => setUnauthorizedHandler(null);
+  }, []);
 
   useEffect(() => {
     async function restore() {

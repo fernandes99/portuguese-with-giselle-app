@@ -11,6 +11,13 @@ export class ApiError extends Error {
   }
 }
 
+// Chamado quando o servidor recusa o token de uma requisição autenticada
+let unauthorizedHandler: (() => void) | null = null;
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  unauthorizedHandler = handler;
+}
+
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'DELETE';
   body?: unknown;
@@ -40,6 +47,12 @@ export async function api<T>(
   }
 
   const data = await response.json().catch(() => null);
+
+  // 401 com token enviado: a sessão expirou ou foi invalidada. Sem token
+  // é só credencial errada no login, que a própria tela trata.
+  if (response.status === 401 && token) {
+    unauthorizedHandler?.();
+  }
 
   if (!response.ok) {
     // O backend responde erros como { error: string }
