@@ -23,6 +23,7 @@ export const API_ROUTES = {
   google: '/api/mobile/auth/google',
   me: '/api/mobile/auth/me',
   progress: '/api/mobile/progress',
+  history: '/api/mobile/history',
   courses: '/api/mobile/courses',
   course: (courseSlug: string) =>
     `/api/mobile/courses/${encodeURIComponent(courseSlug)}`,
