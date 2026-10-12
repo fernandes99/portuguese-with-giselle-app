@@ -31,7 +31,14 @@ function Loading() {
 
 // Vídeo da aula (Veed) ou, sem vídeo, a apresentação do Canva. O player só
 // é carregado depois do toque no botão de play.
-export function LessonMedia({ lesson }: { lesson: Lesson }) {
+export function LessonMedia({
+  lesson,
+  onPlay,
+}: {
+  lesson: Lesson;
+  // Avisa quando o aluno toca no play
+  onPlay?: () => void;
+}) {
   const [isPlaying, setIsPlaying] = useState(false);
   const embedUrl = getEmbedUrl(lesson);
 
@@ -58,7 +65,10 @@ export function LessonMedia({ lesson }: { lesson: Lesson }) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`Reproduzir ${lesson.title}`}
-      onPress={() => setIsPlaying(true)}
+      onPress={() => {
+        setIsPlaying(true);
+        onPlay?.();
+      }}
       className="aspect-video w-full bg-green-50"
     >
       {lesson.imageUrl ? (
