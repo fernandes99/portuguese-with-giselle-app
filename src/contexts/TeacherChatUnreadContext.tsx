@@ -10,9 +10,14 @@ import {
 import { AppState } from 'react-native';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { getTeacherChatUnread } from '@/services/teacherChat';
+import { getTeacherChatEntry } from '@/services/teacherChat';
 
 interface TeacherChatUnreadValue {
+  // Se o botão do chat aparece para esta conta
+  available: boolean;
+  // O aluno fechou o botão; ele volta quando o app abre de novo
+  dismissed: boolean;
+  dismiss: () => void;
   // Mensagens da professora que o aluno ainda não leu
   unread: number;
   refreshUnread: () => Promise<void>;
@@ -24,9 +29,10 @@ const TeacherChatUnreadContext = createContext<TeacherChatUnreadValue | null>(
   null
 );
 
-// Sem notificação, é este contador que avisa o aluno da resposta. Ele é
-// buscado quando a área logada abre e quando o app volta ao primeiro plano;
-// o Perfil busca de novo ao ganhar foco.
+// Estado do botão do chat com a professora: se ele aparece e quantas
+// mensagens não lidas há. Sem notificação, é esse contador que avisa o aluno
+// da resposta. É buscado quando a área logada abre e quando o app volta ao
+// primeiro plano; o botão busca de novo quando as abas ganham foco.
 export function TeacherChatUnreadProvider({
   children,
 }: {
@@ -34,6 +40,9 @@ export function TeacherChatUnreadProvider({
 }) {
   const { token } = useAuth();
   const [unread, setUnread] = useState(0);
+  const [available, setAvailable] = useState(false);
+  // Fica só em memória: fechar o app e abrir de novo traz o botão de volta
+  const [dismissed, setDismissed] = useState(false);
 
   const refreshUnread = useCallback(async () => {
     if (!token) {
@@ -41,19 +50,31 @@ export function TeacherChatUnreadProvider({
     }
 
     try {
-      setUnread(await getTeacherChatUnread(token));
+      const entry = await getTeacherChatEntry(token);
+      setUnread(entry.unread);
+      setAvailable(entry.available);
     } catch {
-      // Falha aqui não é mostrada: o contador fica como estava
+      // Falha aqui não é mostrada: o botão fica como estava
     }
   }, [token]);
 
   const clearUnread = useCallback(() => setUnread(0), []);
+  const dismiss = useCallback(() => setDismissed(true), []);
 
   useEffect(() => {
     refreshUnread();
 
+    let wasInBackground = false;
     const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'background') {
+        wasInBackground = true;
+      }
       if (state === 'active') {
+        // Voltar do segundo plano também conta como abrir o app de novo
+        if (wasInBackground) {
+          wasInBackground = false;
+          setDismissed(false);
+        }
         refreshUnread();
       }
     });
@@ -61,8 +82,15 @@ export function TeacherChatUnreadProvider({
   }, [refreshUnread]);
 
   const value = useMemo(
-    () => ({ unread, refreshUnread, clearUnread }),
-    [unread, refreshUnread, clearUnread]
+    () => ({
+      available,
+      dismissed,
+      unread,
+      refreshUnread,
+      clearUnread,
+      dismiss,
+    }),
+    [available, dismissed, unread, refreshUnread, clearUnread, dismiss]
   );
 
   return (

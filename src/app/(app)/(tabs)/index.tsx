@@ -14,6 +14,7 @@ import { Button } from '@/components/Button';
 import { CourseSelectSheet } from '@/components/learn/CourseSelectSheet';
 import { LearnHeader } from '@/components/learn/LearnHeader';
 import { LearnModule } from '@/components/learn/LearnModule';
+import { TeacherChatButton } from '@/components/teacherChat/TeacherChatButton';
 import { colors } from '@/constants/theme';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { getCourses } from '@/services/courses';
@@ -245,6 +246,9 @@ export default function LearnScreen() {
           </View>
         ) : null}
       </ScrollView>
+
+      {/* Flutua no canto inferior direito, acima do menu */}
+      <TeacherChatButton />
 
       {courses && course ? (
         <CourseSelectSheet

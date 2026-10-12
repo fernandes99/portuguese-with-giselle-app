@@ -27,7 +27,9 @@ O Perfil (`src/app/(app)/(tabs)/profile.tsx`) tem "Meus cursos" e "Histórico". 
 - **RF-01:** O Perfil ganha a linha "Falar com a professora", acima de "Meus cursos", com o ícone `chatbubble-ellipses-outline`. Ela aparece para qualquer conta.
 - **RF-02:** Quando há mensagens não lidas, a linha mostra a quantidade num círculo verde, antes da seta. Acima de 9, mostra "9+".
 - **RF-03:** Quando há mensagens não lidas, a aba Perfil mostra o marcador da barra de abas (`tabBarBadge`) com a mesma quantidade.
-- **RF-04:** A quantidade vem de `GET /api/mobile/teacher-chat/unread` e é buscada quando as abas abrem, quando o app volta ao primeiro plano e quando o Perfil ganha foco. Falha nessa busca não mostra erro: o contador fica como estava.
+- **RF-24:** A aba Aprender mostra um botão flutuante no canto inferior direito, acima do menu, com "Precisa de ajuda?", "Fale com a professora" e a foto dela. Ele abre a conversa e mostra a quantidade de não lidas sobre a foto. Só aparece quando o backend devolve `available` verdadeiro (a partir da terceira aula concluída). As outras abas não têm o botão; a linha do Perfil continua para todas as contas.
+- **RF-25:** O aluno fecha o botão flutuante pelo X pequeno à direita ou arrastando-o para a direita (mais de 80 pontos, ou um arrasto rápido); um arrasto curto o devolve ao lugar. Fechado, ele some até o app ser aberto de novo, o que inclui voltar do segundo plano. Nada é gravado no aparelho.
+- **RF-04:** `unread` e `available` vêm de `GET /api/mobile/teacher-chat/unread` e são buscados quando as abas abrem, quando o app volta ao primeiro plano e quando a aba Aprender ou o Perfil ganham foco (o que inclui a volta de uma aula concluída). Falha nessa busca não mostra erro: o botão e o contador ficam como estavam.
 
 **Bloqueio**
 
@@ -68,7 +70,8 @@ O Perfil (`src/app/(app)/(tabs)/profile.tsx`) tem "Meus cursos" e "Histórico". 
 - [ ] Com o modo avião ligado, a mensagem fica com "Tentar de novo"; desligando o modo avião, o reenvio funciona e ela não aparece duas vezes.
 - [ ] Uma resposta da professora aparece na tela aberta em até 30 segundos, sem ação do aluno.
 - [ ] Puxar a lista traz a resposta na hora.
-- [ ] Com a tela do chat fechada, uma resposta da professora faz aparecer o contador na linha do Perfil e o marcador na aba, ao voltar ao app ou abrir o Perfil. Abrir o chat tira os dois.
+- [ ] Com a tela do chat fechada, uma resposta da professora faz aparecer o contador na linha do Perfil, o marcador na aba Perfil e o contador no botão flutuante, ao voltar ao app ou abrir uma dessas telas. Abrir o chat tira os três.
+- [ ] Uma conta com menos de 3 aulas concluídas e sem conversa não vê o botão flutuante; ao concluir a terceira e voltar para a aba Aprender, ele aparece. Nas outras abas ele nunca aparece.
 - [ ] Mensagens de dias diferentes aparecem separadas pela data.
 - [ ] Com mais de 50 mensagens, "Ver mensagens anteriores" traz as antigas e a tela continua na mesma mensagem.
 - [ ] O teclado aberto não cobre o campo nem a última mensagem, no Android e no iOS.
@@ -93,6 +96,8 @@ O Perfil (`src/app/(app)/(tabs)/profile.tsx`) tem "Meus cursos" e "Histórico". 
 - `src/constants/config.ts`: `teacherChat` e `teacherChatUnread` em `API_ROUTES`.
 - `src/app/(app)/_layout.tsx`: o `TeacherChatUnreadProvider` em volta da pilha.
 - `src/app/(app)/(tabs)/_layout.tsx`: `tabBarBadge` na aba Perfil.
+- `src/app/(app)/(tabs)/index.tsx`: o botão flutuante, na aba Aprender.
+- `src/components/teacherChat/TeacherChatButton.tsx` (novo): o botão flutuante.
 - `src/app/(app)/(tabs)/profile.tsx`: a linha nova, com o contador.
 - `CLAUDE.md`: a iniciativa.
 

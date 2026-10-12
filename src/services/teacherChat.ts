@@ -36,11 +36,20 @@ export async function sendTeacherChatMessage(token: string, content: string) {
   return message;
 }
 
-// Mensagens da professora que o aluno ainda não leu
-export async function getTeacherChatUnread(token: string) {
-  const { unread } = await api<{ unread: number }>(
+export interface TeacherChatEntry {
+  // Mensagens da professora que o aluno ainda não leu
+  unread: number;
+  // Se o botão do chat aparece: a partir da terceira aula concluída
+  available: boolean;
+}
+
+// O que o botão do chat precisa saber
+export async function getTeacherChatEntry(
+  token: string
+): Promise<TeacherChatEntry> {
+  const entry = await api<Partial<TeacherChatEntry>>(
     API_ROUTES.teacherChatUnread,
     { token }
   );
-  return unread;
+  return { unread: entry.unread ?? 0, available: entry.available === true };
 }

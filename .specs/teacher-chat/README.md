@@ -30,28 +30,30 @@ Qualquer conta que não seja de aluno gratuito: os assinantes (`BASIC_STUDENT` e
 
 Tomadas com o dono do projeto:
 
-| Decisão                                                                         | Motivo                                              |
-| ------------------------------------------------------------------------------- | --------------------------------------------------- |
-| O chat abre pelo Perfil                                                         | Pedido direto; o lugar pode mudar depois            |
-| Aluno gratuito abre a tela e vê o aviso de que é só para assinantes             | Pedido direto                                       |
-| Cada mensagem mostra o horário e a situação do envio; há contador de não lidas  | Não haverá notificação nesta versão                 |
-| Sem notificação                                                                 | Pedido direto: nada complexo neste primeiro momento |
-| Mensagens novas a cada 30 segundos com a tela aberta, e ao puxar para atualizar | Pedido direto                                       |
+| Decisão                                                                                                                                | Motivo                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| O chat abre pelo Perfil e por um botão flutuante na aba Aprender, com a foto da professora e "Precisa de ajuda? Fale com a professora" | Pedido direto                                       |
+| O botão flutuante só aparece depois da terceira aula concluída                                                                         | Pedido direto                                       |
+| Aluno gratuito abre a tela e vê o aviso de que é só para assinantes                                                                    | Pedido direto                                       |
+| Cada mensagem mostra o horário e a situação do envio; há contador de não lidas                                                         | Não haverá notificação nesta versão                 |
+| Sem notificação                                                                                                                        | Pedido direto: nada complexo neste primeiro momento |
+| Mensagens novas a cada 30 segundos com a tela aberta, e ao puxar para atualizar                                                        | Pedido direto                                       |
 
 Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e na spec da fase):
 
-| Decisão                                                                                    | Motivo                                                                      |
-| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| O título da tela é "Professora Giselle", com a foto dela no cabeçalho e ao lado das falas  | Para o aluno, quem responde é sempre ela                                    |
-| A conversa vem do backend a cada abertura; o app não guarda mensagens no aparelho          | Uma fonte só; trocar de aparelho não muda nada                              |
-| A mensagem enviada aparece antes da resposta do backend, com "Enviando..."                 | O aluno vê o que escreveu na hora                                           |
-| Mensagem que falha fica na tela com "Tentar de novo"                                       | O texto não se perde                                                        |
-| A mensagem não mostra "lida"                                                               | Não foi pedido                                                              |
-| A linha do Perfil aparece para todos; o bloqueio é dentro da tela                          | Foi o pedido: o gratuito abre e vê o aviso                                  |
-| O contador de não lidas é buscado ao entrar nas abas, ao voltar ao app e ao abrir o Perfil | Sem notificação, é o que avisa da resposta                                  |
-| Só `FREE_STUDENT` vê o bloqueio; `TEACHER` e `ADMIN` usam o chat como um assinante         | Pedido do dono do projeto: o admin precisa conseguir falar com a professora |
-| Componentes próprios em `src/components/teacherChat/`, sem mexer nos do chat com IA        | Os balões da Gisa carregam correção e tradução, que aqui não existem        |
-| Nenhuma dependência nova                                                                   | Não exige novo build por causa de biblioteca                                |
+| Decisão                                                                                                                                          | Motivo                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| O título da tela é "Professora Giselle", com a foto dela no cabeçalho e ao lado das falas                                                        | Para o aluno, quem responde é sempre ela                                                               |
+| A conversa vem do backend a cada abertura; o app não guarda mensagens no aparelho                                                                | Uma fonte só; trocar de aparelho não muda nada                                                         |
+| A mensagem enviada aparece antes da resposta do backend, com "Enviando..."                                                                       | O aluno vê o que escreveu na hora                                                                      |
+| Mensagem que falha fica na tela com "Tentar de novo"                                                                                             | O texto não se perde                                                                                   |
+| A mensagem não mostra "lida"                                                                                                                     | Não foi pedido                                                                                         |
+| A linha do Perfil aparece para todos; o bloqueio é dentro da tela                                                                                | Foi o pedido: o gratuito abre e vê o aviso                                                             |
+| O contador de não lidas e a liberação do botão são buscados ao entrar nas abas, ao voltar ao app e quando a aba Aprender ou o Perfil ganham foco | Sem notificação, é o que avisa da resposta; e o botão aparece na volta da terceira aula                |
+| Quem decide se o botão aparece é o backend (`available`)                                                                                         | Mudar a regra não exige nova versão do app. Quem já tem conversa vê o botão mesmo com menos de 3 aulas |
+| Só `FREE_STUDENT` vê o bloqueio; `TEACHER` e `ADMIN` usam o chat como um assinante                                                               | Pedido do dono do projeto: o admin precisa conseguir falar com a professora                            |
+| Componentes próprios em `src/components/teacherChat/`, sem mexer nos do chat com IA                                                              | Os balões da Gisa carregam correção e tradução, que aqui não existem                                   |
+| Nenhuma dependência nova                                                                                                                         | Não exige novo build por causa de biblioteca                                                           |
 
 ## Fora do escopo
 
@@ -91,7 +93,7 @@ Espelho do contrato em `.specs/teacher-chat/README.md` do site; ao mudar um, mud
 
 `POST /api/mobile/teacher-chat`, com `{ "content": "..." }`. Responde `201` com `{ "message": { ... } }`. `400` para mensagem vazia ou acima de `maxLength`; `403` para `FREE_STUDENT`.
 
-`GET /api/mobile/teacher-chat/unread`. Responde `{ "unread": 2 }`; para `FREE_STUDENT`, `{ "unread": 0 }`.
+`GET /api/mobile/teacher-chat/unread`. Responde `{ "unread": 2, "available": true }`; para `FREE_STUDENT`, `unread` é sempre `0`. `available` diz se o botão flutuante aparece.
 
 ## Pré-requisitos
 
