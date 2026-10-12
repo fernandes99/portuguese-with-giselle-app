@@ -16,6 +16,7 @@ Iniciativas atuais:
 | Iniciativa                      | Assunto                                    |
 | ------------------------------- | ------------------------------------------ |
 | [guided-lesson](guided-lesson/) | Aula em etapas, com parabéns e desbloqueio |
+| [practice-chat](practice-chat/) | Aba Praticar e chat de texto com IA        |
 
 ## Modelo de spec
 

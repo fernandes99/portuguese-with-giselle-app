@@ -34,6 +34,7 @@ export const API_ROUTES = {
     `/api/mobile/lessons/${encodeURIComponent(lessonId)}/discussions`,
   lessonComplete: (lessonId: string) =>
     `/api/mobile/lessons/${encodeURIComponent(lessonId)}/complete`,
+  practiceChat: '/api/mobile/practice/chat',
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

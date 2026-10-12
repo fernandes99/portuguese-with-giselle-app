@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
 import { CourseCard } from '@/components/course/CourseCard';
+import { LessonHeader } from '@/components/lesson/ClassicLesson';
 import { colors } from '@/constants/theme';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { getCourses } from '@/services/courses';
@@ -24,9 +25,10 @@ export default function CoursesScreen() {
   } = useApiQuery(getCourses, 'Erro ao carregar os cursos.');
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background">
+      <LessonHeader title="Cursos" />
       <ScrollView
-        contentContainerClassName="flex-grow gap-5 px-5 pb-8 pt-6"
+        contentContainerClassName="flex-grow gap-5 px-5 pb-8 pt-4"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -36,14 +38,9 @@ export default function CoursesScreen() {
           />
         }
       >
-        <View>
-          <Text className="font-poppins-bold text-3xl text-gray-900">
-            Cursos
-          </Text>
-          <Text className="mt-1 font-poppins text-base text-gray-600">
-            Escolha um curso e continue de onde parou.
-          </Text>
-        </View>
+        <Text className="font-poppins text-base text-gray-600">
+          Escolha um curso e continue de onde parou.
+        </Text>
 
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">

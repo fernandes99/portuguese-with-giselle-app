@@ -51,10 +51,10 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="courses"
+        name="practice"
         options={{
-          title: 'Cursos',
-          tabBarIcon: tabIcon('book', 'book-outline'),
+          title: 'Praticar',
+          tabBarIcon: tabIcon('chatbubbles', 'chatbubbles-outline'),
         }}
       />
       <Tabs.Screen
