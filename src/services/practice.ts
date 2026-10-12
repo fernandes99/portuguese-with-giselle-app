@@ -20,6 +20,8 @@ export interface PracticeTurn {
   correction: PracticeCorrection;
   // Fala seguinte da Gisa
   reply: string;
+  // A mesma fala em inglês; pode vir vazia
+  replyTranslation?: string;
 }
 
 // `messages` é a conversa inteira e termina na mensagem nova do aluno

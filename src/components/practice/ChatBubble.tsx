@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { type ReactNode, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { CorrectionCard } from '@/components/practice/CorrectionCard';
+import { colors } from '@/constants/theme';
 import type { ChatMessage } from '@/hooks/usePracticeChat';
 import { splitByMistakes } from '@/utils/practice';
 
@@ -19,12 +21,43 @@ export function GisaBubble({ children }: { children: ReactNode }) {
   );
 }
 
-export function GisaMessage({ content }: { content: string }) {
+// Fala da Gisa. A tradução só aparece quando o aluno toca no botão.
+export function GisaMessage({
+  content,
+  translation,
+}: {
+  content: string;
+  translation?: string;
+}) {
+  const [isTranslated, setIsTranslated] = useState(false);
+
   return (
     <GisaBubble>
       <Text className="font-poppins text-[15px] leading-6 text-white">
         {content}
       </Text>
+
+      {translation && isTranslated ? (
+        <Text className="mt-2 border-t border-white/30 pt-2 font-poppins text-sm leading-5 text-green-50">
+          {translation}
+        </Text>
+      ) : null}
+
+      {translation ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={isTranslated ? 'Esconder tradução' : 'Traduzir'}
+          onPress={() => setIsTranslated((current) => !current)}
+          hitSlop={8}
+          className={`mt-2 h-8 w-8 items-center justify-center rounded-full active:opacity-70 ${isTranslated ? 'bg-white' : 'bg-white/20'}`}
+        >
+          <Ionicons
+            name="language"
+            size={16}
+            color={isTranslated ? colors.green : colors.white}
+          />
+        </Pressable>
+      ) : null}
     </GisaBubble>
   );
 }

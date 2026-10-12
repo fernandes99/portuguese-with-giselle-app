@@ -49,11 +49,13 @@ Resposta `200`:
     "explanation": "\"Hospital\" is a masculine noun, so use \"um\".",
     "mistakes": ["uma hospital"]
   },
-  "reply": "Que legal! O que você faz no hospital?"
+  "reply": "Que legal! O que você faz no hospital?",
+  "replyTranslation": "How nice! What do you do at the hospital?"
 }
 ```
 
 - `mistakes`: trechos da mensagem do aluno, como ele escreveu.
+- `replyTranslation`: a fala da Gisa em inglês, mostrada só quando o aluno pede.
 - Sem erros: `hasErrors` falso, `explanation` vazia e `mistakes` vazio.
 
 Erros, como `{ "error": string }`: `401` (sessão; o `api` já encerra o login), `403` (gratuito), `400` (corpo inválido) e `500` (falha do modelo).
@@ -64,7 +66,13 @@ Fica em memória, no hook `usePracticeChat` (`src/hooks/usePracticeChat.ts`). Na
 
 ```ts
 type ChatMessage =
-  | { id: string; role: 'assistant'; content: string }
+  | {
+      id: string;
+      role: 'assistant';
+      content: string;
+      // Em inglês; sem ela, o balão não tem o botão de traduzir
+      translation?: string;
+    }
   | {
       id: string;
       role: 'user';

@@ -7,10 +7,16 @@ import {
   type PracticeMessage,
   sendPracticeMessage,
 } from '@/services/practice';
-import { getOpeningMessage } from '@/utils/practice';
+import { getOpeningMessage, getOpeningTranslation } from '@/utils/practice';
 
 export type ChatMessage =
-  | { id: string; role: 'assistant'; content: string }
+  | {
+      id: string;
+      role: 'assistant';
+      content: string;
+      // Em inglês; sem ela, o balão não tem o botão de traduzir
+      translation?: string;
+    }
   | {
       id: string;
       role: 'user';
@@ -34,6 +40,7 @@ export function usePracticeChat() {
         id: 'opening',
         role: 'assistant',
         content: getOpeningMessage(user?.name),
+        translation: getOpeningTranslation(user?.name),
       },
     ],
     [user?.name]
@@ -74,7 +81,12 @@ export function usePracticeChat() {
         setMessages([
           ...history,
           { ...pending, status: 'sent', correction: turn.correction },
-          { id: replyId, role: 'assistant', content: turn.reply },
+          {
+            id: replyId,
+            role: 'assistant',
+            content: turn.reply,
+            translation: turn.replyTranslation || undefined,
+          },
         ]);
       } catch (err) {
         if (conversation.current !== current) {

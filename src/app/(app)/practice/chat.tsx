@@ -108,7 +108,10 @@ export default function PracticeChatScreen() {
           contentContainerClassName="gap-4 px-4 py-4"
           renderItem={({ item }) =>
             item.role === 'assistant' ? (
-              <GisaMessage content={item.content} />
+              <GisaMessage
+                content={item.content}
+                translation={item.translation}
+              />
             ) : (
               <StudentMessage message={item} onRetry={retry} />
             )

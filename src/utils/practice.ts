@@ -15,6 +15,15 @@ export function getOpeningMessage(name: string | null | undefined) {
     : 'Olá! Sou a Professora Gisa, e vamos usar esse chat para conversar e treinar seu Português. Me fala, no que você trabalha ou estuda?';
 }
 
+// A abertura em inglês, para o botão de traduzir
+export function getOpeningTranslation(name: string | null | undefined) {
+  const firstName = getFirstName(name);
+
+  return firstName
+    ? `Hi, ${firstName}! I'm Professora Gisa, and we'll use this chat to talk and practice your Portuguese. So tell me, ${firstName}, what do you do for work or study?`
+    : `Hi! I'm Professora Gisa, and we'll use this chat to talk and practice your Portuguese. So tell me, what do you do for work or study?`;
+}
+
 export interface TextPart {
   text: string;
   isMistake: boolean;
