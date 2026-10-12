@@ -35,6 +35,11 @@ export const API_ROUTES = {
   lessonComplete: (lessonId: string) =>
     `/api/mobile/lessons/${encodeURIComponent(lessonId)}/complete`,
   practiceChat: '/api/mobile/practice/chat',
+  flashcards: '/api/mobile/flashcards',
+  flashcard: (slug: string) =>
+    `/api/mobile/flashcards/${encodeURIComponent(slug)}`,
+  flashcardCardProgress: (slug: string, cardId: string) =>
+    `/api/mobile/flashcards/${encodeURIComponent(slug)}/cards/${encodeURIComponent(cardId)}/progress`,
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

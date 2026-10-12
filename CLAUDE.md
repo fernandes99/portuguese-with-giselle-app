@@ -33,6 +33,7 @@ O terminal é PowerShell no Windows; use `;` para encadear comandos, não `&&`.
 - `src/app/`: rotas. `_layout.tsx` carrega fontes, segura a splash e separa `(auth)` de `(app)` com `Stack.Protected`.
 - `src/app/(auth)/`: login e cadastro. `src/app/(app)/`: área logada. As abas de baixo (Dashboard, Aprender, Praticar, Progresso, Perfil) ficam em `src/app/(app)/(tabs)/`; telas que abrem por cima das abas entram direto em `(app)/`. A lista de cursos (`(app)/courses.tsx`) abre por "Meus cursos", no Perfil.
 - Aba Praticar (`(tabs)/practice.tsx`) e chat com a Professora Gisa (`(app)/practice/chat.tsx`, `src/components/practice/`, `src/hooks/usePracticeChat.ts`): chat de texto com IA, só para assinantes (`canUsePractice`, em `src/utils/practice.ts`). A abertura é fixa e escrita no app; cada mensagem do aluno vai com a conversa inteira para `POST /api/mobile/practice/chat`, que devolve a correção e a resposta. A conversa fica só em memória. Cada turno gasta créditos da API de IA do backend.
+- Flashcards (`(app)/practice/flashcards/`, `src/components/flashcards/`, `src/hooks/useFlashcardSession.ts`): segunda opção da aba Praticar, aberta a qualquer aluno. São os mesmos conjuntos e o mesmo progresso do site, pelas rotas `/api/mobile/flashcards`. A sessão carrega o conjunto inteiro uma vez, mantém o card da vez e o seguinte montados (`StudyCard`) e grava cada resposta sem esperar o backend.
 - Aba Aprender (`(tabs)/learn.tsx`, `src/components/learn/`, `src/utils/learn.ts`): caminho de módulos e aulas do curso selecionado, com os dados de `getCourses`. As aulas depois da primeira não concluída aparecem trancadas. Esse bloqueio é só visual e só dessa aba: o backend, o site e a lista de cursos abrem qualquer aula.
 - Tela de aula (`(app)/lesson/[courseSlug]/[lessonSlug].tsx`): a rota carrega a aula e escolhe, uma vez por abertura, entre duas telas. Aula não concluída abre o fluxo em etapas (`src/components/lesson-flow/GuidedLesson.tsx`, etapas calculadas em `src/utils/lessonFlow.ts`), que termina na tela de parabéns; aula concluída abre a tela com abas (`src/components/lesson/ClassicLesson.tsx`). Vale para qualquer lugar que abra uma aula.
 - O parabéns volta para a aba Aprender com os parâmetros `course` (slug do curso) e `completed` (id da aula). A aba seleciona o curso, rola até a aula, anima a conclusão e o desbloqueio da próxima e limpa os parâmetros.
@@ -57,6 +58,7 @@ Iniciativas em andamento:
 
 - `.specs/guided-lesson/`: aula em etapas, com tela de parabéns e desbloqueio animado na aba Aprender.
 - `.specs/practice-chat/`: aba Praticar e chat de texto com IA.
+- `.specs/practice-flashcards/`: flashcards do site na aba Praticar, com sessão de estudo por toque e arrasto.
 
 ## Cuidados
 
