@@ -18,6 +18,25 @@ export function setUnauthorizedHandler(handler: (() => void) | null) {
   unauthorizedHandler = handler;
 }
 
+// Conquista que o backend acabou de desbloquear. Qualquer rota pode mandá-la
+// em `unlockedAchievements`, junto da resposta normal.
+export interface UnlockedAchievement {
+  code: string;
+  title: string;
+  description: string;
+  unlockedAt: string;
+}
+
+// Chamado quando uma resposta traz conquistas novas
+let achievementHandler: ((achievements: UnlockedAchievement[]) => void) | null =
+  null;
+
+export function setAchievementHandler(
+  handler: ((achievements: UnlockedAchievement[]) => void) | null
+) {
+  achievementHandler = handler;
+}
+
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'DELETE';
   body?: unknown;
@@ -61,6 +80,13 @@ export async function api<T>(
         ? data.error
         : 'Ocorreu um erro. Tente novamente.';
     throw new ApiError(message, response.status);
+  }
+
+  if (
+    Array.isArray(data?.unlockedAchievements) &&
+    data.unlockedAchievements.length > 0
+  ) {
+    achievementHandler?.(data.unlockedAchievements);
   }
 
   return data as T;
