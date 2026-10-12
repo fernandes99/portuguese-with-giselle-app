@@ -37,11 +37,11 @@ O túnel só expõe o bundle do app. Para o celular alcançar o site local, use 
 
 Ficam em `.env`, que não é versionado. Veja `.env.example`.
 
-| Variável                           | O que é                                                         |
-| ---------------------------------- | --------------------------------------------------------------- |
-| `EXPO_PUBLIC_API_URL`              | URL do site. Em produção, `https://portuguesewithgiselle.com`.  |
-| `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` | OAuth client Web do Google, o mesmo `GOOGLE_CLIENT_ID` do site. |
-| `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` | OAuth client iOS do Google.                                     |
+| Variável                           | O que é                                                                       |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
+| `EXPO_PUBLIC_API_URL`              | URL do site. Em produção, `https://www.portuguesewithgiselle.com`, com `www`. |
+| `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` | OAuth client Web do Google, o mesmo `GOOGLE_CLIENT_ID` do site.               |
+| `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` | OAuth client iOS do Google.                                                   |
 
 Para testar contra o site rodando na sua máquina (`yarn dev` no outro repositório):
 

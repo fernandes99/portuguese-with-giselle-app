@@ -1,4 +1,6 @@
-export const SITE_URL = 'https://portuguesewithgiselle.com';
+// Com www: o domínio sem www redireciona para cá, e no redirecionamento o
+// Android descarta o header Authorization, o que derruba a sessão.
+export const SITE_URL = 'https://www.portuguesewithgiselle.com';
 
 export const API_URL = (process.env.EXPO_PUBLIC_API_URL || SITE_URL).replace(
   /\/$/,
