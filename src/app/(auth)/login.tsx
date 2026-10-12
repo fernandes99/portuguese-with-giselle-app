@@ -7,12 +7,14 @@ import { Button } from '@/components/Button';
 import { GoogleButton } from '@/components/GoogleButton';
 import { TextField } from '@/components/TextField';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWelcome } from '@/contexts/WelcomeContext';
 import { useGoogleSignIn } from '@/hooks/useGoogleSignIn';
 import { getErrorMessage } from '@/lib/api';
 import { login } from '@/services/auth';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
+  const { showWelcome } = useWelcome();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,6 +48,7 @@ export default function LoginScreen() {
       title="Boas-vindas de volta"
       subtitle="Entre na sua conta e continue aprendendo."
       error={error}
+      onBackToStart={showWelcome}
       footer={
         <Text className="font-poppins text-sm text-gray-600">
           Não tem uma conta?{' '}

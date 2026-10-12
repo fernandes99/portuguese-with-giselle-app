@@ -42,7 +42,7 @@ O terminal é PowerShell no Windows; use `;` para encadear comandos, não `&&`.
 - Histórico (`(app)/history.tsx`, `src/hooks/useHistory.ts`): aberto pelo Perfil, lista a situação atual de cada item que o aluno abriu, de `GET /api/mobile/history`, com filtro por tipo e "Carregar mais". É a mesma lista que a professora vê no site.
 - O parabéns volta para a aba Aprender com os parâmetros `course` (slug do curso) e `completed` (id da aula). A aba seleciona o curso, rola até a aula, anima a conclusão e o desbloqueio da próxima e limpa os parâmetros.
 - `scripts/generate-lesson-complete-sound.js` gera `assets/sounds/lesson-complete.wav`, o som do parabéns, e `scripts/generate-achievement-sound.js` gera `assets/sounds/achievement.wav`, o som de conquista.
-- `src/components/WelcomeScreen.tsx`: introdução da primeira abertura (slides com fotos de `assets/onboarding/`). Não é uma rota: o `_layout.tsx` raiz a mostra no lugar da navegação enquanto a marca `pwg.welcomeSeen` do SecureStore não existe e não há sessão.
+- `src/components/WelcomeScreen.tsx`: introdução da primeira abertura (slides com fotos de `assets/onboarding/`). Não é uma rota: o `_layout.tsx` raiz a mostra no lugar da navegação enquanto a marca `pwg.welcomeSeen` do SecureStore não existe e não há sessão. O "Início" da tela de login a mostra de novo (`useWelcome`, de `src/contexts/WelcomeContext.tsx`), sem apagar a marca.
 - `src/components/`, `src/hooks/`, `src/utils/`, `src/constants/`.
 - `src/contexts/AuthContext.tsx`: sessão (`status`, `user`, `token`, `signIn`, `signOut`).
 - `src/lib/`: `api` (fetch com Bearer e `ApiError`), `storage` (SecureStore), `google`.

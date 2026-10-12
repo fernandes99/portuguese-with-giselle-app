@@ -1,8 +1,10 @@
+import { Ionicons } from '@expo/vector-icons';
 import type { ReactNode } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   View,
@@ -11,6 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import logo from '@assets/logo.png';
 
+import { colors } from '@/constants/theme';
+
 interface AuthScreenProps {
   eyebrow?: string;
   title: string;
@@ -18,6 +22,8 @@ interface AuthScreenProps {
   error?: string;
   children: ReactNode;
   footer?: ReactNode;
+  // Mostra "Início" ao lado da logo, que leva de volta à introdução
+  onBackToStart?: () => void;
 }
 
 // Moldura das telas de login e cadastro: logo, título e o formulário.
@@ -28,6 +34,7 @@ export function AuthScreen({
   error,
   children,
   footer,
+  onBackToStart,
 }: AuthScreenProps) {
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -42,12 +49,28 @@ export function AuthScreen({
           contentContainerClassName="flex-grow px-6 pb-8 pt-3"
           keyboardShouldPersistTaps="handled"
         >
-          <Image
-            source={logo}
-            accessibilityLabel="Portuguese With Giselle"
-            resizeMode="contain"
-            className="h-9 w-40"
-          />
+          <View className="flex-row items-center justify-between">
+            <Image
+              source={logo}
+              accessibilityLabel="Portuguese With Giselle"
+              resizeMode="contain"
+              className="h-9 w-40"
+            />
+            {onBackToStart ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Voltar ao início"
+                onPress={onBackToStart}
+                hitSlop={12}
+                className="flex-row items-center gap-1"
+              >
+                <Ionicons name="arrow-back" size={16} color={colors.gray} />
+                <Text className="font-poppins-medium text-sm text-gray-500">
+                  Início
+                </Text>
+              </Pressable>
+            ) : null}
+          </View>
 
           <View className="flex-1 justify-center py-8">
             <View className="mb-8 items-center">

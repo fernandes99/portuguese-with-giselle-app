@@ -10,12 +10,13 @@ import {
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { WelcomeScreen } from '@/components/WelcomeScreen';
 import { colors } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { WelcomeProvider } from '@/contexts/WelcomeContext';
 import { hasSeenWelcome, markWelcomeSeen } from '@/lib/storage';
 
 // A splash nativa fica na tela até as fontes, a sessão e a marca da
@@ -33,6 +34,13 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
     hasSeenWelcome().then(setWelcomeSeen);
   }, []);
 
+  // A tela de login pode pedir a introdução de novo. A marca do aparelho
+  // não é apagada: na próxima abertura o app vai direto para o login.
+  const welcome = useMemo(
+    () => ({ showWelcome: () => setWelcomeSeen(false) }),
+    []
+  );
+
   useEffect(() => {
     if (ready) {
       SplashScreen.hideAsync();
@@ -43,7 +51,8 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
     return null;
   }
 
-  // Primeira abertura do app: introdução antes do login
+  // Primeira abertura do app, ou pedido da tela de login: introdução antes
+  // do login
   if (!isAuthenticated && !welcomeSeen) {
     return (
       <WelcomeScreen
@@ -56,19 +65,21 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    >
-      <Stack.Protected guard={isAuthenticated}>
-        <Stack.Screen name="(app)" />
-      </Stack.Protected>
-      <Stack.Protected guard={!isAuthenticated}>
-        <Stack.Screen name="(auth)" />
-      </Stack.Protected>
-    </Stack>
+    <WelcomeProvider value={welcome}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.background },
+        }}
+      >
+        <Stack.Protected guard={isAuthenticated}>
+          <Stack.Screen name="(app)" />
+        </Stack.Protected>
+        <Stack.Protected guard={!isAuthenticated}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+      </Stack>
+    </WelcomeProvider>
   );
 }
 
