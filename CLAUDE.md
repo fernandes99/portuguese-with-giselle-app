@@ -53,3 +53,12 @@ O terminal é PowerShell no Windows; use `;` para encadear comandos, não `&&`.
 Mesmo padrão do site: `feat:`, `fix:` ou `chore:`, frase curta em inglês, minúsculas, imperativo, sem escopo e sem ponto final. Um commit por assunto. Documentação em português.
 
 A branch principal é a `main`, como no site, e o trabalho vai direto nela.
+
+## Versão
+
+- A versão do app é o campo `version` do `package.json`, no formato `major.minor.patch`. O `app.config.ts` lê esse valor, e ele aparece no rodapé da aba Perfil.
+- **Todo push sobe o patch** (o último número): `0.0.1`, `0.0.2`, `0.0.3`. É um aumento por push, não por commit.
+- O aumento vai em um commit próprio, o último antes do push: `chore: bump version to 0.0.2`.
+- Minor (`0.1.0`) e major (`1.0.0`) só mudam com pedido explícito do dono do projeto. Nunca suba esses números por conta própria, por maior que seja a mudança.
+- O número de build do Android e do iOS (`versionCode` e `buildNumber`) é controlado pelo EAS e não entra nessa regra.
+- O site (`portuguese-with-giselle`) segue a mesma regra, com versão independente.

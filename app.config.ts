@@ -1,5 +1,7 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
+import packageJson from './package.json';
+
 const APP_ID = 'com.portuguesewithgiselle.app';
 const BACKGROUND = '#f9fafb';
 
@@ -19,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Portuguese With Giselle',
   slug: 'portuguese-with-giselle-app',
-  version: '1.0.0',
+  version: packageJson.version,
   scheme: 'pwg',
   orientation: 'portrait',
   icon: './assets/icon.png',

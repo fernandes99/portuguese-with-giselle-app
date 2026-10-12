@@ -2,6 +2,7 @@ import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
+import { APP_VERSION } from '@/constants/version';
 import { useAuth } from '@/contexts/AuthContext';
 
 // Por enquanto só identifica a conta e permite sair
@@ -28,6 +29,9 @@ export default function ProfileScreen() {
       </View>
       <View className="p-6">
         <Button variant="link" label="Sair" onPress={signOut} />
+        <Text className="mt-2 text-center font-poppins text-[11px] text-gray-400">
+          v{APP_VERSION}
+        </Text>
       </View>
     </SafeAreaView>
   );
