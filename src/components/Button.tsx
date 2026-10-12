@@ -5,7 +5,8 @@ import { colors } from '@/constants/theme';
 interface ButtonProps {
   label: string;
   onPress: () => void;
-  variant?: 'primary' | 'link';
+  // outline: ação secundária, ao lado de um botão principal
+  variant?: 'primary' | 'outline' | 'link';
   // lg: botão principal das telas de entrada
   size?: 'md' | 'lg';
   loading?: boolean;
@@ -13,6 +14,8 @@ interface ButtonProps {
   // Com ela, o botão desabilitado fica cinza e ainda responde ao toque, para
   // a tela explicar o que falta
   onDisabledPress?: () => void;
+  // Quando o texto do botão não basta para o leitor de tela
+  accessibilityLabel?: string;
 }
 
 export function Button({
@@ -23,6 +26,7 @@ export function Button({
   loading = false,
   disabled = false,
   onDisabledPress,
+  accessibilityLabel,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
@@ -53,6 +57,24 @@ export function Button({
         className={`flex-row items-center justify-center gap-2 bg-gray-200 ${sizeClassName}`}
       >
         <Text className="font-poppins-semibold text-base text-gray-600">
+          {label}
+        </Text>
+      </Pressable>
+    );
+  }
+
+  if (variant === 'outline') {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityState={{ disabled: isDisabled, busy: loading }}
+        onPress={onPress}
+        disabled={isDisabled}
+        className={`flex-row items-center justify-center gap-2 border border-green-600 bg-white ${sizeClassName} active:bg-green-50 ${isDisabled ? 'opacity-50' : ''}`}
+      >
+        {loading && <ActivityIndicator color={colors.green} />}
+        <Text className="font-poppins-semibold text-base text-green-700">
           {label}
         </Text>
       </Pressable>

@@ -46,5 +46,6 @@ export function useApiQuery<T>(
     setRefreshing(false);
   }, [load]);
 
-  return { data, error, refreshing, refresh };
+  // reload: recarrega sem o indicador de puxar para atualizar
+  return { data, error, refreshing, refresh, reload: load };
 }

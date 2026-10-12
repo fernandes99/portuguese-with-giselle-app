@@ -12,6 +12,9 @@ export const GOOGLE_WEB_CLIENT_ID =
 export const GOOGLE_IOS_CLIENT_ID =
   process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '';
 
+// Para onde o site devolve o aluno depois de pagar as aulas particulares
+export const PURCHASE_RETURN_URL = 'pwg://practice/private-lessons/purchase';
+
 export const LINKS = {
   terms: `${SITE_URL}/terms`,
   privacy: `${SITE_URL}/privacy`,
@@ -41,6 +44,12 @@ export const API_ROUTES = {
     `/api/mobile/flashcards/${encodeURIComponent(slug)}`,
   flashcardCardProgress: (slug: string, cardId: string) =>
     `/api/mobile/flashcards/${encodeURIComponent(slug)}/cards/${encodeURIComponent(cardId)}/progress`,
+  privateLessons: '/api/mobile/private-lessons',
+  privateLessonsCheckout: '/api/mobile/private-lessons/checkout',
+  privateLessonPurchase: (sessionId: string) =>
+    `/api/mobile/private-lessons/purchases/${encodeURIComponent(sessionId)}`,
+  privateLessonsSchedulingLink: '/api/mobile/private-lessons/scheduling-link',
+  privateLessonsBookings: '/api/mobile/private-lessons/bookings',
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

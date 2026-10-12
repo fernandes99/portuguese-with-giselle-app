@@ -20,6 +20,7 @@ Iniciativas atuais:
 | [practice-flashcards](practice-flashcards/)   | Flashcards do site na aba Praticar                                         |
 | [study-progress](study-progress/)             | Dias de estudo, gráfico de 7 dias, sequência e conquistas na aba Progresso |
 | [achievements-history](achievements-history/) | Aviso de conquista com som e tela de histórico no Perfil                   |
+| [private-lessons](private-lessons/)           | Aulas particulares na aba Praticar: saldo, compra, agendamento e lista     |
 
 ## Modelo de spec
 

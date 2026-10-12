@@ -66,7 +66,8 @@ function PracticeOption({
   );
 }
 
-// Formas de praticar o idioma: o chat com a IA e os flashcards
+// Formas de praticar o idioma: o chat com a IA, os flashcards e as aulas
+// particulares com a professora
 export default function PracticeScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -96,6 +97,12 @@ export default function PracticeScreen() {
             title="Flashcards"
             description="Memorize palavras e frases virando os cards."
             onPress={() => router.push('/practice/flashcards')}
+          />
+          <PracticeOption
+            icon="calendar"
+            title="Aulas particulares"
+            description="Aulas individuais com a professora Giselle."
+            onPress={() => router.push('/practice/private-lessons')}
           />
         </View>
       </ScrollView>
