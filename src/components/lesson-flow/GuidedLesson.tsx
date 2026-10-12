@@ -35,6 +35,9 @@ export function GuidedLesson({
   // Calculada uma vez: salvar o progresso de uma atividade atualiza a aula,
   // e a ordem e o total das etapas não podem mudar no meio do fluxo
   const [steps] = useState(() => getLessonFlow(lesson));
+  // "Recomeçar lição": a aula já estava concluída ao abrir. Nada do que o
+  // aluno fizer aqui desfaz o progresso que ele já tem.
+  const [isReview] = useState(lesson.isCompleted);
   const [index, setIndex] = useState(0);
   const [isDone, setIsDone] = useState(false);
   // A atividade da etapa atual já chegou ao resultado
@@ -51,22 +54,27 @@ export function GuidedLesson({
 
   const goToLearn = useCallback(() => {
     // dismissTo desempilha a aula: voltar, já no Aprender, não a reabre
+    // Ao refazer uma aula, o caminho não tem conclusão nova para animar
     router.dismissTo({
       pathname: '/learn',
-      params: { course: courseSlug, completed: lesson.id },
+      params: isReview
+        ? { course: courseSlug }
+        : { course: courseSlug, completed: lesson.id },
     });
-  }, [router, courseSlug, lesson.id]);
+  }, [router, courseSlug, lesson.id, isReview]);
 
   const confirmExit = useCallback(() => {
     Alert.alert(
       'Sair da aula?',
-      'Você vai recomeçar esta aula do início na próxima vez.',
+      isReview
+        ? 'A aula continua concluída. Você pode recomeçar quando quiser.'
+        : 'Você vai recomeçar esta aula do início na próxima vez.',
       [
         { text: 'Continuar na aula', style: 'cancel' },
         { text: 'Sair', style: 'destructive', onPress: () => router.back() },
       ]
     );
-  }, [router]);
+  }, [router, isReview]);
 
   // Voltar do Android: confirma a saída no meio da aula e, no parabéns, faz
   // o mesmo que o "Continuar"
@@ -103,7 +111,10 @@ export function GuidedLesson({
     setError('');
     setIsSaving(true);
     try {
-      await setCompleted(true);
+      // Refazendo, a aula já está gravada como concluída
+      if (!isReview) {
+        await setCompleted(true);
+      }
       setIsDone(true);
     } catch (err) {
       setError(
@@ -163,9 +174,12 @@ export function GuidedLesson({
             activity={activity}
             number={step.number}
             total={step.total}
-            onProgress={(completed) =>
-              saveActivityProgress(activity.id, completed)
-            }
+            onProgress={(completed) => {
+              // Refazendo, um erro não tira a conclusão que a atividade já tem
+              if (completed || !isReview) {
+                saveActivityProgress(activity.id, completed);
+              }
+            }}
             onFinishedChange={setIsActivityFinished}
           />
         ) : null}

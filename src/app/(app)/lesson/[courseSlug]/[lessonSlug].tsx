@@ -13,18 +13,21 @@ import { useLesson } from '@/hooks/useLesson';
 interface LessonRouteProps {
   courseSlug: string;
   lessonSlug: string;
+  // "Recomeçar lição": refaz em etapas uma aula já concluída
+  restart: boolean;
 }
 
 // Carrega a aula e escolhe a tela: o fluxo guiado para a aula que o aluno
-// ainda não concluiu, a tela com abas para a que ele já concluiu.
-function LessonRoute({ courseSlug, lessonSlug }: LessonRouteProps) {
+// ainda não concluiu (ou pediu para recomeçar), a tela com abas para a que
+// ele já concluiu.
+function LessonRoute({ courseSlug, lessonSlug, restart }: LessonRouteProps) {
   const { data, error, locked, reload, setCompleted, saveActivityProgress } =
     useLesson(courseSlug, lessonSlug);
 
   // Escolhida uma vez, na carga: concluir a aula não troca a tela no meio
   const mode = useRef<'guided' | 'classic' | null>(null);
   if (data && !mode.current) {
-    mode.current = data.lesson.isCompleted ? 'classic' : 'guided';
+    mode.current = data.lesson.isCompleted && !restart ? 'classic' : 'guided';
   }
 
   if (!data) {
@@ -80,9 +83,10 @@ function LessonRoute({ courseSlug, lessonSlug }: LessonRouteProps) {
 }
 
 export default function LessonScreen() {
-  const { courseSlug, lessonSlug } = useLocalSearchParams<{
+  const { courseSlug, lessonSlug, restart } = useLocalSearchParams<{
     courseSlug: string;
     lessonSlug: string;
+    restart?: string;
   }>();
 
   // A key recomeça a escolha quando a tela com abas troca de aula
@@ -91,6 +95,7 @@ export default function LessonScreen() {
       key={lessonSlug}
       courseSlug={courseSlug}
       lessonSlug={lessonSlug}
+      restart={restart === '1'}
     />
   );
 }

@@ -20,7 +20,11 @@ interface LessonNodeProps {
   // A última aula do módulo não tem linha ligando à próxima
   isLast: boolean;
   transition?: LessonTransition;
+  // Aula concluída com as opções de revisar e recomeçar abertas
+  isExpanded?: boolean;
   onPress: () => void;
+  onReview?: () => void;
+  onRestart?: () => void;
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
@@ -70,7 +74,10 @@ export function LessonNode({
   lesson,
   isLast,
   transition,
+  isExpanded = false,
   onPress,
+  onReview,
+  onRestart,
   onLayout,
 }: LessonNodeProps) {
   // Com transição, a aula começa no visual anterior e muda no meio da animação
@@ -121,7 +128,10 @@ export function LessonNode({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`Aula ${lesson.number}: ${lesson.title}, ${STATUS_LABEL[lesson.status]}`}
-        accessibilityState={{ disabled: isLocked }}
+        accessibilityState={{
+          disabled: isLocked,
+          expanded: lesson.status === 'completed' ? isExpanded : undefined,
+        }}
         disabled={isLocked}
         onPress={onPress}
         className={`flex-row items-center gap-4 rounded-2xl border p-3 active:opacity-70 ${styles.row}`}
@@ -163,6 +173,38 @@ export function LessonNode({
           <Ionicons name="play-circle" size={28} color={colors.green} />
         ) : null}
       </Pressable>
+
+      {/* Aula já feita: revisar na tela com abas ou refazer em etapas */}
+      {isExpanded && lesson.status === 'completed' ? (
+        <View className="mt-1 gap-3 rounded-2xl border border-gray-200 bg-white p-4">
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="checkmark-circle" size={18} color={colors.green} />
+            <Text className="font-poppins-medium text-sm text-gray-600">
+              Você já concluiu esta aula
+            </Text>
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            onPress={onReview}
+            className="h-12 flex-row items-center justify-center gap-2 rounded-xl bg-green-600 active:bg-green-700"
+          >
+            <Ionicons name="book-outline" size={18} color={colors.white} />
+            <Text className="font-poppins-semibold text-base text-white">
+              Revisar
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={onRestart}
+            className="h-12 flex-row items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white active:bg-gray-50"
+          >
+            <Ionicons name="refresh" size={18} color={colors.gray} />
+            <Text className="font-poppins-semibold text-base text-gray-900">
+              Recomeçar lição
+            </Text>
+          </Pressable>
+        </View>
+      ) : null}
 
       {/* Alinhada ao centro do círculo: borda, padding e meio círculo */}
       {isLast ? null : transition === 'completing' ? (

@@ -49,6 +49,8 @@ export default function LearnScreen() {
   // null enquanto o aluno não escolhe: vale o curso em andamento
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+  // Aula concluída com as opções de revisar e recomeçar abertas
+  const [expandedLessonId, setExpandedLessonId] = useState<string | null>(null);
 
   const scrollRef = useRef<ScrollView>(null);
   const positions = useRef(new Map<string, number>());
@@ -156,15 +158,34 @@ export default function LearnScreen() {
     return () => clearTimeout(timeout);
   }, [completedId, transition, router]);
 
-  function openLesson(lesson: PathLesson) {
+  // restart: refaz em etapas uma aula já concluída, sem desfazer a conclusão
+  function openLesson(lesson: PathLesson, restart = false) {
     if (!courseSlug) {
       return;
     }
 
+    setExpandedLessonId(null);
     router.push({
       pathname: '/lesson/[courseSlug]/[lessonSlug]',
-      params: { courseSlug, lessonSlug: lesson.slug },
+      params: {
+        courseSlug,
+        lessonSlug: lesson.slug,
+        ...(restart ? { restart: '1' } : {}),
+      },
     });
+  }
+
+  // A aula atual abre direto; a concluída mostra as opções de revisar e
+  // recomeçar, e um segundo toque as esconde
+  function pressLesson(lesson: PathLesson) {
+    if (lesson.status === 'completed') {
+      setExpandedLessonId((current) =>
+        current === lesson.id ? null : lesson.id
+      );
+      return;
+    }
+
+    openLesson(lesson);
   }
 
   return (
@@ -204,7 +225,10 @@ export default function LearnScreen() {
             index={index}
             // Com menos movimento, o caminho já aparece no estado final
             transition={reducedMotion ? null : transition}
-            onOpenLesson={openLesson}
+            expandedLessonId={expandedLessonId}
+            onPressLesson={pressLesson}
+            onReviewLesson={(lesson) => openLesson(lesson)}
+            onRestartLesson={(lesson) => openLesson(lesson, true)}
             onLessonLayout={handleLessonLayout}
           />
         ))}

@@ -9,7 +9,12 @@ interface LearnModuleProps {
   index: number;
   // Aulas a animar na volta de uma aula recém concluída
   transition: PathTransition | null;
-  onOpenLesson: (lesson: PathLesson) => void;
+  // Aula concluída com as opções de revisar e recomeçar abertas
+  expandedLessonId: string | null;
+  // Toque na aula: abre a atual, ou mostra as opções de uma concluída
+  onPressLesson: (lesson: PathLesson) => void;
+  onReviewLesson: (lesson: PathLesson) => void;
+  onRestartLesson: (lesson: PathLesson) => void;
   // Posição vertical de cada aula dentro da lista, para a tela rolar até ela
   onLessonLayout: (lessonId: string, y: number) => void;
 }
@@ -25,7 +30,10 @@ export function LearnModule({
   module,
   index,
   transition,
-  onOpenLesson,
+  expandedLessonId,
+  onPressLesson,
+  onReviewLesson,
+  onRestartLesson,
   onLessonLayout,
 }: LearnModuleProps) {
   // As medidas do módulo e das aulas chegam em ordem não garantida
@@ -67,7 +75,10 @@ export function LearnModule({
           lesson={lesson}
           isLast={position === module.lessons.length - 1}
           transition={getTransition(lesson, transition)}
-          onPress={() => onOpenLesson(lesson)}
+          isExpanded={lesson.id === expandedLessonId}
+          onPress={() => onPressLesson(lesson)}
+          onReview={() => onReviewLesson(lesson)}
+          onRestart={() => onRestartLesson(lesson)}
           onLayout={(event) => {
             lessonYs.current.set(lesson.id, event.nativeEvent.layout.y);
             report(lesson.id);
