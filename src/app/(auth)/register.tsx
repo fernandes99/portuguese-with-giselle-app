@@ -3,7 +3,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { AuthScreen } from '@/components/AuthScreen';
+import { AuthDivider, AuthScreen } from '@/components/AuthScreen';
 import { Button } from '@/components/Button';
 import { CodeInput } from '@/components/CodeInput';
 import { GoogleButton } from '@/components/GoogleButton';
@@ -132,6 +132,7 @@ export default function RegisterScreen() {
         <CodeInput value={code} onChange={setCode} />
 
         <Button
+          size="lg"
           label={loading ? 'Verificando...' : 'Verificar e Criar Conta'}
           onPress={handleVerify}
           loading={loading}
@@ -156,12 +157,13 @@ export default function RegisterScreen() {
 
   return (
     <AuthScreen
-      title="Criar conta"
+      title="Crie sua conta"
+      subtitle="Comece a aprender português hoje."
       error={error}
       footer={
         <Text className="font-poppins text-sm text-gray-600">
           Já tem uma conta?{' '}
-          <Link href="/login" className="font-poppins-semibold text-green-600">
+          <Link href="/login" className="font-poppins-semibold text-green-700">
             Entrar
           </Link>
         </Text>
@@ -169,15 +171,19 @@ export default function RegisterScreen() {
     >
       <GoogleButton onPress={google.signInWithGoogle} disabled={busy} />
 
+      <AuthDivider label="ou cadastre-se com seu e-mail" />
+
       <TextField
         label="Nome"
+        icon="person-outline"
         value={name}
         onChangeText={setName}
         autoComplete="name"
         textContentType="name"
       />
       <TextField
-        label="Email"
+        label="E-mail"
+        icon="mail-outline"
         placeholder="seu@email.com"
         value={email}
         onChangeText={setEmail}
@@ -189,6 +195,7 @@ export default function RegisterScreen() {
       />
       <TextField
         label="Senha"
+        icon="lock-closed-outline"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -199,6 +206,7 @@ export default function RegisterScreen() {
       {password ? <PasswordRules password={password} /> : null}
       <TextField
         label="Confirmar senha"
+        icon="lock-closed-outline"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
@@ -239,6 +247,7 @@ export default function RegisterScreen() {
       </View>
 
       <Button
+        size="lg"
         label={loading ? 'Carregando...' : 'Criar conta'}
         onPress={handleSubmit}
         loading={loading}

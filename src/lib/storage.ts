@@ -20,3 +20,18 @@ export function saveSession(session: Session) {
 export function clearSession() {
   return SecureStore.deleteItemAsync(SESSION_KEY);
 }
+
+const WELCOME_KEY = 'pwg.welcomeSeen';
+
+// A introdução aparece só na primeira abertura do app neste aparelho
+export async function hasSeenWelcome(): Promise<boolean> {
+  try {
+    return (await SecureStore.getItemAsync(WELCOME_KEY)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function markWelcomeSeen() {
+  return SecureStore.setItemAsync(WELCOME_KEY, '1');
+}

@@ -1,8 +1,8 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 
-import { AuthScreen } from '@/components/AuthScreen';
+import { AuthDivider, AuthScreen } from '@/components/AuthScreen';
 import { Button } from '@/components/Button';
 import { GoogleButton } from '@/components/GoogleButton';
 import { TextField } from '@/components/TextField';
@@ -43,15 +43,15 @@ export default function LoginScreen() {
 
   return (
     <AuthScreen
-      title="Bem-vindo de volta!"
-      subtitle="Entre na sua conta para continuar aprendendo"
+      title="Boas-vindas de volta"
+      subtitle="Entre na sua conta e continue aprendendo."
       error={error}
       footer={
         <Text className="font-poppins text-sm text-gray-600">
           Não tem uma conta?{' '}
           <Link
             href="/register"
-            className="font-poppins-semibold text-green-600"
+            className="font-poppins-semibold text-green-700"
           >
             Criar conta gratuita
           </Link>
@@ -60,14 +60,11 @@ export default function LoginScreen() {
     >
       <GoogleButton onPress={google.signInWithGoogle} disabled={busy} />
 
-      <View className="flex-row items-center gap-3">
-        <View className="h-px flex-1 bg-gray-200" />
-        <Text className="font-poppins text-sm text-gray-500">ou</Text>
-        <View className="h-px flex-1 bg-gray-200" />
-      </View>
+      <AuthDivider label="ou entre com seu e-mail" />
 
       <TextField
-        label="Email"
+        label="E-mail"
+        icon="mail-outline"
         placeholder="seu@email.com"
         value={email}
         onChangeText={setEmail}
@@ -79,6 +76,7 @@ export default function LoginScreen() {
       />
       <TextField
         label="Senha"
+        icon="lock-closed-outline"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -90,6 +88,7 @@ export default function LoginScreen() {
       />
 
       <Button
+        size="lg"
         label={loading ? 'Entrando...' : 'Entrar'}
         onPress={handleSubmit}
         loading={loading}

@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import logo from '@assets/logo.png';
 
 interface AuthScreenProps {
+  eyebrow?: string;
   title: string;
   subtitle?: string;
   error?: string;
@@ -19,8 +20,9 @@ interface AuthScreenProps {
   footer?: ReactNode;
 }
 
-// Moldura das telas de login e cadastro: logo, título e cartão branco.
+// Moldura das telas de login e cadastro: logo, título e o formulário.
 export function AuthScreen({
+  eyebrow = 'Área do aluno',
   title,
   subtitle,
   error,
@@ -28,46 +30,66 @@ export function AuthScreen({
   footer,
 }: AuthScreenProps) {
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-white">
+      {/* Anel decorativo no canto, o mesmo da introdução */}
+      <View className="absolute -right-16 -top-16 h-48 w-48 rounded-full border-[22px] border-green-50" />
+
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          contentContainerClassName="flex-grow justify-center px-6 py-8"
+          contentContainerClassName="flex-grow px-6 pb-8 pt-3"
           keyboardShouldPersistTaps="handled"
         >
-          <View className="mb-6 items-center">
-            <Image
-              source={logo}
-              accessibilityLabel="Portuguese With Giselle"
-              resizeMode="contain"
-              className="h-14 w-64"
-            />
-            <Text className="mt-6 text-center font-poppins-bold text-3xl text-gray-900">
-              {title}
-            </Text>
-            {subtitle && (
-              <Text className="mt-2 text-center font-poppins text-base text-gray-600">
-                {subtitle}
+          <Image
+            source={logo}
+            accessibilityLabel="Portuguese With Giselle"
+            resizeMode="contain"
+            className="h-9 w-40"
+          />
+
+          <View className="flex-1 justify-center py-8">
+            <View className="mb-8 items-center">
+              <Text className="font-poppins-semibold text-xs uppercase tracking-widest text-green-700">
+                {eyebrow}
               </Text>
-            )}
-          </View>
-
-          <View className="gap-5 rounded-2xl border border-gray-200 bg-white p-6">
-            {error ? (
-              <View className="rounded-lg border border-red-200 bg-red-50 p-3">
-                <Text className="font-poppins text-sm text-red-700">
-                  {error}
+              <Text className="mt-2 text-center font-poppins-semibold text-3xl leading-10 text-gray-900">
+                {title}
+              </Text>
+              {subtitle && (
+                <Text className="mt-2 text-center font-poppins text-base text-gray-600">
+                  {subtitle}
                 </Text>
-              </View>
-            ) : null}
-            {children}
-          </View>
+              )}
+            </View>
 
-          {footer && <View className="mt-6 items-center">{footer}</View>}
+            <View className="gap-5">
+              {error ? (
+                <View className="rounded-2xl border border-red-200 bg-red-50 p-4">
+                  <Text className="font-poppins text-sm text-red-700">
+                    {error}
+                  </Text>
+                </View>
+              ) : null}
+              {children}
+            </View>
+
+            {footer && <View className="mt-8 items-center">{footer}</View>}
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+  );
+}
+
+// Linha com texto no meio, entre o botão do Google e o formulário
+export function AuthDivider({ label }: { label: string }) {
+  return (
+    <View className="flex-row items-center gap-3">
+      <View className="h-px flex-1 bg-gray-200" />
+      <Text className="font-poppins text-xs text-gray-500">{label}</Text>
+      <View className="h-px flex-1 bg-gray-200" />
+    </View>
   );
 }

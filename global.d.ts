@@ -9,3 +9,8 @@ declare module '*.wav' {
   const source: number;
   export default source;
 }
+
+declare module '*.jpg' {
+  const source: import('react-native').ImageSourcePropType;
+  export default source;
+}
