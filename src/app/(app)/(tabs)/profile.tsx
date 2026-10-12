@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -7,12 +8,23 @@ import { Button } from '@/components/Button';
 import { colors } from '@/constants/theme';
 import { APP_VERSION } from '@/constants/version';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTeacherChatUnread } from '@/contexts/TeacherChatUnreadContext';
+import { formatUnread } from '@/utils/teacherChat';
 
-// Por enquanto identifica a conta, leva aos cursos e permite sair
+// Por enquanto identifica a conta, leva ao chat com a professora, aos
+// cursos e ao histórico, e permite sair
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, signOut } = useAuth();
+  const { unread, refreshUnread } = useTeacherChatUnread();
   const initial = (user?.name || user?.email || '?').charAt(0).toUpperCase();
+
+  // Sem notificação, é aqui que o aluno vê que a professora respondeu
+  useFocusEffect(
+    useCallback(() => {
+      refreshUnread();
+    }, [refreshUnread])
+  );
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
@@ -32,6 +44,33 @@ export default function ProfileScreen() {
         </Text>
       </View>
       <View className="gap-4 p-6">
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={
+            unread > 0
+              ? `Falar com a professora, ${unread} mensagens não lidas`
+              : 'Falar com a professora'
+          }
+          onPress={() => router.push('/teacher-chat')}
+          className="flex-row items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 active:bg-gray-50"
+        >
+          <Ionicons
+            name="chatbubble-ellipses-outline"
+            size={20}
+            color={colors.green}
+          />
+          <Text className="flex-1 font-poppins-semibold text-base text-gray-900">
+            Falar com a professora
+          </Text>
+          {unread > 0 ? (
+            <View className="h-6 min-w-6 items-center justify-center rounded-full bg-green-600 px-1.5">
+              <Text className="font-poppins-bold text-xs text-white">
+                {formatUnread(unread)}
+              </Text>
+            </View>
+          ) : null}
+          <Ionicons name="chevron-forward" size={20} color={colors.gray} />
+        </Pressable>
         <Pressable
           accessibilityRole="button"
           onPress={() => router.push('/courses')}

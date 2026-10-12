@@ -50,6 +50,8 @@ export const API_ROUTES = {
     `/api/mobile/private-lessons/purchases/${encodeURIComponent(sessionId)}`,
   privateLessonsSchedulingLink: '/api/mobile/private-lessons/scheduling-link',
   privateLessonsBookings: '/api/mobile/private-lessons/bookings',
+  teacherChat: '/api/mobile/teacher-chat',
+  teacherChatUnread: '/api/mobile/teacher-chat/unread',
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

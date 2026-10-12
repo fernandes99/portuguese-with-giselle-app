@@ -66,6 +66,7 @@ Iniciativas em andamento:
 - `.specs/study-progress/`: dias de estudo, gráfico de 7 dias, sequência e conquistas na aba Progresso.
 - `.specs/achievements-history/`: aviso de conquista com som e tela de histórico.
 - `.specs/private-lessons/`: aulas particulares na aba Praticar, com saldo de aulas, compra pelo Stripe fora do app, agendamento pelo Calendly e lista de agendamentos. As duas fases estão escritas e aguardam o teste no aparelho.
+- `.specs/teacher-chat/`: chat de texto do aluno assinante com a professora Giselle, aberto pelo Perfil, com contador de mensagens não lidas no Perfil e na aba (`TeacherChatUnreadContext`). A tela é `src/app/(app)/teacher-chat.tsx`, e a conversa vem sempre do backend (`useTeacherChat`), que é consultado a cada 30 segundos. A fase está escrita e aguarda o teste no aparelho.
 
 ## Cuidados
 

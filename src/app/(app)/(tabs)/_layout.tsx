@@ -4,6 +4,8 @@ import type { ComponentProps } from 'react';
 import type { ColorValue } from 'react-native';
 
 import { colors } from '@/constants/theme';
+import { useTeacherChatUnread } from '@/contexts/TeacherChatUnreadContext';
+import { formatUnread } from '@/utils/teacherChat';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -22,6 +24,8 @@ function tabIcon(active: IconName, inactive: IconName) {
 }
 
 export default function TabsLayout() {
+  const { unread } = useTeacherChatUnread();
+
   return (
     <Tabs
       screenOptions={{
@@ -62,6 +66,14 @@ export default function TabsLayout() {
         options={{
           title: 'Perfil',
           tabBarIcon: tabIcon('person', 'person-outline'),
+          // Mensagens da professora ainda não lidas; o chat abre pelo Perfil
+          tabBarBadge: unread > 0 ? formatUnread(unread) : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.green,
+            color: colors.white,
+            fontFamily: 'Poppins_600SemiBold',
+            fontSize: 10,
+          },
         }}
       />
     </Tabs>
