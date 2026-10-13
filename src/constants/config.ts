@@ -15,6 +15,9 @@ export const GOOGLE_IOS_CLIENT_ID =
 // Para onde o site devolve o aluno depois de pagar as aulas particulares
 export const PURCHASE_RETURN_URL = 'pwg://practice/private-lessons/purchase';
 
+// Para onde o site devolve o aluno depois de assinar um plano
+export const PLANS_RETURN_URL = 'pwg://plans/result';
+
 export const LINKS = {
   terms: `${SITE_URL}/terms`,
   privacy: `${SITE_URL}/privacy`,
@@ -52,6 +55,10 @@ export const API_ROUTES = {
   privateLessonsBookings: '/api/mobile/private-lessons/bookings',
   teacherChat: '/api/mobile/teacher-chat',
   teacherChatUnread: '/api/mobile/teacher-chat/unread',
+  plans: '/api/mobile/plans',
+  plansCheckout: '/api/mobile/plans/checkout',
+  planCheckoutStatus: (sessionId: string) =>
+    `/api/mobile/plans/checkout/${encodeURIComponent(sessionId)}`,
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

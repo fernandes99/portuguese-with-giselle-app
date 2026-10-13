@@ -66,6 +66,7 @@ Iniciativas em andamento:
 - `.specs/study-progress/`: dias de estudo, gráfico de 7 dias, sequência e conquistas na aba Progresso.
 - `.specs/achievements-history/`: aviso de conquista com som e tela de histórico.
 - `.specs/private-lessons/`: aulas particulares na aba Praticar, com saldo de aulas, compra pelo Stripe fora do app, agendamento pelo Calendly e lista de agendamentos. As duas fases estão escritas e aguardam o teste no aparelho.
+- `.specs/subscription-plans/`: tela de venda da assinatura (`src/app/(app)/plans/`, `src/components/plans/`), aberta pelo botão "Seja Premium" do Perfil, que só o aluno gratuito e o Básico veem. Os planos, os preços e a comparação de benefícios vêm do backend (`/api/mobile/plans`). Assinar abre o Checkout do Stripe com `openAuthSessionAsync`; o site devolve o aluno para `pwg://plans/result`, e a tela de resultado (`result.tsx`, `usePlanCheckoutStatus`) consulta o backend até a assinatura constar como paga e então relê a conta (`refreshUser`, no `AuthContext`). Quem já é Básico não troca de plano pelo app: é levado ao chat com a professora. As duas fases estão escritas e aguardam o teste no aparelho.
 - `.specs/teacher-chat/`: chat de texto do aluno assinante com a professora Giselle, aberto pelo Perfil, com contador de mensagens não lidas no Perfil e na aba (`TeacherChatUnreadContext`). A tela é `src/app/(app)/teacher-chat.tsx`, e a conversa vem sempre do backend (`useTeacherChat`), que é consultado a cada 30 segundos. A fase está escrita e aguarda o teste no aparelho.
 
 ## Cuidados

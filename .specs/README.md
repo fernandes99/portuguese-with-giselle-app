@@ -22,6 +22,7 @@ Iniciativas atuais:
 | [achievements-history](achievements-history/) | Aviso de conquista com som e tela de histórico no Perfil                   |
 | [private-lessons](private-lessons/)           | Aulas particulares na aba Praticar: saldo, compra, agendamento e lista     |
 | [teacher-chat](teacher-chat/)                 | Chat do aluno assinante com a professora, aberto pelo Perfil               |
+| [subscription-plans](subscription-plans/)     | Tela de planos com a comparação e assinatura pelo Checkout do Stripe       |
 
 ## Modelo de spec
 

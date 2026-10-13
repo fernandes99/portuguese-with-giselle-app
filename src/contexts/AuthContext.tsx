@@ -21,6 +21,8 @@ interface AuthContextValue {
   token: string | null;
   signIn: (session: Session) => Promise<void>;
   signOut: () => Promise<void>;
+  // Relê a conta no backend, depois de algo que muda a role (uma assinatura)
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -83,6 +85,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus('unauthenticated');
   }, []);
 
+  const token = session?.token ?? null;
+  const refreshUser = useCallback(async () => {
+    if (!token) {
+      return;
+    }
+
+    try {
+      const fresh = await me(token);
+      await saveSession(fresh);
+      setSession(fresh);
+    } catch {
+      // Sem rede: a conta fica como estava e é relida na próxima abertura.
+      // O 401 já derruba o login pelo api.
+    }
+  }, [token]);
+
   const value = useMemo(
     () => ({
       status,
@@ -90,8 +108,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token: session?.token ?? null,
       signIn,
       signOut,
+      refreshUser,
     }),
-    [status, session, signIn, signOut]
+    [status, session, signIn, signOut, refreshUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

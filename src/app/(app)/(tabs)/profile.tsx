@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -9,10 +9,11 @@ import { colors } from '@/constants/theme';
 import { APP_VERSION } from '@/constants/version';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTeacherChatUnread } from '@/contexts/TeacherChatUnreadContext';
+import { canSeePlans } from '@/utils/plans';
 import { formatUnread } from '@/utils/teacherChat';
 
-// Por enquanto identifica a conta, leva ao chat com a professora, aos
-// cursos e ao histórico, e permite sair
+// Por enquanto identifica a conta, leva aos planos, ao chat com a
+// professora, aos cursos e ao histórico, e permite sair
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, signOut } = useAuth();
@@ -44,6 +45,19 @@ export default function ProfileScreen() {
         </Text>
       </View>
       <View className="gap-4 p-6">
+        {canSeePlans(user) ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/plans')}
+            className="flex-row items-center gap-3 rounded-2xl bg-green-600 p-4 active:bg-green-700"
+          >
+            <MaterialCommunityIcons name="crown" size={22} color="#fde047" />
+            <Text className="flex-1 font-poppins-semibold text-base text-white">
+              Seja Premium
+            </Text>
+            <Ionicons name="chevron-forward" size={20} color={colors.white} />
+          </Pressable>
+        ) : null}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
