@@ -18,6 +18,8 @@ O Expo muda APIs a cada SDK. Antes de usar uma API do Expo, confira os tipos em 
 ```bash
 yarn start         # servidor de desenvolvimento (precisa de development build)
 yarn android       # gera e instala o build Android
+yarn build:dev     # development build Android no EAS (com o dev client, para o yarn start)
+yarn build:preview # build Android de teste no EAS, instalável sem o dev client
 yarn lint          # Biome
 yarn tsc --noEmit  # typecheck
 yarn format        # Prettier
@@ -68,7 +70,7 @@ Iniciativas em andamento:
 - `.specs/private-lessons/`: aulas particulares na aba Praticar, com saldo de aulas, compra pelo Stripe fora do app, agendamento pelo Calendly e lista de agendamentos. As duas fases estão escritas e aguardam o teste no aparelho.
 - `.specs/subscription-plans/`: tela de venda da assinatura (`src/app/(app)/plans/`, `src/components/plans/`), aberta pelo botão "Seja Premium" do Perfil, que só o aluno gratuito vê. Há um plano pago só, o Premium, e a tela o compara com o gratuito; o plano, o preço e os benefícios vêm do backend (`/api/mobile/plans`). Assinar abre o Checkout do Stripe com `openAuthSessionAsync`; o site devolve o aluno para `pwg://plans/result`, e a tela de resultado (`result.tsx`, `usePlanCheckoutStatus`) consulta o backend até a assinatura constar como paga e então relê a conta (`refreshUser`, no `AuthContext`). O que é exclusivo do plano usa os componentes de `src/components/premium/`: `PremiumBadge` (etiqueta "Premium" com a coroa, em opções e linhas que levam à tela de planos) e `PremiumLock` (aviso de tela bloqueada com o botão "Seja Premium"), no lugar de cadeado e botão cinza. As fases estão escritas e aguardam o teste no aparelho.
 - `.specs/teacher-chat/`: chat de texto do aluno assinante com a professora Giselle, aberto pelo Perfil, com contador de mensagens não lidas no Perfil e na aba (`TeacherChatUnreadContext`). A tela é `src/app/(app)/teacher-chat.tsx`, e a conversa vem sempre do backend (`useTeacherChat`), que é consultado a cada 30 segundos. A fase está escrita e aguarda o teste no aparelho.
-- `.specs/notifications/`: sino com o número de não lidas nas quatro abas, tela de notificações (`/notifications`), detalhe e push pela Expo. O destino de cada notificação vem do backend já como caminho do app (`link.path`). As specs estão escritas; nada foi implementado.
+- `.specs/notifications/`: sino com o número de não lidas nas quatro abas, tela de notificações (`/notifications`), detalhe e push pela Expo. O destino de cada notificação vem do backend já como caminho do app (`link.path`) e é aberto por `openNotificationLink` (`src/utils/notifications.ts`). O número do sino fica em `NotificationsContext`, e o `NotificationBell` o busca de novo quando a aba ganha foco. O push (`expo-notifications`) é registrado em `NotificationsContext` (`usePushRegistration`, `usePushResponse`): a permissão é pedida uma vez por aparelho, o token vai para `/api/mobile/push-tokens` e é apagado no `signOut`. O `google-services.json` fica fora do git e entra no build pela variável `GOOGLE_SERVICES_JSON`. As duas fases estão escritas e aguardam o teste no aparelho; o push exige um development build novo.
 
 ## Cuidados
 

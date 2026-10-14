@@ -57,7 +57,7 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e na spec da 
 
 ## Fora do escopo
 
-- Notificações e som.
+- Notificações e som. Depois, a iniciativa `.specs/notifications/` passou a avisar o aluno por push e pelo sino das abas quando a professora responde; abrir a conversa marca esse aviso como lido.
 - Anexos, áudio e imagens.
 - Editar ou apagar mensagem.
 - "Digitando" e "lida".
