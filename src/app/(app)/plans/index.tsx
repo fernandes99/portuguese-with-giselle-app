@@ -18,7 +18,7 @@ import { getDefaultPlan, getPaidPlans } from '@/utils/plans';
 
 const RESULT_PATH = '/plans/result';
 
-// Tela de venda: os planos pagos, a comparação com o gratuito e o botão de
+// Tela de venda: o plano Premium, a comparação com o gratuito e o botão de
 // assinar. O pagamento acontece numa página do Stripe, fora do app; ao
 // voltar, a tela de resultado confere a compra.
 export default function PlansScreen() {
@@ -42,7 +42,7 @@ export default function PlansScreen() {
   pathnameRef.current = pathname;
 
   const paidPlans = data ? getPaidPlans(data.plans) : [];
-  // Quem já tem o plano mais completo não escolhe nada
+  // Quem já tem o plano não escolhe nada
   const hasEverything = data?.currentTier === 'premium';
   const selectedPlan =
     data && !hasEverything
@@ -160,13 +160,11 @@ export default function PlansScreen() {
 
       {data ? (
         <PlansFooter
-          currentTier={data.currentTier}
           canSubscribe={data.canSubscribe}
           plan={selectedPlan}
           paying={paying}
           error={error}
           onSubscribe={subscribe}
-          onTalkToTeacher={() => router.push('/teacher-chat')}
         />
       ) : null}
     </View>

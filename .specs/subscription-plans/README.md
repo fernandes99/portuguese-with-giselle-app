@@ -1,6 +1,6 @@
 # Planos e assinatura
 
-Tela de venda do curso: compara o aluno gratuito, o Básico e o Premium, mostra os preços e leva à assinatura. Abre pelo botão "Seja Premium" do Perfil.
+Tela de venda do curso: compara o aluno gratuito com o plano Premium, mostra o preço e leva à assinatura. Abre pelo botão "Seja Premium" do Perfil.
 
 ## Contexto
 
@@ -11,14 +11,14 @@ O app só conversa com o backend. Os planos, os preços, a lista de benefícios 
 ## Objetivos
 
 1. O aluno entende, numa tela, o que ganha em cada nível.
-2. O aluno gratuito assina o Básico ou o Premium sem sair do fluxo do app.
+2. O aluno gratuito assina o Premium sem sair do fluxo do app.
 3. Depois de pagar, o app já se comporta como assinante, sem entrar de novo.
 
 ## Como funciona
 
 1. Perfil > "Seja Premium" (com a coroa) abre a tela.
-2. No alto, uma chamada de venda. Abaixo, os planos pagos como cartões para escolher, com o preço por mês; o Premium vem escolhido e destacado.
-3. Em seguida, a tabela "Compare os planos", com uma linha por benefício e as colunas Gratuito, Básico e Premium.
+2. No alto, uma chamada de venda. Abaixo, o cartão do Premium, com o preço por mês.
+3. Em seguida, a tabela "Compare os planos", com uma linha por benefício e as colunas Gratuito e Premium.
 4. No rodapé fixo, o botão de assinar o plano escolhido e uma linha sobre o pagamento.
 5. O botão abre o Checkout do Stripe no navegador. Na volta, a tela de resultado confere a compra e dá as boas-vindas.
 
@@ -26,30 +26,27 @@ O app só conversa com o backend. Os planos, os preços, a lista de benefícios 
 
 Tomadas com o dono do projeto:
 
-| Decisão                                                                   | Motivo                                                                     |
-| ------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| A tela mostra as diferenças entre gratuito, Básico e Premium e as ofertas | Pedido direto                                                              |
-| Preços e planos vêm do Stripe, pelo backend, como no site                 | Pedido direto                                                              |
-| Linguagem de venda, centrada em benefício                                 | Pedido direto                                                              |
-| A entrada é um botão "Seja Premium", com ícone de coroa, no Perfil        | Pedido direto: por enquanto fica lá                                        |
-| O pagamento é pelo Checkout do Stripe, no navegador                       | Escolha do dono do projeto, ciente do risco de recusa na revisão das lojas |
-| Os benefícios vêm do backend                                              | Mudar o texto não pede novo build                                          |
-| Quem já é Básico vê o Premium, sem trocar de plano pelo app               | A troca fica para outra entrega                                            |
+| Decisão                                                                 | Motivo                                                                             |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Há um plano pago só, o Premium; a tela compara o Premium com o gratuito | Pedido direto, para simplificar no começo. A primeira versão tinha também o Básico |
+| Preços e planos vêm do Stripe, pelo backend, como no site               | Pedido direto                                                                      |
+| Linguagem de venda, centrada em benefício                               | Pedido direto                                                                      |
+| A entrada é um botão "Seja Premium", com ícone de coroa, no Perfil      | Pedido direto: por enquanto fica lá                                                |
+| O pagamento é pelo Checkout do Stripe, no navegador                     | Escolha do dono do projeto, ciente do risco de recusa na revisão das lojas         |
+| Os benefícios vêm do backend                                            | Mudar o texto não pede novo build                                                  |
 
 Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs das fases):
 
-| Decisão                                                                                                      | Motivo                                                                                        |
-| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| "Três ofertas" são os níveis gratuito, Básico e Premium; dois são compráveis                                 | São os produtos que existem no Stripe                                                         |
-| A tela usa o tema claro do app, com um bloco verde no alto e o Premium destacado                             | As referências enviadas são escuras, mas o resto do app é claro; a tela não destoa            |
-| Tela cheia, fora das abas, com um X para fechar no alto                                                      | É como as telas de venda das referências funcionam                                            |
-| O botão do Perfil aparece para o gratuito e para o Básico; Premium, professora e admin não o veem            | Para eles não há o que vender                                                                 |
-| Para o Básico, o Premium aparece com "Para mudar de plano, fale com a professora" e um botão que abre o chat | O Básico tem acesso ao chat com a professora; a troca é feita por ela                         |
-| A tela não leva o aluno ao navegador sem ele tocar em assinar                                                | O aluno escolhe quando sair do app                                                            |
-| O preço aparece em dólar, como vem do backend, com "/mês"                                                    | É a moeda dos planos; o Checkout converte para a moeda do aluno                               |
-| Quem diz se a compra foi paga é o backend, consultado pela tela de resultado                                 | O fechamento do navegador não prova nada, como nas aulas particulares                         |
-| Depois de paga, a conta é relida (`me`) e a sessão guardada é atualizada                                     | A role nova passa a valer em todas as telas sem novo login                                    |
-| Nenhuma dependência nova                                                                                     | `expo-web-browser` e `@expo/vector-icons` já estão no projeto; não exige build por biblioteca |
+| Decisão                                                                                    | Motivo                                                                                        |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| A tela usa o tema claro do app, com um bloco verde no alto e o Premium destacado           | As referências enviadas são escuras, mas o resto do app é claro; a tela não destoa            |
+| Tela cheia, fora das abas, com um X para fechar no alto                                    | É como as telas de venda das referências funcionam                                            |
+| O botão do Perfil aparece só para o aluno gratuito; Premium, professora e admin não o veem | Para eles não há o que vender                                                                 |
+| A tela não leva o aluno ao navegador sem ele tocar em assinar                              | O aluno escolhe quando sair do app                                                            |
+| O preço aparece em dólar, como vem do backend, com "/mês"                                  | É a moeda dos planos; o Checkout converte para a moeda do aluno                               |
+| Quem diz se a compra foi paga é o backend, consultado pela tela de resultado               | O fechamento do navegador não prova nada, como nas aulas particulares                         |
+| Depois de paga, a conta é relida (`me`) e a sessão guardada é atualizada                   | A role nova passa a valer em todas as telas sem novo login                                    |
+| Nenhuma dependência nova                                                                   | `expo-web-browser` e `@expo/vector-icons` já estão no projeto; não exige build por biblioteca |
 
 ## Fora do escopo
 
@@ -91,13 +88,13 @@ Espelho do contrato em `.specs/subscription-plans/README.md` do site; ao mudar u
     {
       "id": "course",
       "label": "Todas as aulas e atividades do curso",
-      "tiers": ["basic", "premium"]
+      "tiers": ["premium"]
     }
   ]
 }
 ```
 
-- `plans` vem na ordem `free`, `basic`, `premium`. Um nível pago pode faltar, se não houver produto à venda.
+- `plans` vem na ordem `free`, `premium`. Sem o Premium à venda, só o `free` vem.
 - `amount` é em centavos. `interval` é `month` ou `year`.
 - `currentTier` é o nível da conta; `canSubscribe` é verdadeiro só para o aluno gratuito.
 - `benefits` vem na ordem de exibição; `tiers` lista os níveis que têm o benefício.
@@ -122,6 +119,6 @@ O Stripe devolve o aluno a uma página do site, que abre `pwg://plans/result?res
 
 ## Glossário
 
-- **Nível (`tier`):** `free`, `basic` ou `premium`.
+- **Nível (`tier`):** `free` ou `premium`.
 - **Plano:** um nível com o preço dele.
-- **Assinante:** aluno com role `BASIC_STUDENT` ou `PREMIUM_STUDENT`.
+- **Assinante:** aluno com role `PREMIUM_STUDENT`.

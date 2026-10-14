@@ -1,8 +1,9 @@
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
 
-// Nível da conta: é como o backend traduz a role para a tela de planos
-export type PlanTier = 'free' | 'basic' | 'premium';
+// Nível da conta: é como o backend traduz a role para a tela de planos. Há
+// um plano pago só, o Premium.
+export type PlanTier = 'free' | 'premium';
 
 export interface PlanPrice {
   // Em centavos

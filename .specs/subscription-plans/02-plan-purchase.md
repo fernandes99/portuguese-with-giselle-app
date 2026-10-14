@@ -3,6 +3,8 @@
 - **Status:** em andamento
 - **Depende de:** [01-plans-screen](01-plans-screen.md); fase `02-plan-checkout` do site no ar
 
+> **Atualização:** hoje há um plano pago só, o Premium (fase `03-single-plan` do site). A tela mostra o cartão do Premium e compara com o gratuito; não existe mais conta Básico. Os requisitos que falam do Básico deixaram de valer, como marcado abaixo.
+
 ## Contexto
 
 A fase 01 mostra os planos, mas o botão de assinar ainda não vende. Esta fase liga o botão ao Checkout do Stripe, confere a compra na volta e atualiza a conta no app. O caminho é o mesmo da compra de aulas particulares (`src/app/(app)/practice/private-lessons/buy.tsx` e `purchase.tsx`). O contrato está no [README.md](README.md).
@@ -32,7 +34,7 @@ A fase 01 mostra os planos, mas o botão de assinar ainda não vende. Esta fase 
 **Resultado**
 
 - **RF-07:** `/plans/result` consulta `GET /api/mobile/plans/checkout/<sessionId>` ao abrir, mostrando "Confirmando o pagamento...".
-- **RF-08:** Com `status` igual a `paid`, a tela relê a conta (`me`), grava a sessão atualizada e mostra a coroa, "Bem-vindo ao " seguido do nome do nível (Básico ou Premium), "Seu plano já está ativo. Bons estudos!" e o botão "Começar a estudar", que leva à aba Aprender.
+- **RF-08:** Com `status` igual a `paid`, a tela relê a conta (`me`), grava a sessão atualizada e mostra a coroa, "Bem-vindo ao Premium!", "Seu plano já está ativo. Bons estudos!" e o botão "Começar a estudar", que leva à aba Aprender.
 - **RF-09:** Com `status` igual a `pending`, a tela consulta de novo a cada 3 segundos, até 10 vezes. Passado isso, mostra "Ainda estamos confirmando o pagamento. Se você pagou, seu plano aparece em instantes." com "Conferir de novo" e "Voltar".
 - **RF-10:** Com `status` igual a `expired`, ou sem `sessionId`, a tela mostra "O pagamento não foi concluído." com o botão "Ver os planos", que volta para `/plans`.
 - **RF-11:** Falha na consulta mostra a mensagem do backend (ou "Erro ao conferir a compra.") com "Tentar de novo".
@@ -49,7 +51,7 @@ Conferidos no aparelho, com o backend usando a chave de teste do Stripe:
 
 - [ ] Conta gratuita toca em "Assinar o Premium", paga com cartão de teste, volta para o app e vê "Bem-vindo ao Premium".
 - [ ] Depois disso, sem sair do app, uma aula abre e o chat com a professora mostra o campo de mensagem.
-- [ ] O Perfil não mostra mais "Seja Premium" para quem assinou o Premium, e continua mostrando para quem assinou o Básico.
+- [ ] O Perfil não mostra mais "Seja Premium" depois da assinatura.
 - [ ] Voltar do Checkout sem pagar deixa o aluno na tela de planos, sem erro.
 - [ ] Fechar o navegador no meio do pagamento leva à tela de resultado, que mostra "O pagamento não foi concluído." ou a espera, conforme o backend.
 - [ ] Tocar duas vezes rápido em assinar abre um Checkout só.

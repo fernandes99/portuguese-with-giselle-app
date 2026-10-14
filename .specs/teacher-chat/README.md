@@ -10,7 +10,7 @@ O app só conversa com o backend. As tabelas, as rotas e o painel estão descrit
 
 ## Quem usa
 
-Qualquer conta que não seja de aluno gratuito: os assinantes (`BASIC_STUDENT` e `PREMIUM_STUDENT`) e as contas `TEACHER` e `ADMIN`. O aluno gratuito abre a tela e vê só o aviso de que o chat é para assinantes.
+Qualquer conta que não seja de aluno gratuito: os assinantes (`PREMIUM_STUDENT`) e as contas `TEACHER` e `ADMIN`. O aluno gratuito abre a tela e vê só o aviso de que o chat é para assinantes.
 
 ## Objetivos
 
@@ -108,5 +108,5 @@ Espelho do contrato em `.specs/teacher-chat/README.md` do site; ao mudar um, mud
 
 ## Glossário
 
-- **Assinante:** aluno com role `BASIC_STUDENT` ou `PREMIUM_STUDENT`.
+- **Assinante:** aluno com role `PREMIUM_STUDENT`.
 - **Não lida:** mensagem da professora mais nova que a última vez em que o aluno abriu a conversa.

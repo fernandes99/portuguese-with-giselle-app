@@ -4,14 +4,13 @@ import { formatPrice } from '@/utils/privateLessons';
 
 const TIER_NAMES: Record<PlanTier, string> = {
   free: 'Gratuito',
-  basic: 'Básico',
   premium: 'Premium',
 };
 
-// Quem vê o botão "Seja Premium": o gratuito e o Básico. Para as outras
+// Quem vê o botão "Seja Premium": só o aluno gratuito. Para as outras
 // contas não há o que vender.
 export function canSeePlans(user: User | null) {
-  return user?.role === 'FREE_STUDENT' || user?.role === 'BASIC_STUDENT';
+  return user?.role === 'FREE_STUDENT';
 }
 
 // "US$ 49,90"

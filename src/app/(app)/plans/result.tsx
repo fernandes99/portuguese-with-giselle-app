@@ -151,7 +151,7 @@ export default function PlanResultScreen() {
                 />
               </View>
             }
-            title={`Bem-vindo ao ${getTierName(tier ?? 'basic')}!`}
+            title={`Bem-vindo ao ${getTierName(tier ?? 'premium')}!`}
           >
             <Message>Seu plano já está ativo. Bons estudos!</Message>
           </Result>

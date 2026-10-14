@@ -2,17 +2,15 @@ import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
-import type { Plan, PlanTier } from '@/services/plans';
+import type { Plan } from '@/services/plans';
 
 interface PlansFooterProps {
-  currentTier: PlanTier;
   canSubscribe: boolean;
   // Plano escolhido; null quando não há o que escolher
   plan: Plan | null;
   paying: boolean;
   error: string;
   onSubscribe: () => void;
-  onTalkToTeacher: () => void;
 }
 
 function Note({ children }: { children: string }) {
@@ -23,20 +21,18 @@ function Note({ children }: { children: string }) {
   );
 }
 
-// Rodapé da tela de planos, preso embaixo: assinar, falar com a professora
-// (quem já é Básico) ou só o aviso de que a conta já tem tudo
+// Rodapé da tela de planos, preso embaixo: assinar ou só o aviso de que a
+// conta já tem o plano
 export function PlansFooter({
-  currentTier,
   canSubscribe,
   plan,
   paying,
   error,
   onSubscribe,
-  onTalkToTeacher,
 }: PlansFooterProps) {
   const insets = useSafeAreaInsets();
 
-  let content = <Note>Você já tem o plano mais completo.</Note>;
+  let content = <Note>Você já tem o plano Premium.</Note>;
 
   if (canSubscribe && plan) {
     content = (
@@ -61,18 +57,7 @@ export function PlansFooter({
       </>
     );
   } else if (canSubscribe) {
-    content = <Note>Os planos não estão disponíveis no momento.</Note>;
-  } else if (currentTier === 'basic' && plan) {
-    content = (
-      <>
-        <Note>{`Para mudar para o ${plan.name}, fale com a professora.`}</Note>
-        <Button
-          size="lg"
-          label="Falar com a professora"
-          onPress={onTalkToTeacher}
-        />
-      </>
-    );
+    content = <Note>O plano não está disponível no momento.</Note>;
   }
 
   return (

@@ -3,6 +3,8 @@
 - **Status:** em andamento
 - **Depende de:** fase `01-plans-api` do site no ar
 
+> **Atualização:** hoje há um plano pago só, o Premium (fase `03-single-plan` do site). A tela mostra o cartão do Premium e compara com o gratuito; não existe mais conta Básico. Os requisitos que falam do Básico deixaram de valer, como marcado abaixo.
+
 ## Contexto
 
 O app não tem tela de venda. Esta fase cria a entrada no Perfil e a tela que apresenta os planos e a comparação, com os dados de `GET /api/mobile/plans`. O contrato está no [README.md](README.md). O botão de assinar só passa a abrir o pagamento na fase 02.
@@ -11,7 +13,7 @@ O app não tem tela de venda. Esta fase cria a entrada no Perfil e a tela que ap
 
 - Botão "Seja Premium" no Perfil.
 - Tela `/plans`: chamada de venda, cartões dos planos pagos, tabela de comparação e rodapé com o botão de assinar.
-- Estados de carregamento, erro, conta que já é Básico e conta que já tem tudo.
+- Estados de carregamento, erro e conta que já tem o plano.
 
 ## Fora do escopo
 
@@ -23,7 +25,7 @@ O app não tem tela de venda. Esta fase cria a entrada no Perfil e a tela que ap
 **Entrada**
 
 - **RF-01:** O Perfil mostra, acima de "Falar com a professora", o botão "Seja Premium" com o ícone de coroa, em destaque (fundo verde, texto branco). Ele abre `/plans`.
-- **RF-02:** O botão aparece para as roles `FREE_STUDENT` e `BASIC_STUDENT` e não aparece para as outras.
+- **RF-02:** O botão aparece só para a role `FREE_STUDENT`.
 
 **Tela**
 
@@ -40,8 +42,8 @@ O app não tem tela de venda. Esta fase cria a entrada no Perfil e a tela que ap
 
 **Outras contas**
 
-- **RF-13:** Com `currentTier` igual a `basic`, o cartão do Básico leva a etiqueta "Seu plano" e não pode ser escolhido; o Premium vem escolhido. O rodapé troca o botão por "Para mudar para o Premium, fale com a professora." e o botão "Falar com a professora", que abre `/teacher-chat`.
-- **RF-14:** Com `currentTier` igual a `premium`, o cartão do Premium leva "Seu plano", nenhum cartão pode ser escolhido e o rodapé mostra só "Você já tem o plano mais completo."
+- **RF-13:** (Não vale mais: não existe conta Básico.)
+- **RF-14:** Com `currentTier` igual a `premium`, o cartão do Premium leva "Seu plano", não pode ser escolhido e o rodapé mostra só "Você já tem o plano Premium."
 - **RF-15:** Se a resposta não trouxer nenhum plano pago, a tela mostra a comparação e, no lugar dos cartões e do botão, "Os planos não estão disponíveis no momento."
 
 **Carregamento e erro**
@@ -60,7 +62,6 @@ O app não tem tela de venda. Esta fase cria a entrada no Perfil e a tela que ap
 - [ ] A tela mostra dois cartões pagos com os preços do Stripe, o Premium escolhido e com "Mais completo".
 - [ ] Trocar de cartão muda a coluna destacada na tabela e o texto do botão do rodapé.
 - [ ] A tabela tem as sete linhas da lista do backend, com vistos e traços iguais aos da tabela do README do site.
-- [ ] Conta Básico vê "Seu plano" no Básico e o botão "Falar com a professora", que abre o chat.
 - [ ] Sem internet, a tela mostra o erro e "Tentar de novo" recarrega quando a internet volta.
 - [ ] Num aparelho pequeno, a última linha da tabela aparece acima do rodapé ao rolar até o fim.
 - [ ] O X fecha a tela e volta para o Perfil.
@@ -75,7 +76,7 @@ O app não tem tela de venda. Esta fase cria a entrada no Perfil e a tela que ap
   - `PlansHero.tsx`: o bloco verde do alto.
   - `PlanCard.tsx`: um plano pago, com os estados escolhido, destacado e "Seu plano".
   - `PlanComparison.tsx`: a tabela de benefícios.
-  - `PlansFooter.tsx`: o rodapé fixo, nos três casos (assinar, falar com a professora, já tem tudo).
+  - `PlansFooter.tsx`: o rodapé fixo, nos dois casos (assinar, já tem o plano).
 - `src/app/(app)/plans/index.tsx`: a tela.
 
 **Alterar**
@@ -100,7 +101,7 @@ yarn tsc --noEmit
 npx expo-doctor
 ```
 
-No aparelho, com uma conta gratuita, uma Básico e uma da equipe: percorrer os critérios de aceite. Quem implementa diz quais passos fez e quais ficaram para o dono do projeto.
+No aparelho, com uma conta gratuita, uma Premium e uma da equipe: percorrer os critérios de aceite. Quem implementa diz quais passos fez e quais ficaram para o dono do projeto.
 
 ## O que foi conferido
 
