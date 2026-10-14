@@ -46,6 +46,8 @@
     "start:go": "expo start --go --tunnel",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "build:dev": "eas build --profile development --platform android",
+    "build:preview": "eas build --profile preview --platform android",
     "lint": "biome lint",
     "lint:fix": "biome lint --write",
     "format": "prettier --write .",
