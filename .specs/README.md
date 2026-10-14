@@ -23,6 +23,7 @@ Iniciativas atuais:
 | [private-lessons](private-lessons/)           | Aulas particulares na aba Praticar: saldo, compra, agendamento e lista      |
 | [teacher-chat](teacher-chat/)                 | Chat do aluno assinante com a professora, aberto pelo Perfil                |
 | [subscription-plans](subscription-plans/)     | Tela do plano Premium com a comparação e assinatura pelo Checkout do Stripe |
+| [notifications](notifications/)               | Sino nas abas, lista e detalhe de notificações e push no aparelho           |
 
 ## Modelo de spec
 
