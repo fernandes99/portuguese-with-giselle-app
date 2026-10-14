@@ -5,6 +5,7 @@ import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
+import { PremiumBadge } from '@/components/premium/PremiumBadge';
 import { colors } from '@/constants/theme';
 import { APP_VERSION } from '@/constants/version';
 import { useAuth } from '@/contexts/AuthContext';
@@ -51,7 +52,11 @@ export default function ProfileScreen() {
             onPress={() => router.push('/plans')}
             className="flex-row items-center gap-3 rounded-2xl bg-green-600 p-4 active:bg-green-700"
           >
-            <MaterialCommunityIcons name="crown" size={22} color="#fde047" />
+            <MaterialCommunityIcons
+              name="crown"
+              size={22}
+              color={colors.crown}
+            />
             <Text className="flex-1 font-poppins-semibold text-base text-white">
               Seja Premium
             </Text>
@@ -73,9 +78,12 @@ export default function ProfileScreen() {
             size={20}
             color={colors.green}
           />
-          <Text className="flex-1 font-poppins-semibold text-base text-gray-900">
-            Falar com a professora
-          </Text>
+          <View className="flex-1 gap-1">
+            {canSeePlans(user) ? <PremiumBadge /> : null}
+            <Text className="font-poppins-semibold text-base text-gray-900">
+              Falar com a professora
+            </Text>
+          </View>
           {unread > 0 ? (
             <View className="h-6 min-w-6 items-center justify-center rounded-full bg-green-600 px-1.5">
               <Text className="font-poppins-bold text-xs text-white">

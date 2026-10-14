@@ -13,4 +13,6 @@ export const colors = {
   purple: '#9333ea',
   orange: '#ea580c',
   red: '#ef4444',
+  // Coroa do plano Premium, sempre sobre o verde
+  crown: '#fde047',
 };

@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useRef } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
@@ -7,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
 import { ClassicLesson, LessonHeader } from '@/components/lesson/ClassicLesson';
 import { GuidedLesson } from '@/components/lesson-flow/GuidedLesson';
+import { PremiumLock } from '@/components/premium/PremiumLock';
 import { colors } from '@/constants/theme';
 import { useLesson } from '@/hooks/useLesson';
 
@@ -34,28 +34,26 @@ function LessonRoute({ courseSlug, lessonSlug, restart }: LessonRouteProps) {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <LessonHeader title="" />
-        <View className="flex-1 items-center justify-center gap-4 px-6">
-          {locked ? (
-            <>
-              <Ionicons name="lock-closed" size={40} color={colors.gray} />
-              <Text className="text-center font-poppins-bold text-xl text-gray-900">
-                Conteúdo exclusivo para alunos
-              </Text>
-              <Text className="text-center font-poppins text-base text-gray-600">
-                Esta aula está disponível apenas para alunos matriculados.
-              </Text>
-            </>
-          ) : error ? (
-            <>
-              <Text className="text-center font-poppins text-base text-red-700">
-                {error}
-              </Text>
-              <Button variant="link" label="Tentar de novo" onPress={reload} />
-            </>
-          ) : (
-            <ActivityIndicator size="large" color={colors.green} />
-          )}
-        </View>
+        {locked ? (
+          <PremiumLock description="Todas as aulas e atividades do curso fazem parte do plano Premium." />
+        ) : (
+          <View className="flex-1 items-center justify-center gap-4 px-6">
+            {error ? (
+              <>
+                <Text className="text-center font-poppins text-base text-red-700">
+                  {error}
+                </Text>
+                <Button
+                  variant="link"
+                  label="Tentar de novo"
+                  onPress={reload}
+                />
+              </>
+            ) : (
+              <ActivityIndicator size="large" color={colors.green} />
+            )}
+          </View>
+        )}
       </SafeAreaView>
     );
   }

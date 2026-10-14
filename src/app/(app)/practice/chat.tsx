@@ -1,13 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef } from 'react';
-import {
-  Alert,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  View,
-} from 'react-native';
+import { Alert, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HeaderButton, LessonHeader } from '@/components/lesson/ClassicLesson';
@@ -18,7 +10,7 @@ import {
 } from '@/components/practice/ChatBubble';
 import { ChatComposer } from '@/components/practice/ChatComposer';
 import { TypingIndicator } from '@/components/practice/TypingIndicator';
-import { colors } from '@/constants/theme';
+import { PremiumLock } from '@/components/premium/PremiumLock';
 import { useAuth } from '@/contexts/AuthContext';
 import { type ChatMessage, usePracticeChat } from '@/hooks/usePracticeChat';
 import { canUsePractice } from '@/utils/practice';
@@ -70,15 +62,7 @@ export default function PracticeChatScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <LessonHeader title={TITLE} />
-        <View className="flex-1 items-center justify-center gap-4 px-6">
-          <Ionicons name="lock-closed" size={40} color={colors.gray} />
-          <Text className="text-center font-poppins-bold text-xl text-gray-900">
-            Exclusivo para assinantes
-          </Text>
-          <Text className="text-center font-poppins text-base text-gray-600">
-            O chat com IA está disponível apenas para assinantes.
-          </Text>
-        </View>
+        <PremiumLock description="Converse com a Professora Gisa e receba a correção de cada frase. O chat com IA faz parte do plano Premium." />
       </SafeAreaView>
     );
   }

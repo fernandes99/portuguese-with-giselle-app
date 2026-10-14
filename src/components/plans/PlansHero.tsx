@@ -25,7 +25,7 @@ export function PlansHero({ onClose }: { onClose: () => void }) {
 
       <View className="items-center gap-3">
         <View className="h-14 w-14 items-center justify-center rounded-full bg-white/15">
-          <MaterialCommunityIcons name="crown" size={30} color="#fde047" />
+          <MaterialCommunityIcons name="crown" size={30} color={colors.crown} />
         </View>
         <Text
           accessibilityRole="header"

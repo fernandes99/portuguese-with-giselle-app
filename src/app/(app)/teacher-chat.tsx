@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef } from 'react';
 import {
@@ -23,6 +22,7 @@ import {
   TeacherMessage,
 } from '@/components/teacherChat/MessageBubble';
 import { MessageComposer } from '@/components/teacherChat/MessageComposer';
+import { PremiumLock } from '@/components/premium/PremiumLock';
 import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { type PendingMessage, useTeacherChat } from '@/hooks/useTeacherChat';
@@ -159,15 +159,7 @@ export default function TeacherChatScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <ChatHeader />
-        <View className="flex-1 items-center justify-center gap-4 px-6">
-          <Ionicons name="lock-closed" size={40} color={colors.gray} />
-          <Text className="text-center font-poppins-bold text-xl text-gray-900">
-            Exclusivo para assinantes
-          </Text>
-          <Text className="text-center font-poppins text-base text-gray-600">
-            O chat com a professora está disponível apenas para assinantes.
-          </Text>
-        </View>
+        <PremiumLock description="Tire suas dúvidas direto com a professora Giselle. O chat com a professora faz parte do plano Premium." />
       </SafeAreaView>
     );
   }
