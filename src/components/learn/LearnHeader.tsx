@@ -19,26 +19,28 @@ export function LearnHeader({ course, canSwitch, onSwitch }: LearnHeaderProps) {
 
   return (
     <View className="gap-3">
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={
-          canSwitch ? `${course.title}, trocar de curso` : course.title
-        }
-        disabled={!canSwitch}
-        onPress={onSwitch}
-        hitSlop={8}
-        className="flex-row items-center gap-2 active:opacity-70"
-      >
-        <Text
-          numberOfLines={2}
-          className="shrink font-poppins-bold text-2xl text-gray-900"
+      <View className="flex-row items-start gap-3">
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={
+            canSwitch ? `${course.title}, trocar de curso` : course.title
+          }
+          disabled={!canSwitch}
+          onPress={onSwitch}
+          hitSlop={8}
+          className="flex-1 flex-row items-center gap-2 active:opacity-70"
         >
-          {course.title}
-        </Text>
-        {canSwitch ? (
-          <Ionicons name="chevron-down" size={22} color={colors.gray} />
-        ) : null}
-      </Pressable>
+          <Text
+            numberOfLines={2}
+            className="shrink font-poppins-bold text-2xl text-gray-900"
+          >
+            {course.title}
+          </Text>
+          {canSwitch ? (
+            <Ionicons name="chevron-down" size={22} color={colors.gray} />
+          ) : null}
+        </Pressable>
+      </View>
 
       <View className="flex-row items-center gap-3">
         <View className="flex-1">

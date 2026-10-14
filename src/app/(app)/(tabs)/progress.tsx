@@ -18,6 +18,7 @@ import { ActivityChart } from '@/components/progress/ActivityChart';
 import { StreakSummary } from '@/components/progress/StreakSummary';
 import { StudyDays } from '@/components/progress/StudyDays';
 import { StatCard } from '@/components/StatCard';
+import { TabTopBar } from '@/components/TabTopBar';
 import { colors } from '@/constants/theme';
 import { useProgress } from '@/hooks/useProgress';
 import type { Course } from '@/services/courses';
@@ -102,7 +103,7 @@ export default function ProgressScreen() {
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
       <ScrollView
-        contentContainerClassName="flex-grow gap-6 px-5 pb-8 pt-6"
+        contentContainerClassName="flex-grow gap-6 px-5 pb-8 pt-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -112,6 +113,8 @@ export default function ProgressScreen() {
           />
         }
       >
+        <TabTopBar />
+
         <View>
           <Text className="font-poppins-bold text-3xl text-gray-900">
             Progresso

@@ -54,7 +54,7 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e na spec da 
 | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | As notificações vêm sempre do backend; o app não guarda nada no aparelho                                                  | Uma fonte só, a mesma do site; ler no site marca como lida no app                                      |
 | O contador é buscado ao entrar na área logada, ao voltar ao app, quando uma aba ganha foco e quando chega um push         | Mesmo modelo do contador do chat com a professora                                                      |
-| O sino fica na linha do título de cada aba e rola com o conteúdo                                                          | As abas não têm cabeçalho fixo; um sino solto por cima cobriria o conteúdo                             |
+| O sino fica numa linha no topo das abas, com o símbolo à esquerda, e rola com o conteúdo                                  | Pedido do dono do projeto                                                                              |
 | Abrir o detalhe marca como lida; a lista não marca nada sozinha                                                           | O aluno pode ver a lista sem perder o destaque das que ainda não abriu                                 |
 | Tocar no push vai direto ao destino; sem destino, ao detalhe                                                              | O push já mostrou o texto; o que o aluno quer é a tela                                                 |
 | Permissão pedida uma vez, na primeira entrada nas abas depois do login; negada, a tela de notificações mostra como ativar | O pedido aparece quando o aluno já está dentro do app, e não volta a incomodar                         |
@@ -80,9 +80,9 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e na spec da 
 
 A ordem alterna com o site (tabela completa no README da iniciativa no site).
 
-| Fase                                                     | Depende de      | Status   |
-| -------------------------------------------------------- | --------------- | -------- |
-| [01. Sino, lista e detalhe](01-notifications-screens.md) | site 01         | rascunho |
-| [02. Push no aparelho](02-push.md)                       | site 02, app 01 | rascunho |
+| Fase                                                     | Depende de      | Status       |
+| -------------------------------------------------------- | --------------- | ------------ |
+| [01. Sino, lista e detalhe](01-notifications-screens.md) | site 01         | em andamento |
+| [02. Push no aparelho](02-push.md)                       | site 02, app 01 | em andamento |
 
 O contrato das rotas está em [architecture.md](architecture.md).

@@ -44,3 +44,7 @@ yarn-error.*
 .env
 .env.*
 !.env.example
+
+# credenciais do push (Firebase e Apple)
+google-services.json
+GoogleService-Info.plist

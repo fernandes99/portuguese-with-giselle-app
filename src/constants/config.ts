@@ -59,6 +59,14 @@ export const API_ROUTES = {
   plansCheckout: '/api/mobile/plans/checkout',
   planCheckoutStatus: (sessionId: string) =>
     `/api/mobile/plans/checkout/${encodeURIComponent(sessionId)}`,
+  notifications: '/api/mobile/notifications',
+  notificationsUnread: '/api/mobile/notifications/unread',
+  notification: (id: string) =>
+    `/api/mobile/notifications/${encodeURIComponent(id)}`,
+  notificationRead: (id: string) =>
+    `/api/mobile/notifications/${encodeURIComponent(id)}/read`,
+  notificationsReadAll: '/api/mobile/notifications/read-all',
+  pushTokens: '/api/mobile/push-tokens',
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

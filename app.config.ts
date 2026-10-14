@@ -17,6 +17,12 @@ function googleSignInPlugin(): [string, { iosUrlScheme: string }][] {
   return [['@react-native-google-signin/google-signin', { iosUrlScheme }]];
 }
 
+// Credenciais do Firebase para o push no Android. O arquivo fica fora do
+// git: no EAS, GOOGLE_SERVICES_JSON é uma variável do tipo arquivo; no build
+// local, aponta para o arquivo (ex.: ./google-services.json, no .env). Sem
+// ela, o build sai sem push no Android.
+const GOOGLE_SERVICES_FILE = process.env.GOOGLE_SERVICES_JSON || undefined;
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Portuguese With Giselle',
@@ -33,6 +39,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     package: APP_ID,
+    googleServicesFile: GOOGLE_SERVICES_FILE,
     adaptiveIcon: {
       backgroundColor: BACKGROUND,
       foregroundImage: './assets/android-icon-foreground.png',
@@ -43,6 +50,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     'expo-font',
     'expo-web-browser',
+    [
+      'expo-notifications',
+      {
+        // Cor de destaque do push na barra do Android
+        color: '#00a63e',
+        defaultChannel: 'default',
+      },
+    ],
     [
       'expo-splash-screen',
       {

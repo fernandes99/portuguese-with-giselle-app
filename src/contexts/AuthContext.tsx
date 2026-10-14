@@ -10,8 +10,15 @@ import {
 
 import { ApiError, setUnauthorizedHandler } from '@/lib/api';
 import { signOutFromGoogle } from '@/lib/google';
-import { clearSession, loadSession, saveSession } from '@/lib/storage';
+import {
+  clearPushToken,
+  clearSession,
+  loadPushToken,
+  loadSession,
+  saveSession,
+} from '@/lib/storage';
 import { me, type Session, type User } from '@/services/auth';
+import { deletePushToken } from '@/services/notifications';
 
 type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -78,14 +85,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus('authenticated');
   }, []);
 
+  const sessionToken = session?.token ?? null;
   const signOut = useCallback(async () => {
+    // O aparelho para de receber os avisos desta conta. Sem rede, sai mesmo
+    // assim; o token muda de dono quando outra conta entrar no aparelho.
+    const pushToken = await loadPushToken();
+    if (pushToken && sessionToken) {
+      await deletePushToken(sessionToken, pushToken).catch(() => {});
+    }
+    await clearPushToken().catch(() => {});
     await clearSession();
     await signOutFromGoogle();
     setSession(null);
     setStatus('unauthenticated');
-  }, []);
+  }, [sessionToken]);
 
-  const token = session?.token ?? null;
+  const token = sessionToken;
   const refreshUser = useCallback(async () => {
     if (!token) {
       return;

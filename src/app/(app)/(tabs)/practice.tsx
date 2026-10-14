@@ -5,6 +5,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PremiumBadge } from '@/components/premium/PremiumBadge';
+import { TabTopBar } from '@/components/TabTopBar';
 import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { canUsePractice } from '@/utils/practice';
@@ -63,7 +64,8 @@ export default function PracticeScreen() {
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
-      <ScrollView contentContainerClassName="flex-grow gap-5 px-5 pb-8 pt-6">
+      <ScrollView contentContainerClassName="flex-grow gap-5 px-5 pb-8 pt-3">
+        <TabTopBar />
         <View>
           <Text className="font-poppins-bold text-3xl text-gray-900">
             Praticar

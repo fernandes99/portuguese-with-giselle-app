@@ -17,6 +17,7 @@ import { WelcomeScreen } from '@/components/WelcomeScreen';
 import { colors } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { WelcomeProvider } from '@/contexts/WelcomeContext';
+import { clearLastPushResponse } from '@/lib/push';
 import { hasSeenWelcome, markWelcomeSeen } from '@/lib/storage';
 
 // A splash nativa fica na tela até as fontes, a sessão e a marca da
@@ -46,6 +47,14 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
       SplashScreen.hideAsync();
     }
   }, [ready]);
+
+  // Um toque no push sem sessão aberta é descartado: depois do login, o app
+  // não abre uma notificação de antes
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      clearLastPushResponse();
+    }
+  }, [status]);
 
   if (!ready) {
     return null;

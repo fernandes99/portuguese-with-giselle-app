@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
 import { PremiumBadge } from '@/components/premium/PremiumBadge';
+import { TabTopBar } from '@/components/TabTopBar';
 import { colors } from '@/constants/theme';
 import { APP_VERSION } from '@/constants/version';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,6 +31,9 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
+      <View className="px-5 pt-3">
+        <TabTopBar />
+      </View>
       <View className="flex-1 items-center justify-center gap-2 px-6">
         <View className="mb-2 h-20 w-20 items-center justify-center rounded-full bg-green-100">
           <Text className="font-poppins-bold text-3xl text-green-700">

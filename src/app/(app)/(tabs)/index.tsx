@@ -14,6 +14,7 @@ import { Button } from '@/components/Button';
 import { CourseSelectSheet } from '@/components/learn/CourseSelectSheet';
 import { LearnHeader } from '@/components/learn/LearnHeader';
 import { LearnModule } from '@/components/learn/LearnModule';
+import { TabTopBar } from '@/components/TabTopBar';
 import { TeacherChatButton } from '@/components/teacherChat/TeacherChatButton';
 import { colors } from '@/constants/theme';
 import { useApiQuery } from '@/hooks/useApiQuery';
@@ -193,7 +194,7 @@ export default function LearnScreen() {
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
       <ScrollView
         ref={scrollRef}
-        contentContainerClassName="flex-grow gap-8 px-5 pb-8 pt-6"
+        contentContainerClassName="flex-grow gap-8 px-5 pb-8 pt-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -203,6 +204,8 @@ export default function LearnScreen() {
           />
         }
       >
+        <TabTopBar />
+
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>

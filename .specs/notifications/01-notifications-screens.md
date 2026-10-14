@@ -1,6 +1,6 @@
 # 01. Sino, lista e detalhe
 
-- **Status:** rascunho
+- **Status:** em andamento
 - **Depende de:** fase 01 do site (rotas de leitura)
 
 ## Contexto
@@ -23,11 +23,11 @@ Leia antes o [README](README.md) e o [architecture.md](architecture.md).
 
 ## Requisitos
 
-- **RF-01:** o sino aparece no canto superior direito das quatro abas, na linha do título: ao lado de "Praticar" e de "Progresso", ao lado do título do curso na aba Aprender e numa linha própria, alinhada à direita, no topo do Perfil. Ele aparece também nos estados de carregamento, erro e vazio de cada aba.
-- **RF-02:** com não lidas, o sino mostra o número num círculo verde (acima de 9, "9+", com `formatUnread`). O ícone é `notifications-outline` (Ionicons), 24, cinza; com não lidas, `notifications`, verde.
+- **RF-01:** as quatro abas começam com uma linha (`TabTopBar`), que rola com o conteúdo e não tem borda, com o símbolo da marca (`assets/logo-symbol.png`) à esquerda e o sino à direita. Ela aparece também nos estados de carregamento, erro e vazio de cada aba.
+- **RF-02:** com não lidas, o sino mostra o número num círculo vermelho (acima de 9, "9+", com `formatUnread`). O ícone é `notifications-outline` (Ionicons), 26, cinza, sem moldura; só o círculo vermelho indica as não lidas.
 - **RF-03:** o sino tem `accessibilityLabel` "Notificações" ou "Notificações, 3 não lidas", área de toque de pelo menos 44 pt, e abre `/notifications`.
 - **RF-04:** o número de não lidas é buscado quando a área logada abre, quando o app volta ao primeiro plano e quando uma das abas ganha foco (`useFocusEffect`). Falha na busca não mostra erro; o número fica como estava.
-- **RF-05:** a tela de lista tem o cabeçalho com voltar e o título "Notificações" (`LessonHeader`) e, à direita, "Marcar todas como lidas" quando há não lidas.
+- **RF-05:** a tela de lista tem o cabeçalho com voltar e o título "Notificações" (`LessonHeader`) e, à direita, quando há não lidas, um botão de ícone (`checkmark-done`) com o rótulo "Marcar todas como lidas" para o leitor de tela.
 - **RF-06:** cada item mostra o título (negrito se não lida), a descrição em até 2 linhas e o tempo relativo (`formatTimeAgo`, `src/utils/date.ts`). A não lida tem fundo verde-claro e um ponto verde. Itens separados por borda, sem sombra.
 - **RF-07:** a lista carrega a próxima página ao chegar perto do fim e atualiza ao puxar para baixo. Volta à tela (foco) também atualiza a primeira página.
 - **RF-08:** sem notificações, a tela mostra o sino grande e "Nenhuma notificação por enquanto". Falha ao carregar mostra o erro e "Tentar de novo".
@@ -59,13 +59,13 @@ Criar:
 - `src/hooks/useNotification.ts`: carga do detalhe e a marcação de lida.
 - `src/utils/notifications.ts`.
 - `src/components/notifications/NotificationBell.tsx` e `NotificationRow.tsx`.
+- `src/components/TabTopBar.tsx`: a linha do topo das abas, com o símbolo da marca e o sino.
 - `src/app/(app)/notifications/index.tsx` e `src/app/(app)/notifications/[id].tsx`.
 
 Alterar:
 
 - `src/app/(app)/_layout.tsx`: `NotificationsProvider`.
-- `src/app/(app)/(tabs)/index.tsx`, `practice.tsx`, `progress.tsx` e `profile.tsx`: o sino e a busca do contador no foco.
-- `src/components/learn/LearnHeader.tsx`: espaço para o sino à direita do título do curso.
+- `src/app/(app)/(tabs)/index.tsx`, `practice.tsx`, `progress.tsx` e `profile.tsx`: a `TabTopBar` como primeiro item da rolagem (no Perfil, que não rola, no topo da tela).
 - `src/constants/config.ts`: as rotas em `API_ROUTES`.
 - `CLAUDE.md`: a linha da iniciativa em "Iniciativas em andamento" (o que ficou pronto).
 
@@ -79,13 +79,26 @@ Sem dependência nativa nova: esta fase não exige novo build.
 2. Com o backend local e notificações criadas pelo script da fase 01 do site: os critérios acima, num aparelho ou emulador com o development build atual.
 3. Dizer quais critérios foram conferidos no aparelho e quais ficaram para o dono do projeto.
 
+## O que foi conferido
+
+`yarn lint` e `yarn tsc --noEmit` passaram, e as rotas que as telas usam foram conferidas no site (fase 01 de lá). O `npx expo-doctor` acusa só versões de patch do SDK 57 mais novas que as instaladas (`expo`, `expo-router` e outros), o que já acontecia antes desta fase. Nada foi testado no aparelho: os critérios de aceite ficam para o dono do projeto.
+
+Divergências da spec:
+
+- "Marcar todas como lidas" é um botão de ícone no cabeçalho, com o texto no rótulo de acessibilidade (RF-05): um texto longo no cabeçalho tiraria o título do centro.
+- O sino busca o número quando a aba dele ganha foco (`useFocusEffect` dentro de `NotificationBell`), então as quatro abas não precisaram de código próprio para isso.
+- A primeira versão punha o sino na linha do título de cada aba, com moldura e número verde. A pedido do dono do projeto, ele passou para uma linha própria no topo de cada aba, com o símbolo da marca à esquerda (`TabTopBar`), e o número ficou vermelho. O `LearnHeader` perdeu o espaço do sino.
+- A lista recarrega a primeira página quando volta a ter foco (volta do detalhe); as páginas seguintes carregadas antes são descartadas.
+
+Com o `expo start` aberto durante a criação das telas, as rotas tipadas (`.expo/types/router.d.ts`, fora do git) saíram como `/notifications/index`, a mesma falha da tela de planos. Reiniciar o `expo start` gera o arquivo certo.
+
 ## Tarefas
 
-- [ ] Serviço, rotas em `API_ROUTES` e utilitários.
-- [ ] `NotificationsContext` no layout da área logada.
-- [ ] `NotificationBell` nas quatro abas.
-- [ ] Tela de lista.
-- [ ] Tela de detalhe e abertura do destino.
-- [ ] Linha da iniciativa no `CLAUDE.md`.
+- [x] Serviço, rotas em `API_ROUTES` e utilitários.
+- [x] `NotificationsContext` no layout da área logada.
+- [x] `NotificationBell` nas quatro abas.
+- [x] Tela de lista.
+- [x] Tela de detalhe e abertura do destino.
+- [x] Linha da iniciativa no `CLAUDE.md`.
 - [ ] Verificação.
-- [ ] Status desta spec e da tabela do README.
+- [x] Status desta spec e da tabela do README.

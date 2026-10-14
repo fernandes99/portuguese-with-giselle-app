@@ -35,3 +35,38 @@ export async function hasSeenWelcome(): Promise<boolean> {
 export function markWelcomeSeen() {
   return SecureStore.setItemAsync(WELCOME_KEY, '1');
 }
+
+const PUSH_ASKED_KEY = 'pwg.pushPermissionAsked';
+
+// O pedido de permissão de notificações aparece uma vez por aparelho. A marca
+// não é apagada ao sair da conta.
+export async function hasAskedPushPermission(): Promise<boolean> {
+  try {
+    return (await SecureStore.getItemAsync(PUSH_ASKED_KEY)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function markPushPermissionAsked() {
+  return SecureStore.setItemAsync(PUSH_ASKED_KEY, '1');
+}
+
+const PUSH_TOKEN_KEY = 'pwg.pushToken';
+
+// Último token de push mandado ao backend, para apagá-lo ao sair da conta
+export async function loadPushToken(): Promise<string | null> {
+  try {
+    return await SecureStore.getItemAsync(PUSH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function savePushTokenLocally(token: string) {
+  return SecureStore.setItemAsync(PUSH_TOKEN_KEY, token);
+}
+
+export function clearPushToken() {
+  return SecureStore.deleteItemAsync(PUSH_TOKEN_KEY);
+}
