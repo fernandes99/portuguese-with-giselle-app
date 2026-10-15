@@ -12,6 +12,7 @@ O que as fases compartilham.
 (tabs)/profile    Perfil            ganha o link "Meus cursos"
 courses           lista de cursos   movida para fora das abas
 practice/chat     chat com a Gisa   novo
+practice/style    estilo da Gisa    fase 04, aberto pelo chat e pelo Perfil
 ```
 
 `courses` e `practice/chat` são telas da pilha de `src/app/(app)/_layout.tsx`, abertas por cima das abas.
@@ -33,13 +34,20 @@ Resposta `200`:
 
 ```json
 {
-  "reply": "Oi, Ana! Sou a Professora Gisa e vamos praticar português aqui. Vi que você gosta de cozinhar: qual é o seu prato favorito?",
-  "replyTranslation": "Hi, Ana! I'm Professora Gisa and we're going to practice Portuguese here. I saw you like cooking: what's your favorite dish?"
+  "reply": "Oi, Ana! 😊 Eu sou a Gisa, sua parceira de conversação com IA. Aqui no Portuguese with Giselle a gente pratica português conversando. Qual é o seu prato favorito?",
+  "replyTranslation": "Hi, Ana! 😊 I'm Gisa, your AI conversation partner. Here on Portuguese with Giselle we practice Portuguese by talking. What's your favorite dish?"
 }
 ```
 
 - `reply` vira a primeira mensagem `assistant` da conversa; `replyTranslation`, a tradução dela. Pode vir vazia.
 - Erros: `401`, `403` e `500`, como na rota do turno.
+
+### Estilo da Gisa (fase 05 do site)
+
+- `GET /api/mobile/preferences` traz `preferences.chatStyle` (`FRIENDLY`, `TUTOR`, `BRAZILIAN`, `CALM` ou `null`) e `options.chatStyles`, com `id`, `title`, `emoji`, `description` e `example`.
+- O usuário da sessão do app (login, Google e `me`) traz `chatStyle`; `null` quer dizer que o aluno ainda não escolheu.
+- `PUT /api/mobile/preferences/chat-style`, com `{ "chatStyle": "TUTOR" }`, grava só o estilo e responde `{ "chatStyle": "TUTOR" }`. Erros: `401`, `400` (código fora da lista), `409` (`Responda as perguntas de boas-vindas antes.`) e `500`.
+- O estilo muda o tom da abertura e das respostas; a correção segue o nível. Sem estilo, o backend usa Amigável.
 
 ### Turno
 
@@ -50,7 +58,10 @@ Corpo:
 ```json
 {
   "messages": [
-    { "role": "assistant", "content": "Olá, Ana! Sou a Professora Gisa..." },
+    {
+      "role": "assistant",
+      "content": "Oi, Ana! 😊 Eu sou a Gisa, sua parceira de conversação com IA..."
+    },
     { "role": "user", "content": "Eu trabalho em uma hospital." }
   ]
 }
@@ -113,17 +124,19 @@ type ChatMessage =
 
 ## Arquivos
 
-| Arquivo                             | Papel                                                              | Fase |
-| ----------------------------------- | ------------------------------------------------------------------ | ---- |
-| `src/app/(app)/(tabs)/practice.tsx` | Aba Praticar                                                       | 01   |
-| `src/app/(app)/courses.tsx`         | Lista de cursos, movida de `(tabs)/courses.tsx`                    | 01   |
-| `src/utils/practice.ts`             | Regra de assinante, texto da abertura e divisão do texto em grifos | 01   |
-| `src/app/(app)/practice/chat.tsx`   | Tela do chat                                                       | 02   |
-| `src/services/practice.ts`          | Chamada à rota e tipos do contrato                                 | 02   |
-| `src/hooks/usePracticeChat.ts`      | Estado da conversa                                                 | 02   |
-| `src/components/practice/`          | Balões, cartão de correção, campo de envio, indicador de digitação | 02   |
-| `src/services/practice.ts`          | Chamada à rota da abertura (`startPracticeChat`)                   | 03   |
-| `src/hooks/usePracticeChat.ts`      | Abertura pelo backend, com a fixa de reserva                       | 03   |
+| Arquivo                                                           | Papel                                                              | Fase |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------ | ---- |
+| `src/app/(app)/(tabs)/practice.tsx`                               | Aba Praticar                                                       | 01   |
+| `src/app/(app)/courses.tsx`                                       | Lista de cursos, movida de `(tabs)/courses.tsx`                    | 01   |
+| `src/utils/practice.ts`                                           | Regra de assinante, texto da abertura e divisão do texto em grifos | 01   |
+| `src/app/(app)/practice/chat.tsx`                                 | Tela do chat                                                       | 02   |
+| `src/services/practice.ts`                                        | Chamada à rota e tipos do contrato                                 | 02   |
+| `src/hooks/usePracticeChat.ts`                                    | Estado da conversa                                                 | 02   |
+| `src/components/practice/`                                        | Balões, cartão de correção, campo de envio, indicador de digitação | 02   |
+| `src/services/practice.ts`                                        | Chamada à rota da abertura (`startPracticeChat`)                   | 03   |
+| `src/hooks/usePracticeChat.ts`                                    | Abertura pelo backend, com a fixa de reserva                       | 03   |
+| `src/app/(app)/practice/style.tsx`                                | Troca do estilo da Gisa                                            | 04   |
+| `src/components/practice/ChatStyleSelector.tsx` e `StyleCard.tsx` | Escolha do estilo, na primeira vez no chat e na troca              | 04   |
 
 ## Reaproveitado sem alterar
 

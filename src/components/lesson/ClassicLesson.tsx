@@ -46,12 +46,15 @@ export function HeaderButton({
   );
 }
 
-// Cabeçalho da aula: voltar, título do curso e um botão opcional à direita
+// Cabeçalho da aula: voltar, título do curso (com uma linha opcional
+// abaixo) e um botão opcional à direita
 export function LessonHeader({
   title,
+  subtitle,
   right,
 }: {
   title: string;
+  subtitle?: string;
   right?: ReactNode;
 }) {
   const router = useRouter();
@@ -63,12 +66,22 @@ export function LessonHeader({
         label="Voltar"
         onPress={() => router.back()}
       />
-      <Text
-        numberOfLines={1}
-        className="flex-1 text-center font-poppins-semibold text-sm text-gray-900"
-      >
-        {title}
-      </Text>
+      <View className="flex-1 items-center">
+        <Text
+          numberOfLines={1}
+          className="text-center font-poppins-semibold text-sm text-gray-900"
+        >
+          {title}
+        </Text>
+        {subtitle ? (
+          <Text
+            numberOfLines={1}
+            className="text-center font-poppins text-xs text-gray-500"
+          >
+            {subtitle}
+          </Text>
+        ) : null}
+      </View>
       {/* Mantém o título centralizado quando não há botão à direita */}
       {right ?? <View className="w-10" />}
     </View>

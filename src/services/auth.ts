@@ -1,3 +1,4 @@
+import type { ChatStyle } from '@/services/preferences';
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
 
@@ -12,6 +13,9 @@ export interface User {
   // false: o app abre as boas-vindas antes das abas. Ausente (backend
   // antigo) conta como respondido
   onboardingCompleted?: boolean;
+  // null: o chat mostra a escolha do estilo da Gisa antes da conversa.
+  // Ausente (backend antigo) conta como escolhido
+  chatStyle?: ChatStyle | null;
 }
 
 export interface Session {

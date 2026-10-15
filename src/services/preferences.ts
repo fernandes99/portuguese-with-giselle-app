@@ -9,6 +9,18 @@ export type PortugueseLevel = 'A0' | 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
 export type LearningGoal = 'PROFESSIONAL' | 'PERSONAL' | 'TRAVEL' | 'ACADEMIC';
 
+// Estilo da Gisa no chat de prática
+export type ChatStyle = 'FRIENDLY' | 'TUTOR' | 'BRAZILIAN' | 'CALM';
+
+export interface ChatStyleOption {
+  id: ChatStyle;
+  title: string;
+  emoji: string;
+  description: string;
+  // Como a Gisa se apresenta nesse estilo
+  example: string;
+}
+
 export interface PreferenceOption {
   id: string;
   title: string;
@@ -27,6 +39,8 @@ export interface Preferences {
   goal: LearningGoal;
   // Códigos dos temas
   interests: string[];
+  // null: o aluno ainda não escolheu o estilo da Gisa
+  chatStyle?: ChatStyle | null;
 }
 
 export interface PreferencesResponse {
@@ -38,6 +52,8 @@ export interface PreferencesResponse {
     goals: PreferenceOption[];
     interests: PreferenceOption[];
     interestsCount: number;
+    // Ausente no backend antigo
+    chatStyles?: ChatStyleOption[];
   };
 }
 
@@ -65,5 +81,14 @@ export function savePreferences(token: string, input: PreferencesInput) {
     method: 'PUT',
     token,
     body: input,
+  });
+}
+
+// Grava só o estilo da Gisa; o resto das preferências não muda
+export function saveChatStyle(token: string, chatStyle: ChatStyle) {
+  return api<{ chatStyle: ChatStyle }>(API_ROUTES.chatStyle, {
+    method: 'PUT',
+    token,
+    body: { chatStyle },
   });
 }

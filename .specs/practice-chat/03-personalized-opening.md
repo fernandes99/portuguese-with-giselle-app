@@ -1,6 +1,6 @@
 # 03. Abertura personalizada
 
-- **Status:** aprovada
+- **Status:** em andamento (falta o teste no aparelho)
 - **Depende de:** [02-chat-screen.md](02-chat-screen.md) e a rota `POST /api/mobile/practice/opening` no ar (fase `03-opening` do site)
 
 ## Contexto
@@ -73,10 +73,20 @@ yarn tsc --noEmit
 
 No aparelho, com uma conta assinante com preferências respondidas, percorrer os critérios de aceite. Para o caso sem internet, ligar o modo avião antes de abrir o chat.
 
+## O que foi conferido
+
+- `yarn lint` e `npx tsc --noEmit` passam.
+- A rota da abertura está no backend desde a versão 0.0.19 do site. As aberturas geradas foram conferidas lá (fase `03-opening` do site): 10 de 10 com 3 frases, uma pergunta no fim, o assunto sorteado e a tradução no idioma do aluno.
+- Falta percorrer os critérios de aceite no aparelho.
+
+## Divergências
+
+- Conta gratuita não chama a rota da abertura: o hook confere `canUsePractice` antes, e a tela já mostra o bloqueio. O `403` da rota continua tratado (RF-04), para o caso de o plano mudar com a tela aberta.
+
 ## Tarefas
 
-- [ ] Rota e serviço da abertura.
-- [ ] `usePracticeChat` com `isOpening`, reserva e descarte.
-- [ ] Tela do chat com a espera da abertura.
-- [ ] Atualizar `CLAUDE.md`.
+- [x] Rota e serviço da abertura.
+- [x] `usePracticeChat` com `isOpening`, reserva e descarte.
+- [x] Tela do chat com a espera da abertura.
+- [x] Atualizar `CLAUDE.md`.
 - [ ] Rodar a verificação, marcar as tarefas e atualizar o status aqui e no `README.md`.

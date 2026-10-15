@@ -7,7 +7,7 @@ import { colors } from '@/constants/theme';
 import type { ChatMessage } from '@/hooks/usePracticeChat';
 import { splitByMistakes } from '@/utils/practice';
 
-// Balão da Professora Gisa, com o avatar ao lado
+// Balão da Gisa, com o avatar ao lado
 export function GisaBubble({ children }: { children: ReactNode }) {
   return (
     <View className="max-w-[88%] flex-row items-end gap-2 self-start">

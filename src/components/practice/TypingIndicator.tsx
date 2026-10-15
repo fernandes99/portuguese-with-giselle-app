@@ -47,7 +47,7 @@ export function TypingIndicator() {
 
   return (
     <View
-      accessibilityLabel="Professora Gisa está digitando"
+      accessibilityLabel="Gisa está digitando"
       className="h-6 flex-row items-center gap-1.5"
     >
       <Dot delay={0} />

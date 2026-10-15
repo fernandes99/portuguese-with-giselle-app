@@ -1,5 +1,12 @@
+import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HeaderButton, LessonHeader } from '@/components/lesson/ClassicLesson';
@@ -9,20 +16,25 @@ import {
   StudentMessage,
 } from '@/components/practice/ChatBubble';
 import { ChatComposer } from '@/components/practice/ChatComposer';
+import { ChatStyleSelector } from '@/components/practice/ChatStyleSelector';
 import { TypingIndicator } from '@/components/practice/TypingIndicator';
 import { PremiumLock } from '@/components/premium/PremiumLock';
 import { useAuth } from '@/contexts/AuthContext';
 import { type ChatMessage, usePracticeChat } from '@/hooks/usePracticeChat';
 import { canUsePractice } from '@/utils/practice';
 
-const TITLE = 'Professora Gisa';
+const TITLE = 'Gisa';
+const SUBTITLE = 'Parceira de conversação com IA';
 
-// Chat de texto com a Professora Gisa: ela corrige cada frase do aluno e
-// continua a conversa com uma pergunta
+// Chat de texto com a Gisa, parceira de conversação com IA: ela corrige
+// cada frase do aluno e continua a conversa com uma pergunta, no estilo que
+// ele escolheu
 export default function PracticeChatScreen() {
+  const router = useRouter();
   const { user } = useAuth();
   const {
     messages,
+    isOpening,
     isReplying,
     isBlocked,
     hasFailed,
@@ -58,11 +70,39 @@ export default function PracticeChatScreen() {
     );
   }
 
+  // Trocar o estilo recomeça a conversa: com mensagens do aluno, pergunta
+  // antes
+  function openStyle() {
+    if (isEmpty) {
+      router.push('/practice/style');
+      return;
+    }
+
+    Alert.alert(
+      'Trocar o estilo da Gisa?',
+      'Trocar o estilo recomeça a conversa. Continuar?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Continuar', onPress: () => router.push('/practice/style') },
+      ]
+    );
+  }
+
   if (!canUsePractice(user) || isBlocked) {
     return (
       <SafeAreaView className="flex-1 bg-background">
-        <LessonHeader title={TITLE} />
-        <PremiumLock description="Converse com a Professora Gisa e receba a correção de cada frase. O chat com IA faz parte do plano Premium." />
+        <LessonHeader title={TITLE} subtitle={SUBTITLE} />
+        <PremiumLock description="Converse com a Gisa, sua parceira de conversação com IA, e receba a correção de cada frase. O chat com IA faz parte do plano Premium." />
+      </SafeAreaView>
+    );
+  }
+
+  // Primeira vez no chat: o aluno escolhe o estilo antes da conversa
+  if (user?.chatStyle === null) {
+    return (
+      <SafeAreaView edges={['top']} className="flex-1 bg-background">
+        <LessonHeader title={TITLE} subtitle={SUBTITLE} />
+        <ChatStyleSelector mode="first" onDone={() => {}} />
       </SafeAreaView>
     );
   }
@@ -71,12 +111,20 @@ export default function PracticeChatScreen() {
     <SafeAreaView className="flex-1 bg-background">
       <LessonHeader
         title={TITLE}
+        subtitle={SUBTITLE}
         right={
-          <HeaderButton
-            icon="refresh"
-            label="Recomeçar conversa"
-            onPress={confirmRestart}
-          />
+          <View className="flex-row gap-2">
+            <HeaderButton
+              icon="color-palette-outline"
+              label="Estilo da Gisa"
+              onPress={openStyle}
+            />
+            <HeaderButton
+              icon="refresh"
+              label="Recomeçar conversa"
+              onPress={confirmRestart}
+            />
+          </View>
         }
       />
 
@@ -101,7 +149,8 @@ export default function PracticeChatScreen() {
             )
           }
           ListFooterComponent={
-            isReplying ? (
+            // A Gisa "digita" enquanto a abertura e as respostas não chegam
+            isOpening || isReplying ? (
               <GisaBubble>
                 <TypingIndicator />
               </GisaBubble>
@@ -109,7 +158,10 @@ export default function PracticeChatScreen() {
           }
         />
 
-        <ChatComposer disabled={isReplying || hasFailed} onSend={send} />
+        <ChatComposer
+          disabled={isOpening || isReplying || hasFailed}
+          onSend={send}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

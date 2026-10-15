@@ -79,7 +79,7 @@ export default function PracticeScreen() {
           <PracticeOption
             icon="chatbubbles"
             title="Chat com IA"
-            description="Converse com a Professora Gisa e receba correções a cada frase."
+            description="Converse com a Gisa, sua parceira de conversação com IA, e receba correções a cada frase."
             isPremiumOnly={!canUsePractice(user)}
             onPress={() =>
               router.push(canUsePractice(user) ? '/practice/chat' : '/plans')

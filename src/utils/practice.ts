@@ -6,22 +6,23 @@ export function canUsePractice(user: User | null) {
   return !!user && user.role !== 'FREE_STUDENT';
 }
 
-// Primeira mensagem da Gisa, fixa e escrita no app
+// Abertura de reserva, para quando o backend não gera a abertura (sem
+// conexão ou erro). A abertura normal vem de /api/mobile/practice/opening.
 export function getOpeningMessage(name: string | null | undefined) {
   const firstName = getFirstName(name);
 
   return firstName
-    ? `Olá, ${firstName}! Sou a Professora Gisa, e vamos usar esse chat para conversar e treinar seu Português. Me fala, ${firstName}, no que você trabalha ou estuda?`
-    : 'Olá! Sou a Professora Gisa, e vamos usar esse chat para conversar e treinar seu Português. Me fala, no que você trabalha ou estuda?';
+    ? `Oi, ${firstName}! Eu sou a Gisa, sua parceira de conversação com IA aqui no Portuguese with Giselle. Me conta um pouco de você: no que você trabalha ou estuda?`
+    : 'Oi! Eu sou a Gisa, sua parceira de conversação com IA aqui no Portuguese with Giselle. Me conta um pouco de você: no que você trabalha ou estuda?';
 }
 
-// A abertura em inglês, para o botão de traduzir
+// A abertura de reserva em inglês, para o botão de traduzir
 export function getOpeningTranslation(name: string | null | undefined) {
   const firstName = getFirstName(name);
 
   return firstName
-    ? `Hi, ${firstName}! I'm Professora Gisa, and we'll use this chat to talk and practice your Portuguese. So tell me, ${firstName}, what do you do for work or study?`
-    : `Hi! I'm Professora Gisa, and we'll use this chat to talk and practice your Portuguese. So tell me, what do you do for work or study?`;
+    ? `Hi, ${firstName}! I'm Gisa, your AI conversation partner here on Portuguese with Giselle. Tell me a little about yourself: what do you do for work or study?`
+    : `Hi! I'm Gisa, your AI conversation partner here on Portuguese with Giselle. Tell me a little about yourself: what do you do for work or study?`;
 }
 
 export interface TextPart {

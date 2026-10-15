@@ -49,6 +49,8 @@ Da fase 03 em diante, também com o dono do projeto (o detalhe está em `.specs/
 | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | A abertura passa a ser gerada pelo backend, sobre um dos temas ou o objetivo do aluno e no nível dele; substitui a decisão da abertura fixa | Varia a cada conversa e parte do que o aluno gosta                   |
 | A Gisa fala e corrige no nível do aluno, de A0 a C2                                                                                         | Pedido direto; é feito no backend, sem mudança no app                |
+| A Gisa deixa de ser "Professora Gisa" e passa a "Gisa, sua parceira de conversação com IA"                                                  | Deixar claro para o aluno que ele conversa com uma IA                |
+| O aluno escolhe o estilo da Gisa (Amigável, Tutora, Brasileira ou Tranquila) na primeira vez no chat e troca pelo chat ou pelo Perfil       | Pedido direto; o tom muda no backend                                 |
 | A explicação do erro e a tradução saem no idioma nativo do aluno (espanhol ou inglês); substitui a decisão da explicação em inglês          | O aluno entende melhor a regra no próprio idioma; é feito no backend |
 
 Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs afetadas):
@@ -82,13 +84,14 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 | ----------------------------------------------------- | ------------------------------------------------------------- | ------------ |
 | [01-practice-tab](01-practice-tab.md)                 | Aba Praticar, Cursos fora das abas e link no Perfil           | em andamento |
 | [02-chat-screen](02-chat-screen.md)                   | Tela do chat com a Gisa, cartão de correção e estados de erro | em andamento |
-| [03-personalized-opening](03-personalized-opening.md) | Abertura gerada pelo backend, com a fixa de reserva           | aprovada     |
+| [03-personalized-opening](03-personalized-opening.md) | Abertura gerada pelo backend, com a fixa de reserva           | em andamento |
+| [04-chat-style](04-chat-style.md)                     | Gisa como IA e escolha do estilo da conversa                  | em andamento |
 
 O desenho compartilhado está em [architecture.md](architecture.md).
 
 ## Glossário
 
-- **Gisa / Professora Gisa:** a persona de IA do chat.
+- **Gisa:** a parceira de conversação com IA do chat. Até a fase 03, chamada de "Professora Gisa".
 - **Abertura:** a primeira mensagem da Gisa. Vem do backend (fase 03); a fixa, escrita no app, é a reserva.
 - **Turno:** uma mensagem do aluno e a resposta da Gisa a ela.
 - **Assinante:** usuário com role diferente de `FREE_STUDENT`.
