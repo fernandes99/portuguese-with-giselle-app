@@ -58,9 +58,9 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 
 ## Fases
 
-| Fase                                              | Depende de      | Status   |
-| ------------------------------------------------- | --------------- | -------- |
-| [01. Fluxo de boas-vindas](01-onboarding-flow.md) | fase 01 do site | rascunho |
-| [02. Edição pelo Perfil](02-edit-preferences.md)  | 01              | rascunho |
+| Fase                                              | Depende de      | Status       |
+| ------------------------------------------------- | --------------- | ------------ |
+| [01. Fluxo de boas-vindas](01-onboarding-flow.md) | fase 01 do site | em andamento |
+| [02. Edição pelo Perfil](02-edit-preferences.md)  | 01              | em andamento |
 
 O contrato das rotas, o layout e os componentes estão em [architecture.md](architecture.md).

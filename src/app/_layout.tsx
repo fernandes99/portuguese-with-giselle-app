@@ -25,11 +25,14 @@ import { hasSeenWelcome, markWelcomeSeen } from '@/lib/storage';
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   // null enquanto a marca ainda não foi lida do aparelho
   const [welcomeSeen, setWelcomeSeen] = useState<boolean | null>(null);
   const ready = fontsReady && status !== 'loading' && welcomeSeen !== null;
   const isAuthenticated = status === 'authenticated';
+  // Campo ausente (backend antigo) conta como respondido
+  const needsOnboarding =
+    isAuthenticated && user?.onboardingCompleted === false;
 
   useEffect(() => {
     hasSeenWelcome().then(setWelcomeSeen);
@@ -81,8 +84,12 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
           contentStyle: { backgroundColor: colors.background },
         }}
       >
-        <Stack.Protected guard={isAuthenticated}>
+        <Stack.Protected guard={isAuthenticated && !needsOnboarding}>
           <Stack.Screen name="(app)" />
+        </Stack.Protected>
+        {/* Antes das abas, enquanto o aluno não respondeu as boas-vindas */}
+        <Stack.Protected guard={needsOnboarding}>
+          <Stack.Screen name="(onboarding)" />
         </Stack.Protected>
         <Stack.Protected guard={!isAuthenticated}>
           <Stack.Screen name="(auth)" />

@@ -1,6 +1,6 @@
 # 01. Fluxo de boas-vindas
 
-- **Status:** rascunho
+- **Status:** em andamento (falta o teste no aparelho)
 - **Depende de:** fase 01 do site (`portuguese-with-giselle/.specs/onboarding/01-preferences-api.md`)
 
 ## Contexto
@@ -73,10 +73,22 @@ Reutilizar:
 2. Com o backend local da fase 01 do site e contas de teste (`@example.test`): os critérios acima no emulador.
 3. Dizer quais critérios foram conferidos e quais ficaram para o dono do projeto.
 
+## O que foi conferido
+
+`yarn lint` e `yarn tsc --noEmit` passaram. O backend da fase 01 do site foi conferido pelas rotas, com um aluno de teste (respostas, recusas e `onboardingCompleted` no login e no `me`). As telas ainda não foram abertas no aparelho: os critérios de aceite ficam para o dono do projeto.
+
+Divergências da spec:
+
+- Os textos e os ícones dos objetivos ficaram em `src/utils/preferences.ts`, que a spec não listava.
+- `api` (`src/lib/api.ts`) passou a aceitar `PUT`.
+- `FlowHeader` ganhou `closeIcon` (`'close' | 'back'`) e `closeLabel`; na aula, nada muda.
+- Com erro ao carregar as perguntas, a tela mostra "Sair da conta" no fluxo e "Voltar" na edição, junto de "Tentar de novo".
+- No primeiro passo, o voltar do Android segue o padrão do sistema (sai do app nas boas-vindas), como dizia o README; o "X" é que pergunta se o aluno quer sair da conta.
+
 ## Tarefas
 
-- [ ] Serviço, rota em `API_ROUTES` e `onboardingCompleted` no usuário.
-- [ ] `completeOnboarding` no `AuthContext` e as guardas no layout raiz.
-- [ ] Componentes `TeacherPrompt`, `ChoiceCard` e `InterestChip`.
-- [ ] `PreferencesFlow` com os três passos, voltar, avisos e gravação.
-- [ ] Grupo `(onboarding)`.
+- [x] Serviço, rota em `API_ROUTES` e `onboardingCompleted` no usuário.
+- [x] `completeOnboarding` no `AuthContext` e as guardas no layout raiz.
+- [x] Componentes `TeacherPrompt`, `ChoiceCard` e `InterestChip`.
+- [x] `PreferencesFlow` com os três passos, voltar, avisos e gravação.
+- [x] Grupo `(onboarding)`.

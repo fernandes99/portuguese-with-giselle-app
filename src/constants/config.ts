@@ -72,6 +72,7 @@ export const API_ROUTES = {
   pushTokens: '/api/mobile/push-tokens',
   billing: '/api/mobile/billing',
   billingPortal: '/api/mobile/billing/portal',
+  preferences: '/api/mobile/preferences',
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

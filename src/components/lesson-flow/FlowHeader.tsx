@@ -14,10 +14,18 @@ interface FlowHeaderProps {
   progress: number;
   // Sem onClose (tela de parabéns) o botão de fechar não aparece
   onClose?: () => void;
+  // back: seta de voltar no lugar do X (passos das boas-vindas)
+  closeIcon?: 'close' | 'back';
+  closeLabel?: string;
 }
 
 // Topo da aula guiada: fechar e a barra de progresso da aula
-export function FlowHeader({ progress, onClose }: FlowHeaderProps) {
+export function FlowHeader({
+  progress,
+  onClose,
+  closeIcon = 'close',
+  closeLabel = 'Sair da aula',
+}: FlowHeaderProps) {
   const value = useSharedValue(progress);
 
   useEffect(() => {
@@ -33,11 +41,15 @@ export function FlowHeader({ progress, onClose }: FlowHeaderProps) {
       {onClose ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Sair da aula"
+          accessibilityLabel={closeLabel}
           onPress={onClose}
           hitSlop={12}
         >
-          <Ionicons name="close" size={26} color={colors.gray} />
+          <Ionicons
+            name={closeIcon === 'back' ? 'arrow-back' : 'close'}
+            size={26}
+            color={colors.gray}
+          />
         </Pressable>
       ) : null}
 

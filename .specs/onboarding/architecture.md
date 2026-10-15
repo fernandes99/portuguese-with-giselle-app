@@ -17,6 +17,7 @@ type PreferenceOption = {
   id: string;
   title: string;
   description: string | null; // null nos interesses
+  emoji: string | null; // só nos interesses
 };
 
 type Preferences = {
@@ -82,7 +83,7 @@ A edição pelo Perfil é a rota `/preferences`, dentro de `(app)`, com o mesmo 
 
 - Fundo `bg-background`, como as outras telas. O conteúdo rola; o topo e o rodapé ficam fixos.
 - O objetivo usa o mesmo `ChoiceCard`, com um ícone à esquerda (tabela abaixo).
-- Os interesses são "chips" que quebram linha: `rounded-full`, borda `gray-200`, fundo branco; selecionado com borda `green-600`, fundo `green-50`, texto `green-700` e um ícone de check. Acima deles, o contador "2 de 3".
+- Os interesses são "chips" que quebram linha: `rounded-full`, borda `gray-200`, fundo branco; cada um com o emoji do tema (vindo da rota) antes do nome; selecionado com borda `green-600`, fundo `green-50` e texto `green-700` (tema sem emoji mostra um ícone de check quando selecionado). Acima deles, o contador "2 de 3".
 - Sem sombras: cartões e chips separados por borda.
 - Barra de progresso: 1/3, 2/3 e 3/3 nos passos 1, 2 e 3.
 

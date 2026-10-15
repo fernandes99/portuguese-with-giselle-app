@@ -130,6 +130,17 @@ export default function ProfileScreen() {
           </Text>
           <Ionicons name="chevron-forward" size={20} color={colors.gray} />
         </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/preferences')}
+          className="flex-row items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 active:bg-gray-50"
+        >
+          <Ionicons name="options-outline" size={20} color={colors.green} />
+          <Text className="flex-1 font-poppins-semibold text-base text-gray-900">
+            Minhas preferências
+          </Text>
+          <Ionicons name="chevron-forward" size={20} color={colors.gray} />
+        </Pressable>
         <View>
           <Button variant="link" label="Sair" onPress={signOut} />
           <Text className="mt-2 text-center font-poppins text-[11px] text-gray-400">

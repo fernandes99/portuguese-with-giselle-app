@@ -30,6 +30,8 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
   // Relê a conta no backend, depois de algo que muda a role (uma assinatura)
   refreshUser: () => Promise<void>;
+  // Marca as boas-vindas como respondidas, e o app troca para as abas
+  completeOnboarding: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -116,6 +118,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token]);
 
+  // Também na sessão guardada: sem rede na próxima abertura, o app não volta
+  // para as boas-vindas
+  const completeOnboarding = useCallback(async () => {
+    if (!session) {
+      return;
+    }
+
+    const next = {
+      ...session,
+      user: { ...session.user, onboardingCompleted: true },
+    };
+    await saveSession(next);
+    setSession(next);
+  }, [session]);
+
   const value = useMemo(
     () => ({
       status,
@@ -124,8 +141,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signOut,
       refreshUser,
+      completeOnboarding,
     }),
-    [status, session, signIn, signOut, refreshUser]
+    [status, session, signIn, signOut, refreshUser, completeOnboarding]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

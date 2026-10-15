@@ -9,6 +9,9 @@ export interface User {
   name: string | null;
   image: string | null;
   role: Role;
+  // false: o app abre as boas-vindas antes das abas. Ausente (backend
+  // antigo) conta como respondido
+  onboardingCompleted?: boolean;
 }
 
 export interface Session {

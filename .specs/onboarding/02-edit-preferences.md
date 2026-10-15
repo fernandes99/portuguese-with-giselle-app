@@ -1,6 +1,6 @@
 # 02. Edição pelo Perfil
 
-- **Status:** rascunho
+- **Status:** em andamento (falta o teste no aparelho)
 - **Depende de:** [01](01-onboarding-flow.md)
 
 ## Contexto
@@ -49,7 +49,11 @@ Alterar:
 1. `yarn lint`, `yarn tsc --noEmit`.
 2. No emulador, com o backend local e uma conta de teste que já respondeu: os critérios acima.
 
+## O que foi conferido
+
+`yarn lint` e `yarn tsc --noEmit` passaram. O modo de edição já ficou pronto no `PreferencesFlow` da fase 01; esta fase só criou a rota e a linha no Perfil. Os critérios de aceite ficam para o teste no aparelho, pelo dono do projeto.
+
 ## Tarefas
 
-- [ ] Rota `/preferences`.
-- [ ] Linha no Perfil.
+- [x] Rota `/preferences`.
+- [x] Linha no Perfil.
