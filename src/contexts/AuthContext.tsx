@@ -30,8 +30,11 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
   // Relê a conta no backend, depois de algo que muda a role (uma assinatura)
   refreshUser: () => Promise<void>;
-  // Marca as boas-vindas como respondidas, e o app troca para as abas
-  completeOnboarding: () => Promise<void>;
+  // Troca campos do usuário da sessão (o nome, depois da edição pelo Perfil)
+  updateUser: (changes: Partial<User>) => Promise<void>;
+  // Marca as boas-vindas como respondidas, com o nome gravado, e o app troca
+  // para as abas
+  completeOnboarding: (name: string | null) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -119,19 +122,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [token]);
 
   // Também na sessão guardada: sem rede na próxima abertura, o app não volta
-  // para as boas-vindas
-  const completeOnboarding = useCallback(async () => {
-    if (!session) {
-      return;
-    }
+  // para as boas-vindas nem mostra o nome antigo
+  const updateUser = useCallback(
+    async (changes: Partial<User>) => {
+      if (!session) {
+        return;
+      }
 
-    const next = {
-      ...session,
-      user: { ...session.user, onboardingCompleted: true },
-    };
-    await saveSession(next);
-    setSession(next);
-  }, [session]);
+      const next = { ...session, user: { ...session.user, ...changes } };
+      await saveSession(next);
+      setSession(next);
+    },
+    [session]
+  );
+
+  const completeOnboarding = useCallback(
+    (name: string | null) => updateUser({ name, onboardingCompleted: true }),
+    [updateUser]
+  );
 
   const value = useMemo(
     () => ({
@@ -141,9 +149,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signOut,
       refreshUser,
+      updateUser,
       completeOnboarding,
     }),
-    [status, session, signIn, signOut, refreshUser, completeOnboarding]
+    [
+      status,
+      session,
+      signIn,
+      signOut,
+      refreshUser,
+      updateUser,
+      completeOnboarding,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -4,6 +4,8 @@ import {
   ActivityIndicator,
   Alert,
   BackHandler,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   Text,
   View,
@@ -16,7 +18,10 @@ import { FlowHeader } from '@/components/lesson-flow/FlowHeader';
 import type { ToastMessage } from '@/components/lesson-flow/FlowToast';
 import { ChoiceCard } from '@/components/preferences/ChoiceCard';
 import { InterestChip } from '@/components/preferences/InterestChip';
+import { LevelCard } from '@/components/preferences/LevelCard';
+import { NameStep } from '@/components/preferences/NameStep';
 import { TeacherPrompt } from '@/components/preferences/TeacherPrompt';
+import { WelcomeStep } from '@/components/preferences/WelcomeStep';
 import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { useApiQuery } from '@/hooks/useApiQuery';
@@ -24,6 +29,7 @@ import { ApiError, getErrorMessage } from '@/lib/api';
 import {
   getPreferences,
   type LearningGoal,
+  type NativeLanguage,
   type PortugueseLevel,
   savePreferences,
 } from '@/services/preferences';
@@ -31,10 +37,12 @@ import {
   getGoalIcon,
   getInterestsLimitMessage,
   getMissingAnswerMessage,
+  getPreferencesSteps,
   getStepInstruction,
   getStepPrompt,
-  PREFERENCES_STEPS,
+  groupLevels,
   type PreferencesMode,
+  type PreferencesStep,
 } from '@/utils/preferences';
 
 const LOAD_ERROR = 'Não foi possível carregar as perguntas.';
@@ -43,13 +51,14 @@ const SAVE_ERROR = 'Não foi possível salvar suas respostas.';
 interface PreferencesFlowProps {
   // onboarding: boas-vindas depois do login; edit: aberto pelo Perfil
   mode: PreferencesMode;
-  // Chamado depois de gravar
-  onDone: () => void;
+  // Chamado depois de gravar, com o nome da conta devolvido pela rota
+  onDone: (name: string | null) => void;
   // Só na edição: fechar sem gravar
   onCancel?: () => void;
 }
 
-// Nível, objetivo e três temas de conversa, um passo por vez. As respostas
+// Idioma nativo, nome, nível, objetivo e três temas de conversa, um passo
+// por vez; no primeiro acesso, uma tela de boas-vindas no fim. As respostas
 // são gravadas uma vez só, no último passo.
 export function PreferencesFlow({
   mode,
@@ -59,7 +68,12 @@ export function PreferencesFlow({
   const { token, user, signOut } = useAuth();
   const { data, error, refresh } = useApiQuery(getPreferences, LOAD_ERROR);
 
-  const [step, setStep] = useState(0);
+  const steps = getPreferencesSteps(mode);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [nativeLanguage, setNativeLanguage] = useState<NativeLanguage | null>(
+    null
+  );
+  const [name, setName] = useState(user?.name ?? '');
   const [level, setLevel] = useState<PortugueseLevel | null>(null);
   const [goal, setGoal] = useState<LearningGoal | null>(null);
   const [interests, setInterests] = useState<string[]>([]);
@@ -69,8 +83,11 @@ export function PreferencesFlow({
   const prefilled = useRef(false);
   const scrollRef = useRef<ScrollView>(null);
 
+  const step = steps[stepIndex];
+
   // Respostas já gravadas (edição, ou outro aparelho) vêm marcadas, uma vez
-  // só: a recarga ao voltar o foco não desfaz o que o aluno mudou
+  // só: a recarga ao voltar o foco não desfaz o que o aluno mudou. Idioma,
+  // nível ou tema que não está mais na lista não vem marcado.
   useEffect(() => {
     if (!data || prefilled.current) {
       return;
@@ -78,26 +95,39 @@ export function PreferencesFlow({
     prefilled.current = true;
 
     const saved = data.preferences;
-    if (saved) {
-      const known = new Set(data.options.interests.map((option) => option.id));
-      setLevel(saved.level);
-      setGoal(saved.goal);
-      setInterests(
-        saved.interests
-          .filter((id) => known.has(id))
-          .slice(0, data.options.interestsCount)
-      );
+    if (!saved) {
+      return;
     }
+
+    const { options } = data;
+    const hasOption = (list: { id: string }[], id: string | null) =>
+      id !== null && list.some((option) => option.id === id);
+
+    if (hasOption(options.nativeLanguages, saved.nativeLanguage)) {
+      setNativeLanguage(saved.nativeLanguage);
+    }
+    if (hasOption(options.levels, saved.level)) {
+      setLevel(saved.level);
+    }
+    setGoal(saved.goal);
+    setInterests(
+      saved.interests
+        .filter((id) => hasOption(options.interests, id))
+        .slice(0, options.interestsCount)
+    );
   }, [data]);
 
   const interestsCount = data?.options.interestsCount ?? 3;
-  const isLastStep = step === PREFERENCES_STEPS - 1;
-  const hasAnswer =
-    step === 0
-      ? level !== null
-      : step === 1
-        ? goal !== null
-        : interests.length === interestsCount;
+  const isLastStep = stepIndex === steps.length - 1;
+  const answered: Record<PreferencesStep, boolean> = {
+    language: nativeLanguage !== null,
+    name: name.trim().length > 0,
+    level: level !== null,
+    goal: goal !== null,
+    interests: interests.length === interestsCount,
+    welcome: true,
+  };
+  const hasAnswer = answered[step];
 
   const showToast = (text: string) => setToast({ text, id: Date.now() });
 
@@ -109,8 +139,8 @@ export function PreferencesFlow({
   }, [signOut]);
 
   const goBack = useCallback(() => {
-    if (step > 0) {
-      setStep(step - 1);
+    if (stepIndex > 0) {
+      setStepIndex(stepIndex - 1);
       setSaveError('');
       return;
     }
@@ -119,7 +149,7 @@ export function PreferencesFlow({
     } else {
       confirmSignOut();
     }
-  }, [step, mode, onCancel, confirmSignOut]);
+  }, [stepIndex, mode, onCancel, confirmSignOut]);
 
   // O voltar do Android volta um passo; no primeiro, segue o padrão (sai do
   // app nas boas-vindas, volta ao Perfil na edição)
@@ -128,23 +158,23 @@ export function PreferencesFlow({
       const subscription = BackHandler.addEventListener(
         'hardwareBackPress',
         () => {
-          if (step === 0) {
+          if (stepIndex === 0) {
             return false;
           }
-          setStep(step - 1);
+          setStepIndex(stepIndex - 1);
           setSaveError('');
           return true;
         }
       );
       return () => subscription.remove();
-    }, [step])
+    }, [stepIndex])
   );
 
   // Cada passo começa do topo
   // biome-ignore lint/correctness/useExhaustiveDependencies: roda a cada troca de passo
   useEffect(() => {
     scrollRef.current?.scrollTo({ y: 0, animated: false });
-  }, [step]);
+  }, [stepIndex]);
 
   const toggleInterest = (id: string) => {
     if (interests.includes(id)) {
@@ -159,15 +189,21 @@ export function PreferencesFlow({
   };
 
   const save = async () => {
-    if (!token || !level || !goal || saving) {
+    if (!token || !nativeLanguage || !level || !goal || saving) {
       return;
     }
 
     setSaving(true);
     setSaveError('');
     try {
-      await savePreferences(token, { level, goal, interests });
-      onDone();
+      const saved = await savePreferences(token, {
+        nativeLanguage,
+        name: name.trim(),
+        level,
+        goal,
+        interests,
+      });
+      onDone(saved.name);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         await signOut();
@@ -182,7 +218,7 @@ export function PreferencesFlow({
     if (isLastStep) {
       save();
     } else {
-      setStep(step + 1);
+      setStepIndex(stepIndex + 1);
     }
   };
 
@@ -215,94 +251,148 @@ export function PreferencesFlow({
   }
 
   const { options } = data;
+  const instruction = getStepInstruction(step, interestsCount);
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
       <FlowHeader
-        progress={(step + 1) / PREFERENCES_STEPS}
+        progress={(stepIndex + 1) / steps.length}
         onClose={goBack}
-        closeIcon={step === 0 ? 'close' : 'back'}
+        closeIcon={stepIndex === 0 ? 'close' : 'back'}
         closeLabel={
-          step > 0 ? 'Voltar' : mode === 'edit' ? 'Fechar' : 'Sair da conta'
+          stepIndex > 0
+            ? 'Voltar'
+            : mode === 'edit'
+              ? 'Fechar'
+              : 'Sair da conta'
         }
       />
 
-      <ScrollView
-        ref={scrollRef}
-        contentContainerClassName="gap-6 px-5 pb-8 pt-4"
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <TeacherPrompt text={getStepPrompt(step, mode, user?.name)} />
+        {step === 'welcome' ? (
+          <WelcomeStep name={name} />
+        ) : (
+          <ScrollView
+            ref={scrollRef}
+            keyboardShouldPersistTaps="handled"
+            contentContainerClassName="gap-6 px-5 pb-8 pt-4"
+          >
+            <TeacherPrompt text={getStepPrompt(step, mode, name)} />
 
-        <View className="gap-3">
-          <View className="flex-row items-center justify-between gap-3">
-            <Text className="flex-1 font-poppins text-sm text-gray-500">
-              {getStepInstruction(step, interestsCount)}
-            </Text>
-            {step === 2 ? (
-              <Text className="font-poppins-semibold text-sm text-green-700">
-                {interests.length} de {interestsCount}
-              </Text>
-            ) : null}
-          </View>
+            <View className="gap-3">
+              {instruction ? (
+                <View className="flex-row items-center justify-between gap-3">
+                  <Text className="flex-1 font-poppins text-sm text-gray-500">
+                    {instruction}
+                  </Text>
+                  {step === 'interests' ? (
+                    <Text className="font-poppins-semibold text-sm text-green-700">
+                      {interests.length} de {interestsCount}
+                    </Text>
+                  ) : null}
+                </View>
+              ) : null}
 
-          {step === 0 ? (
-            <View accessibilityRole="radiogroup" className="gap-3">
-              {options.levels.map((option) => (
-                <ChoiceCard
-                  key={option.id}
-                  title={option.title}
-                  description={option.description}
-                  selected={level === option.id}
-                  onPress={() => setLevel(option.id as PortugueseLevel)}
+              {step === 'language' ? (
+                <View accessibilityRole="radiogroup" className="gap-3">
+                  {options.nativeLanguages.map((option) => (
+                    <ChoiceCard
+                      key={option.id}
+                      title={option.title}
+                      emoji={option.emoji}
+                      selected={nativeLanguage === option.id}
+                      onPress={() =>
+                        setNativeLanguage(option.id as NativeLanguage)
+                      }
+                    />
+                  ))}
+                </View>
+              ) : null}
+
+              {step === 'name' ? (
+                <NameStep
+                  value={name}
+                  onChange={setName}
+                  onSubmit={() => {
+                    if (answered.name) {
+                      next();
+                    }
+                  }}
                 />
-              ))}
-            </View>
-          ) : null}
+              ) : null}
 
-          {step === 1 ? (
-            <View accessibilityRole="radiogroup" className="gap-3">
-              {options.goals.map((option) => (
-                <ChoiceCard
-                  key={option.id}
-                  title={option.title}
-                  description={option.description}
-                  icon={getGoalIcon(option.id)}
-                  selected={goal === option.id}
-                  onPress={() => setGoal(option.id as LearningGoal)}
-                />
-              ))}
-            </View>
-          ) : null}
+              {step === 'level' ? (
+                <View accessibilityRole="radiogroup" className="gap-5">
+                  {groupLevels(options.levels).map((group) => (
+                    <View key={group.title} className="gap-3">
+                      {group.title ? (
+                        <Text className="font-poppins-medium text-xs uppercase tracking-wider text-gray-500">
+                          {group.title}
+                        </Text>
+                      ) : null}
+                      {group.options.map((option) => (
+                        <LevelCard
+                          key={option.id}
+                          code={option.title}
+                          description={option.description}
+                          selected={level === option.id}
+                          onPress={() => setLevel(option.id as PortugueseLevel)}
+                        />
+                      ))}
+                    </View>
+                  ))}
+                </View>
+              ) : null}
 
-          {step === 2 ? (
-            <View className="flex-row flex-wrap gap-2">
-              {options.interests.map((option) => (
-                <InterestChip
-                  key={option.id}
-                  title={option.title}
-                  emoji={option.emoji}
-                  selected={interests.includes(option.id)}
-                  onPress={() => toggleInterest(option.id)}
-                />
-              ))}
-            </View>
-          ) : null}
-        </View>
-      </ScrollView>
+              {step === 'goal' ? (
+                <View accessibilityRole="radiogroup" className="gap-3">
+                  {options.goals.map((option) => (
+                    <ChoiceCard
+                      key={option.id}
+                      title={option.title}
+                      description={option.description}
+                      icon={getGoalIcon(option.id)}
+                      selected={goal === option.id}
+                      onPress={() => setGoal(option.id as LearningGoal)}
+                    />
+                  ))}
+                </View>
+              ) : null}
 
-      <FlowFooter
-        label={
-          isLastStep ? (mode === 'edit' ? 'Salvar' : 'Começar') : 'Continuar'
-        }
-        onPress={next}
-        disabled={!hasAnswer}
-        onDisabledPress={() =>
-          showToast(getMissingAnswerMessage(step, interestsCount))
-        }
-        loading={saving}
-        error={saveError}
-        toast={toast}
-      />
+              {step === 'interests' ? (
+                <View className="flex-row flex-wrap gap-2">
+                  {options.interests.map((option) => (
+                    <InterestChip
+                      key={option.id}
+                      title={option.title}
+                      emoji={option.emoji}
+                      selected={interests.includes(option.id)}
+                      onPress={() => toggleInterest(option.id)}
+                    />
+                  ))}
+                </View>
+              ) : null}
+            </View>
+          </ScrollView>
+        )}
+
+        <FlowFooter
+          label={
+            step === 'welcome' ? 'Começar' : isLastStep ? 'Salvar' : 'Continuar'
+          }
+          onPress={next}
+          disabled={!hasAnswer}
+          onDisabledPress={() =>
+            showToast(getMissingAnswerMessage(step, interestsCount))
+          }
+          loading={saving}
+          error={saveError}
+          toast={toast}
+        />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

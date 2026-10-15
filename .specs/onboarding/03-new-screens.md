@@ -1,6 +1,6 @@
 # 03. Idioma nativo, nome, nível de A0 a C2 e boas-vindas
 
-- **Status:** rascunho
+- **Status:** em andamento (falta o teste no aparelho)
 - **Depende de:** [01](01-onboarding-flow.md), [02](02-edit-preferences.md) e a fase 02 do site (`portuguese-with-giselle/.specs/onboarding/02-language-name-level.md`) no ar
 
 ## Contexto
@@ -58,7 +58,7 @@ As telas de pergunta mantêm o layout da fase 01: barra de progresso, a professo
 - Balão: "Prazer, {primeiro nome}! Como você descreveria seu português hoje?" (edição: "Como você descreveria seu português hoje?").
 - Instrução: "Não existe resposta errada: as aulas se adaptam ao seu ritmo.".
 - As opções vêm agrupadas pelo `group` da rota, na ordem em que chegam. Cada grupo tem um título em maiúsculas, `gray-500`, `text-xs`.
-- Cada cartão tem, à esquerda, um selo quadrado de cantos arredondados com o código (`A0`), em `green-700` sobre `green-50`, e a descrição ao lado. Selecionado: borda `green-600`, fundo `green-50`, selo `green-600` com texto branco e o círculo com check.
+- Cada cartão tem, à esquerda, um selo quadrado de cantos arredondados com o código (`A0`), em `green-700` sobre `green-100`, e a descrição ao lado. Selecionado: borda `green-600`, fundo `green-50`, selo `green-600` com texto branco e o círculo com check.
 
 ```
 │ INICIANTE                           │
@@ -137,12 +137,23 @@ Alterar:
 2. Não exige build novo: nenhuma dependência nativa entra.
 3. No aparelho, com o site da fase 02 no ar: os critérios acima, pelo dono do projeto.
 
+## O que foi conferido
+
+`yarn lint` e `yarn tsc --noEmit` passaram. A fase 02 do site está no ar (versão 0.0.17), com a migration aplicada, e a rota foi conferida lá com um aluno de teste. As telas não foram abertas num aparelho: os critérios de aceite ficam para o dono do projeto.
+
+Divergências da spec:
+
+- O campo do nome é o `TextField` do app, com o rótulo "Seu nome" acima; a borda com o foco é a dele (`green-500`).
+- O selo do nível usa `green-100` (não `green-50`), o mesmo fundo do ícone dos objetivos, para aparecer no cartão branco.
+- O círculo de marcado saiu do `ChoiceCard` como `RadioMark`, usado também pelo `LevelCard`.
+- Na edição, um nível que não está mais na lista também não vem marcado, como o idioma e os temas.
+
 ## Tarefas
 
-- [ ] Tipos e serviço.
-- [ ] Telas de idioma e nome.
-- [ ] Tela de nível com grupos.
-- [ ] Tela de boas-vindas.
-- [ ] Edição pelo Perfil com as telas novas.
-- [ ] Nome na sessão.
-- [ ] `architecture.md`.
+- [x] Tipos e serviço.
+- [x] Telas de idioma e nome.
+- [x] Tela de nível com grupos.
+- [x] Tela de boas-vindas.
+- [x] Edição pelo Perfil com as telas novas.
+- [x] Nome na sessão.
+- [x] `architecture.md`.

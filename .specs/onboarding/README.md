@@ -68,6 +68,6 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 | ---------------------------------------------------------------------------- | ------------------------ | ------------ |
 | [01. Fluxo de boas-vindas](01-onboarding-flow.md)                            | fase 01 do site          | em andamento |
 | [02. Edição pelo Perfil](02-edit-preferences.md)                             | 01                       | em andamento |
-| [03. Idioma nativo, nome, nível de A0 a C2 e boas-vindas](03-new-screens.md) | 01, 02 e fase 02 do site | rascunho     |
+| [03. Idioma nativo, nome, nível de A0 a C2 e boas-vindas](03-new-screens.md) | 01, 02 e fase 02 do site | em andamento |
 
 O contrato das rotas, o layout e os componentes estão em [architecture.md](architecture.md).
