@@ -1,6 +1,6 @@
 # Arquitetura
 
-O que as duas fases compartilham.
+O que as fases compartilham.
 
 ## Navegação
 
@@ -21,9 +21,29 @@ practice/chat     chat com a Gisa   novo
 - Assinante é `user.role !== 'FREE_STUDENT'`, com `user` de `useAuth()` (`src/contexts/AuthContext.tsx`). A regra fica numa função em `src/utils/practice.ts`, usada pela aba e pela tela do chat.
 - O backend aplica a mesma regra e responde `403` ao gratuito. O app trata o `403` como bloqueio, não como erro de envio.
 
-## Contrato da rota
+## Contrato das rotas
 
-`POST /api/mobile/practice/chat`, com o token da sessão. É o espelho do contrato em `.specs/practice-chat/README.md` do site; ao mudar um, mude o outro.
+Espelho do contrato em `.specs/practice-chat/README.md` do site; ao mudar um, mude o outro.
+
+### Abertura (fase 03)
+
+`POST /api/mobile/practice/opening`, com o token da sessão e sem corpo.
+
+Resposta `200`:
+
+```json
+{
+  "reply": "Oi, Ana! Sou a Professora Gisa e vamos praticar português aqui. Vi que você gosta de cozinhar: qual é o seu prato favorito?",
+  "replyTranslation": "Hi, Ana! I'm Professora Gisa and we're going to practice Portuguese here. I saw you like cooking: what's your favorite dish?"
+}
+```
+
+- `reply` vira a primeira mensagem `assistant` da conversa; `replyTranslation`, a tradução dela. Pode vir vazia.
+- Erros: `401`, `403` e `500`, como na rota do turno.
+
+### Turno
+
+`POST /api/mobile/practice/chat`, com o token da sessão.
 
 Corpo:
 
@@ -55,7 +75,8 @@ Resposta `200`:
 ```
 
 - `mistakes`: trechos da mensagem do aluno, como ele escreveu.
-- `replyTranslation`: a fala da Gisa em inglês, mostrada só quando o aluno pede.
+- `replyTranslation`: a fala da Gisa traduzida, mostrada só quando o aluno pede.
+- `explanation` e `replyTranslation` vêm no idioma nativo do aluno: espanhol ou inglês. O app mostra os textos como chegam.
 - Sem erros: `hasErrors` falso, `explanation` vazia e `mistakes` vazio.
 
 Erros, como `{ "error": string }`: `401` (sessão; o `api` já encerra o login), `403` (gratuito), `400` (corpo inválido) e `500` (falha do modelo).
@@ -70,7 +91,7 @@ type ChatMessage =
       id: string;
       role: 'assistant';
       content: string;
-      // Em inglês; sem ela, o balão não tem o botão de traduzir
+      // No idioma nativo do aluno; sem ela, o balão não tem o botão de traduzir
       translation?: string;
     }
   | {
@@ -84,7 +105,8 @@ type ChatMessage =
     };
 ```
 
-- O hook começa com a abertura e expõe `messages`, `isReplying`, `send(text)`, `retry()` e `restart()`.
+- O hook expõe `messages`, `isReplying`, `send(text)`, `retry()` e `restart()`.
+- Até a fase 02, o hook começava com a abertura fixa. Da fase 03 em diante, começa vazio, com `isOpening`, e pede a abertura ao backend ao montar e a cada `restart`. Se o pedido falhar, usa a abertura fixa.
 - `send` acrescenta a mensagem do aluno como `sending`, chama o serviço com a conversa e, na resposta, grava a correção nela e acrescenta a fala da Gisa.
 - Só uma mensagem fica pendente por vez: enquanto `isReplying`, a tela não envia outra.
 - Uma mensagem `failed` não entra na conversa enviada ao backend, a não ser no `retry` dela mesma.
@@ -100,6 +122,8 @@ type ChatMessage =
 | `src/services/practice.ts`          | Chamada à rota e tipos do contrato                                 | 02   |
 | `src/hooks/usePracticeChat.ts`      | Estado da conversa                                                 | 02   |
 | `src/components/practice/`          | Balões, cartão de correção, campo de envio, indicador de digitação | 02   |
+| `src/services/practice.ts`          | Chamada à rota da abertura (`startPracticeChat`)                   | 03   |
+| `src/hooks/usePracticeChat.ts`      | Abertura pelo backend, com a fixa de reserva                       | 03   |
 
 ## Reaproveitado sem alterar
 

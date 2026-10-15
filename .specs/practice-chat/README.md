@@ -43,6 +43,14 @@ Tomadas com o dono do projeto:
 | Nomes na interface: "Praticar", "Chat com IA" e "Professora Gisa"                         | O app é todo em português                                             |
 | Sem limite de uso nem de tamanho de mensagem                                              | Os limites serão definidos depois                                     |
 
+Da fase 03 em diante, também com o dono do projeto (o detalhe está em `.specs/practice-chat/` do site):
+
+| Decisão                                                                                                                                     | Motivo                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| A abertura passa a ser gerada pelo backend, sobre um dos temas ou o objetivo do aluno e no nível dele; substitui a decisão da abertura fixa | Varia a cada conversa e parte do que o aluno gosta                   |
+| A Gisa fala e corrige no nível do aluno, de A0 a C2                                                                                         | Pedido direto; é feito no backend, sem mudança no app                |
+| A explicação do erro e a tradução saem no idioma nativo do aluno (espanhol ou inglês); substitui a decisão da explicação em inglês          | O aluno entende melhor a regra no próprio idioma; é feito no backend |
+
 Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs afetadas):
 
 | Decisão                                                                               | Motivo                                                                      |
@@ -53,13 +61,13 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 | Se o envio falhar, a mensagem do aluno fica na tela com "Tentar de novo"              | O aluno não perde o que escreveu                                            |
 | Sair do chat não pede confirmação                                                     | Não há progresso a perder além da conversa, e recomeçar é imediato          |
 | Nenhuma biblioteca nova                                                               | Não exige novo development build                                            |
+| Se a rota da abertura falhar, entra a abertura fixa, sem aviso de erro                | O aluno não fica preso numa tela vazia por causa da primeira mensagem       |
 
 ## Fora do escopo
 
 - Voz, áudio e avaliação de pronúncia.
 - Versão gratuita limitada e limites de uso.
 - Salvar ou retomar conversas.
-- Aberturas aleatórias ou baseadas nos interesses do aluno, e temas de conversa.
 - Outras formas de prática na aba.
 - Redesenho da tela de Perfil.
 - Compra de assinatura pelo app.
@@ -70,16 +78,17 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 
 ## Fases
 
-| Fase                                  | Entrega                                                       | Status       |
-| ------------------------------------- | ------------------------------------------------------------- | ------------ |
-| [01-practice-tab](01-practice-tab.md) | Aba Praticar, Cursos fora das abas e link no Perfil           | em andamento |
-| [02-chat-screen](02-chat-screen.md)   | Tela do chat com a Gisa, cartão de correção e estados de erro | em andamento |
+| Fase                                                  | Entrega                                                       | Status       |
+| ----------------------------------------------------- | ------------------------------------------------------------- | ------------ |
+| [01-practice-tab](01-practice-tab.md)                 | Aba Praticar, Cursos fora das abas e link no Perfil           | em andamento |
+| [02-chat-screen](02-chat-screen.md)                   | Tela do chat com a Gisa, cartão de correção e estados de erro | em andamento |
+| [03-personalized-opening](03-personalized-opening.md) | Abertura gerada pelo backend, com a fixa de reserva           | aprovada     |
 
 O desenho compartilhado está em [architecture.md](architecture.md).
 
 ## Glossário
 
 - **Gisa / Professora Gisa:** a persona de IA do chat.
-- **Abertura:** a primeira mensagem da Gisa, fixa e escrita no app.
+- **Abertura:** a primeira mensagem da Gisa. Vem do backend (fase 03); a fixa, escrita no app, é a reserva.
 - **Turno:** uma mensagem do aluno e a resposta da Gisa a ela.
 - **Assinante:** usuário com role diferente de `FREE_STUDENT`.
