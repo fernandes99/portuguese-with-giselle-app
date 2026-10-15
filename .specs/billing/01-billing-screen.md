@@ -1,6 +1,6 @@
 # 01. Tela de pagamentos
 
-- **Status:** rascunho
+- **Status:** concluída
 - **Depende de:** fase 01 do site (`portuguese-with-giselle/.specs/billing/01-billing-service.md`)
 
 ## Contexto
@@ -36,21 +36,21 @@ O backend já devolve a assinatura, o cartão, o saldo de aulas e o histórico u
 
 ## Critérios de aceite
 
-- [ ] Do Perfil, "Pagamentos" abre a tela; voltar retorna ao Perfil.
-- [ ] Aluno gratuito sem compras: "Você está no plano gratuito.", "Ver planos", saldo "Nenhuma aula disponível", "Nenhum pagamento ainda.", sem bloco de cartão.
-- [ ] Aluno Premium com compras de aula: assinatura com valor e próxima cobrança, cartão, saldo e o histórico com os dois tipos, na ordem de data.
-- [ ] Tocar num pagamento abre o recibo; voltar do navegador mantém a tela.
-- [ ] "Gerenciar assinatura" abre o portal; cancelar lá e voltar mostra "Cancelada, com acesso até <data>".
-- [ ] Sem rede, a tela mostra o erro e "Tentar de novo"; com rede, puxar para atualizar recarrega.
-- [ ] Leitor de tela lê cada linha do histórico com descrição, data, valor e situação.
-- [ ] `yarn lint` sem avisos novos e `yarn tsc --noEmit` passam.
+- [x] Do Perfil, "Pagamentos" abre a tela; voltar retorna ao Perfil.
+- [x] Aluno gratuito sem compras: "Você está no plano gratuito.", "Ver planos", saldo "Nenhuma aula disponível", "Nenhum pagamento ainda.", sem bloco de cartão.
+- [x] Aluno Premium com compras de aula: assinatura com valor e próxima cobrança, cartão, saldo e o histórico com os dois tipos, na ordem de data.
+- [x] Tocar num pagamento abre o recibo; voltar do navegador mantém a tela.
+- [x] "Gerenciar assinatura" abre o portal; cancelar lá e voltar mostra "Cancelada, com acesso até <data>".
+- [x] Sem rede, a tela mostra o erro e "Tentar de novo"; com rede, puxar para atualizar recarrega.
+- [x] Leitor de tela lê cada linha do histórico com descrição, data, valor e situação.
+- [x] `yarn lint` sem avisos novos e `yarn tsc --noEmit` passam.
 
 ## Desenho técnico
 
 Criar (detalhes em [architecture.md](architecture.md#arquivos)):
 
-- `src/services/billing.ts`, `src/hooks/useBilling.ts`, `src/utils/billing.ts`.
-- `src/components/billing/SubscriptionCard.tsx`, `CardSummary.tsx`, `PrivateLessonsSummary.tsx` e `PaymentRow.tsx`.
+- `src/services/billing.ts` e `src/utils/billing.ts`.
+- `src/components/billing/SubscriptionCard.tsx`, `CardSummary.tsx`, `PrivateLessonsSummary.tsx`, `PaymentRow.tsx` e `StatusBadge.tsx`.
 - `src/app/(app)/billing.tsx`.
 
 Alterar:
@@ -69,11 +69,29 @@ Reutilizar:
 2. Com o backend local da fase 01 do site e o aluno de teste dela: os critérios acima no aparelho ou no emulador.
 3. Dizer quais critérios foram conferidos e quais ficaram para o dono do projeto.
 
+## O que foi conferido
+
+`yarn lint` e `yarn tsc --noEmit` passaram. Os textos da tela foram conferidos rodando as funções de `src/utils/billing.ts` sobre a resposta real de `GET /api/mobile/billing` no backend local, com os alunos de teste da fase 01 do site:
+
+- Premium: "Premium Plan", "Ativa", "US$ 89,90/mês", "Próxima cobrança em 14 de nov. de 2026", "Visa •••• 4242", "Validade 10/27", "6 aulas disponíveis" e o histórico "Assinatura Premium | 14 de out. de 2026 | US$ 89,90 | Pago", "2 aulas particulares | … | Pago", "1 aula particular | … | Reembolsado", "3 aulas particulares | … | Pago" (sem recibo).
+- Gratuito: "Você está no plano gratuito.", "Nenhuma aula disponível" e histórico vazio.
+- Depois de cancelar a assinatura de teste no fim do período, a rota devolveu `cancelAtPeriodEnd: true`, que a tela mostra como "Cancelada, com acesso até <data>".
+
+No aparelho, o dono do projeto conferiu os critérios de aceite com o backend local e a sandbox do Stripe. Para o portal abrir, o `stripeCustomerId` dessa conta foi trocado temporariamente pelo cliente da sandbox (o banco é o de produção, e o cliente gravado é do modo live) e depois voltou ao valor original.
+
+Divergências da spec:
+
+- A descrição da assinatura no histórico é "Assinatura Premium", fixa: há um plano pago só, e o item do histórico não traz o nome do plano. O site faz o mesmo.
+- As datas ("14 de out. de 2026") são montadas à mão, sem `Intl`, como as outras datas do app (`src/utils/date.ts`, `src/utils/privateLessons.ts`).
+- Sem `useBilling`: a tela usa `useApiQuery` direto, que já recarrega ao voltar o foco.
+- A etiqueta de situação virou um componente próprio, `StatusBadge`, usado pela assinatura e pelo histórico.
+- Assinatura cancelada no fim do período mantém a etiqueta "Ativa" (o aluno tem acesso até a data); quem diz que foi cancelada é a linha da data.
+
 ## Tarefas
 
-- [ ] Serviço, rotas em `API_ROUTES` e `BILLING_RETURN_URL`.
-- [ ] Textos em `src/utils/billing.ts`.
-- [ ] Componentes dos blocos.
-- [ ] Tela `/billing` com carga, erro e atualização.
-- [ ] "Gerenciar assinatura" com a volta do portal.
-- [ ] Linha no Perfil.
+- [x] Serviço, rotas em `API_ROUTES` e `BILLING_RETURN_URL`.
+- [x] Textos em `src/utils/billing.ts`.
+- [x] Componentes dos blocos.
+- [x] Tela `/billing` com carga, erro e atualização.
+- [x] "Gerenciar assinatura" com a volta do portal.
+- [x] Linha no Perfil.

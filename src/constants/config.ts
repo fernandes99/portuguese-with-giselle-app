@@ -18,6 +18,9 @@ export const PURCHASE_RETURN_URL = 'pwg://practice/private-lessons/purchase';
 // Para onde o site devolve o aluno depois de assinar um plano
 export const PLANS_RETURN_URL = 'pwg://plans/result';
 
+// Para onde o site devolve o aluno depois do portal de pagamentos do Stripe
+export const BILLING_RETURN_URL = 'pwg://billing';
+
 export const LINKS = {
   terms: `${SITE_URL}/terms`,
   privacy: `${SITE_URL}/privacy`,
@@ -67,6 +70,8 @@ export const API_ROUTES = {
     `/api/mobile/notifications/${encodeURIComponent(id)}/read`,
   notificationsReadAll: '/api/mobile/notifications/read-all',
   pushTokens: '/api/mobile/push-tokens',
+  billing: '/api/mobile/billing',
+  billingPortal: '/api/mobile/billing/portal',
   sendCode: '/api/email/send',
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',

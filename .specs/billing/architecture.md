@@ -64,29 +64,28 @@ A volta do portal passa por uma página do site, que redireciona para `pwg://bil
 
 ## Textos
 
-| Dado                               | Texto                                                                                     |
-| ---------------------------------- | ----------------------------------------------------------------------------------------- |
-| `type: 'subscription'`             | "Assinatura <planName>"                                                                   |
-| `type: 'private_lessons'`          | "1 aula particular" / "N aulas particulares"                                              |
-| `status` do pagamento              | `paid` "Pago", `pending` "Pendente", `failed` "Falhou", `refunded` "Reembolsado"          |
-| `status` da assinatura `active`    | "Ativa"                                                                                   |
-| `trialing`                         | "Em teste grátis"                                                                         |
-| `past_due`, `unpaid`, `incomplete` | "Pagamento pendente"                                                                      |
-| `canceled`, `incomplete_expired`   | "Cancelada"                                                                               |
-| `paused`                           | "Pausada"                                                                                 |
-| ativa com `cancelAtPeriodEnd`      | "Cancelada, com acesso até <data>"                                                        |
-| ativa sem `cancelAtPeriodEnd`      | "Próxima cobrança em <data>"                                                              |
-| valor                              | `formatPrice` de `src/utils/privateLessons.ts` (`Intl` em pt-BR com a moeda do pagamento) |
-| intervalo                          | `formatPlanInterval` de `src/utils/plans.ts` ("/mês", "/ano")                             |
-| data                               | "14 de out. de 2026" (`Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium' })`)            |
-| cartão                             | "Visa •••• 4242", "Validade 12/30"                                                        |
+| Dado                               | Texto                                                                                  |
+| ---------------------------------- | -------------------------------------------------------------------------------------- |
+| `type: 'subscription'`             | "Assinatura Premium" (há um plano pago só)                                             |
+| `type: 'private_lessons'`          | "1 aula particular" / "N aulas particulares"                                           |
+| `status` do pagamento              | `paid` "Pago", `pending` "Pendente", `failed` "Falhou", `refunded` "Reembolsado"       |
+| `status` da assinatura `active`    | "Ativa"                                                                                |
+| `trialing`                         | "Em teste grátis"                                                                      |
+| `past_due`, `unpaid`, `incomplete` | "Pagamento pendente"                                                                   |
+| `canceled`, `incomplete_expired`   | "Cancelada"                                                                            |
+| `paused`                           | "Pausada"                                                                              |
+| ativa com `cancelAtPeriodEnd`      | "Cancelada, com acesso até <data>"                                                     |
+| ativa sem `cancelAtPeriodEnd`      | "Próxima cobrança em <data>"                                                           |
+| valor                              | `formatPrice` de `src/utils/privateLessons.ts` ("US$ 89,90", com a moeda do pagamento) |
+| intervalo                          | `formatPlanInterval` de `src/utils/plans.ts` ("/mês", "/ano")                          |
+| data                               | "14 de out. de 2026", montada à mão como as outras datas do app, no fuso do aparelho   |
+| cartão                             | "Visa •••• 4242", "Validade 12/30"                                                     |
 
 Situação desconhecida da assinatura aparece com o próprio código do Stripe, sem quebrar a tela.
 
 ## Arquivos
 
 - `src/services/billing.ts`: tipos acima, `getBilling(token)` e `createBillingPortal(token)`.
-- `src/hooks/useBilling.ts`: carga, atualização e erro, no modelo de `src/hooks/useApiQuery.ts`.
 - `src/utils/billing.ts`: os textos da tabela acima.
-- `src/components/billing/`: `SubscriptionCard`, `CardSummary`, `PrivateLessonsSummary`, `PaymentRow`.
-- `src/app/(app)/billing.tsx`: a tela.
+- `src/components/billing/`: `SubscriptionCard`, `CardSummary`, `PrivateLessonsSummary`, `PaymentRow` e `StatusBadge`.
+- `src/app/(app)/billing.tsx`: a tela, com a carga, a atualização e o erro por `useApiQuery` (`src/hooks/useApiQuery.ts`).

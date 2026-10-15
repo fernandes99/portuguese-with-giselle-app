@@ -45,8 +45,8 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 
 ## Fases
 
-| Fase                                           | Depende de | Status   |
-| ---------------------------------------------- | ---------- | -------- |
-| [01. Tela de pagamentos](01-billing-screen.md) | site 01    | rascunho |
+| Fase                                           | Depende de | Status    |
+| ---------------------------------------------- | ---------- | --------- |
+| [01. Tela de pagamentos](01-billing-screen.md) | site 01    | concluída |
 
 O contrato das rotas está em [architecture.md](architecture.md).
