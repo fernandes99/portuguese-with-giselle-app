@@ -1,6 +1,6 @@
 # Boas-vindas do aluno
 
-Três perguntas logo depois do cadastro ou do login, enquanto o aluno ainda não respondeu: o nível de português, o objetivo com o idioma e os três temas de que ele mais gosta de conversar. As respostas ficam no banco, e o aluno pode mudá-las depois pelo Perfil.
+Perguntas logo depois do cadastro ou do login, enquanto o aluno ainda não respondeu: o idioma nativo, o nome, o nível de português, o objetivo com o idioma e os três temas de que ele mais gosta de conversar. As respostas ficam no banco, e o aluno pode mudá-las depois pelo Perfil.
 
 ## Contexto
 
@@ -22,16 +22,21 @@ O backend (tabela, opções, rotas e o campo `onboardingCompleted` na sessão) e
 
 Tomadas com o dono do projeto:
 
-| Decisão                                                                                                                                                             | Motivo                                   |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| Três perguntas: nível, objetivo (profissional, pessoal, viagem, acadêmico) e exatamente 3 interesses                                                                | Pedido direto                            |
-| O fluxo aparece depois do cadastro ou do login, só para quem ainda não respondeu (inclui contas antigas)                                                            | Pedido direto                            |
-| Só no app; o site não pergunta                                                                                                                                      | Escolha do dono do projeto               |
-| Nível por autoavaliação, em 4 opções com uma frase cada                                                                                                             | Escolha do dono do projeto               |
-| A lista de temas vem do backend                                                                                                                                     | Escolha do dono do projeto               |
-| Edição pelo Perfil                                                                                                                                                  | Escolha do dono do projeto               |
-| Layout como o da aula guiada: barra de progresso no topo, a professora com a pergunta num balão, opções em cartões e "Continuar" no rodapé, com a identidade do app | Pedido direto, com uma referência visual |
-| Esta iniciativa só coleta; o uso no chat e no painel vem numa próxima                                                                                               | Escolha do dono do projeto               |
+| Decisão                                                                                                                                                             | Motivo                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Três perguntas: nível, objetivo (profissional, pessoal, viagem, acadêmico) e exatamente 3 interesses                                                                | Pedido direto                                    |
+| O fluxo aparece depois do cadastro ou do login, só para quem ainda não respondeu (inclui contas antigas)                                                            | Pedido direto                                    |
+| Só no app; o site não pergunta                                                                                                                                      | Escolha do dono do projeto                       |
+| Nível por autoavaliação, em 4 opções com uma frase cada                                                                                                             | Escolha do dono do projeto                       |
+| A lista de temas vem do backend                                                                                                                                     | Escolha do dono do projeto                       |
+| Edição pelo Perfil                                                                                                                                                  | Escolha do dono do projeto                       |
+| Layout como o da aula guiada: barra de progresso no topo, a professora com a pergunta num balão, opções em cartões e "Continuar" no rodapé, com a identidade do app | Pedido direto, com uma referência visual         |
+| Esta iniciativa só coleta; o uso no chat e no painel vem numa próxima                                                                                               | Escolha do dono do projeto                       |
+| Fase 03: ordem idioma nativo, nome, nível, objetivo, temas e uma tela final de boas-vindas com uma frase de incentivo                                               | Pedido direto, com referências visuais           |
+| Fase 03: idioma nativo entre espanhol, inglês e "outro"                                                                                                             | Escolha do dono do projeto                       |
+| Fase 03: o nome digitado troca o nome da conta                                                                                                                      | Escolha do dono do projeto                       |
+| Fase 03: nível de A0 a C2, agrupado em iniciante, intermediário e avançado                                                                                          | Escolha do dono do projeto                       |
+| Fase 03: as telas de pergunta mantêm a professora no balão e o verde do app (a referência usa título solto e roxo)                                                  | Identidade do app e o layout aprovado na fase 01 |
 
 Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs afetadas):
 
@@ -55,12 +60,14 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 ## Pré-requisitos
 
 - Fase 01 do site (`portuguese-with-giselle/.specs/onboarding/01-preferences-api.md`) no ar, com a migration aplicada.
+- Para a fase 03: a fase 02 do site (`02-language-name-level.md`) no ar, com a migration aplicada.
 
 ## Fases
 
-| Fase                                              | Depende de      | Status       |
-| ------------------------------------------------- | --------------- | ------------ |
-| [01. Fluxo de boas-vindas](01-onboarding-flow.md) | fase 01 do site | em andamento |
-| [02. Edição pelo Perfil](02-edit-preferences.md)  | 01              | em andamento |
+| Fase                                                                         | Depende de               | Status       |
+| ---------------------------------------------------------------------------- | ------------------------ | ------------ |
+| [01. Fluxo de boas-vindas](01-onboarding-flow.md)                            | fase 01 do site          | em andamento |
+| [02. Edição pelo Perfil](02-edit-preferences.md)                             | 01                       | em andamento |
+| [03. Idioma nativo, nome, nível de A0 a C2 e boas-vindas](03-new-screens.md) | 01, 02 e fase 02 do site | rascunho     |
 
 O contrato das rotas, o layout e os componentes estão em [architecture.md](architecture.md).
