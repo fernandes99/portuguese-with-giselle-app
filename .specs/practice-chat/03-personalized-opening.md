@@ -1,6 +1,6 @@
 # 03. Abertura personalizada
 
-- **Status:** em andamento (falta o teste no aparelho)
+- **Status:** concluída
 - **Depende de:** [02-chat-screen.md](02-chat-screen.md) e a rota `POST /api/mobile/practice/opening` no ar (fase `03-opening` do site)
 
 ## Contexto
@@ -36,13 +36,13 @@ Esta fase troca a abertura fixa pela da rota nova. A abertura fixa continua no a
 
 ## Critérios de aceite
 
-- [ ] Abrir o chat mostra a Gisa digitando e, em seguida, uma abertura com o nome do aluno sobre um dos temas dele.
-- [ ] Recomeçar algumas vezes traz aberturas sobre assuntos diferentes.
-- [ ] Um aluno com idioma espanhol vê a tradução da abertura e das respostas em espanhol.
-- [ ] Com o celular sem internet ao abrir o chat, aparece a abertura fixa; com a internet de volta, a conversa segue normalmente.
-- [ ] Enquanto a abertura carrega, não dá para enviar mensagem.
-- [ ] Recomeçar enquanto a abertura carrega não mostra duas aberturas.
-- [ ] Uma conta gratuita continua vendo o bloqueio de assinante.
+- [x] Abrir o chat mostra a Gisa digitando e, em seguida, uma abertura com o nome do aluno sobre um dos temas dele.
+- [x] Recomeçar algumas vezes traz aberturas sobre assuntos diferentes.
+- [x] Um aluno com idioma espanhol vê a tradução da abertura e das respostas em espanhol.
+- [x] Com o celular sem internet ao abrir o chat, aparece a abertura fixa; com a internet de volta, a conversa segue normalmente.
+- [x] Enquanto a abertura carrega, não dá para enviar mensagem.
+- [x] Recomeçar enquanto a abertura carrega não mostra duas aberturas.
+- [x] Uma conta gratuita continua vendo o bloqueio de assinante.
 
 ## Desenho técnico
 
@@ -77,7 +77,7 @@ No aparelho, com uma conta assinante com preferências respondidas, percorrer os
 
 - `yarn lint` e `npx tsc --noEmit` passam.
 - A rota da abertura está no backend desde a versão 0.0.19 do site. As aberturas geradas foram conferidas lá (fase `03-opening` do site): 10 de 10 com 3 frases, uma pergunta no fim, o assunto sorteado e a tradução no idioma do aluno.
-- Falta percorrer os critérios de aceite no aparelho.
+- O dono do projeto considerou esta fase feita em 15/10/2026, sem o teste no aparelho; os critérios de aceite ficam marcados.
 
 ## Divergências
 
@@ -89,4 +89,4 @@ No aparelho, com uma conta assinante com preferências respondidas, percorrer os
 - [x] `usePracticeChat` com `isOpening`, reserva e descarte.
 - [x] Tela do chat com a espera da abertura.
 - [x] Atualizar `CLAUDE.md`.
-- [ ] Rodar a verificação, marcar as tarefas e atualizar o status aqui e no `README.md`.
+- [x] Rodar a verificação, marcar as tarefas e atualizar o status aqui e no `README.md`.

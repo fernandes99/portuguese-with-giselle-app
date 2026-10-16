@@ -1,6 +1,7 @@
 # 01. Aba Praticar
 
-- **Status:** em andamento
+- **Status:** concluída
+- **Fechamento:** O dono do projeto considerou esta fase feita em 15/10/2026, sem o teste no aparelho; os critérios de aceite ficam marcados.
 - **Depende de:** nada
 
 ## Contexto
@@ -32,12 +33,12 @@ As abas do app são Dashboard, Aprender, Cursos, Progresso e Perfil (`src/app/(a
 
 ## Critérios de aceite
 
-- [ ] A barra inferior mostra Dashboard, Aprender, Praticar, Progresso e Perfil.
-- [ ] Perfil > "Meus cursos" abre a lista de cursos; o voltar retorna ao Perfil.
-- [ ] Na lista, tocar num curso abre a tela do curso, e o voltar retorna à lista.
-- [ ] Com conta assinante, o cartão "Chat com IA" abre a tela provisória.
-- [ ] Com conta gratuita, o cartão aparece trancado e não abre nada.
-- [ ] As abas Dashboard, Aprender e Progresso seguem iguais.
+- [x] A barra inferior mostra Dashboard, Aprender, Praticar, Progresso e Perfil.
+- [x] Perfil > "Meus cursos" abre a lista de cursos; o voltar retorna ao Perfil.
+- [x] Na lista, tocar num curso abre a tela do curso, e o voltar retorna à lista.
+- [x] Com conta assinante, o cartão "Chat com IA" abre a tela provisória.
+- [x] Com conta gratuita, o cartão aparece trancado e não abre nada.
+- [x] As abas Dashboard, Aprender e Progresso seguem iguais.
 
 ## Desenho técnico
 
@@ -85,4 +86,4 @@ No aparelho: percorrer os critérios de aceite com uma conta assinante e uma gra
 - [x] Aba Praticar com o cartão e o estado trancado.
 - [x] Tela do chat em `/practice/chat` (direto a da fase 02, sem a provisória).
 - [x] Atualizar o `CLAUDE.md`.
-- [ ] Marcar esta spec e a tabela da iniciativa como `concluída`.
+- [x] Marcar esta spec e a tabela da iniciativa como `concluída`.

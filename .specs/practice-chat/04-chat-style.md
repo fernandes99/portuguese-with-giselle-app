@@ -1,6 +1,6 @@
 # 04. Gisa como IA e escolha de estilo
 
-- **Status:** em andamento (falta o teste no aparelho)
+- **Status:** concluída
 - **Depende de:** [03-personalized-opening.md](03-personalized-opening.md) e a fase `05-chat-style` do site no ar
 
 ## Contexto
@@ -45,12 +45,12 @@ Esta fase sai junto com a fase 03, numa versão só do app.
 
 ## Critérios de aceite
 
-- [ ] Na primeira vez no chat, aparece a escolha; depois de "Começar", a Gisa abre a conversa dizendo que é uma IA.
-- [ ] Abrir o chat de novo não mostra a escolha.
-- [ ] Trocar o estilo pelo cabeçalho, com conversa em andamento, pede confirmação e recomeça com uma abertura no estilo novo.
-- [ ] Trocar o estilo pelo Perfil e abrir o chat traz a abertura no estilo novo.
-- [ ] O título do chat é "Gisa", com o subtítulo "Parceira de conversação com IA".
-- [ ] Sem internet ao salvar, aparece o erro e a tela continua.
+- [x] Na primeira vez no chat, aparece a escolha; depois de "Começar", a Gisa abre a conversa dizendo que é uma IA.
+- [x] Abrir o chat de novo não mostra a escolha.
+- [x] Trocar o estilo pelo cabeçalho, com conversa em andamento, pede confirmação e recomeça com uma abertura no estilo novo.
+- [x] Trocar o estilo pelo Perfil e abrir o chat traz a abertura no estilo novo.
+- [x] O título do chat é "Gisa", com o subtítulo "Parceira de conversação com IA".
+- [x] Sem internet ao salvar, aparece o erro e a tela continua.
 
 ## Desenho técnico
 
@@ -87,7 +87,7 @@ No aparelho, com uma conta assinante que nunca escolheu estilo, percorrer os cri
 
 - `yarn lint` e `npx tsc --noEmit` passam.
 - A persona e os estilos foram conferidos no backend (fase `05-chat-style` do site): a Gisa diz que é uma IA, e cada estilo se apresenta de um jeito.
-- Falta percorrer os critérios de aceite no aparelho, com o backend da fase 05 no ar.
+- O dono do projeto considerou esta fase feita em 15/10/2026, sem o teste no aparelho; os critérios de aceite ficam marcados.
 
 ## Divergências
 
@@ -101,4 +101,4 @@ No aparelho, com uma conta assinante que nunca escolheu estilo, percorrer os cri
 - [x] Chat: persona, primeira escolha, botão de estilo e recomeço ao trocar.
 - [x] Textos da aba Praticar e da abertura de reserva, e a linha no Perfil.
 - [x] Atualizar `CLAUDE.md`, `README.md` e `architecture.md`.
-- [ ] Rodar a verificação, marcar as tarefas e atualizar o status aqui e no `README.md`.
+- [x] Rodar a verificação, marcar as tarefas e atualizar o status aqui e no `README.md`.

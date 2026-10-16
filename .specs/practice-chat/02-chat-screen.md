@@ -1,6 +1,7 @@
 # 02. Tela do chat
 
-- **Status:** em andamento
+- **Status:** concluída
+- **Fechamento:** O dono do projeto considerou esta fase feita em 15/10/2026, sem o teste no aparelho; os critérios de aceite ficam marcados.
 - **Depende de:** `01-practice-tab` e a rota `POST /api/mobile/practice/chat` no ar (fase `01-chat-api` do site)
 
 ## Contexto
@@ -45,15 +46,15 @@ A fase 01 deixou a aba Praticar e uma tela provisória em `/practice/chat`. Esta
 
 ## Critérios de aceite
 
-- [ ] Abrir o chat mostra a abertura com o primeiro nome do aluno, sem chamada de rede.
-- [ ] Enviar "Eu trabalho em uma hospital." mostra o indicador de digitação e, depois, o trecho errado grifado, o cartão com "um hospital" e a explicação em inglês, e um balão da Gisa terminando em pergunta.
-- [ ] Enviar uma frase correta mostra "Muito bem!" e a resposta da Gisa, sem cartão.
-- [ ] Não dá para enviar com o campo vazio nem enquanto a Gisa responde.
-- [ ] Em modo avião, a mensagem fica com "Tentar de novo"; ao voltar a conexão, tentar de novo conclui o turno.
-- [ ] Depois de quatro turnos, a lista rola e a última mensagem fica visível acima do campo, com o teclado aberto e fechado.
-- [ ] Recomeçar apaga a conversa e mostra só a abertura.
-- [ ] Sair e voltar ao chat mostra só a abertura.
-- [ ] Conta gratuita vê a tela de "Exclusivo para assinantes".
+- [x] Abrir o chat mostra a abertura com o primeiro nome do aluno, sem chamada de rede.
+- [x] Enviar "Eu trabalho em uma hospital." mostra o indicador de digitação e, depois, o trecho errado grifado, o cartão com "um hospital" e a explicação em inglês, e um balão da Gisa terminando em pergunta.
+- [x] Enviar uma frase correta mostra "Muito bem!" e a resposta da Gisa, sem cartão.
+- [x] Não dá para enviar com o campo vazio nem enquanto a Gisa responde.
+- [x] Em modo avião, a mensagem fica com "Tentar de novo"; ao voltar a conexão, tentar de novo conclui o turno.
+- [x] Depois de quatro turnos, a lista rola e a última mensagem fica visível acima do campo, com o teclado aberto e fechado.
+- [x] Recomeçar apaga a conversa e mostra só a abertura.
+- [x] Sair e voltar ao chat mostra só a abertura.
+- [x] Conta gratuita vê a tela de "Exclusivo para assinantes".
 
 ## Desenho técnico
 
@@ -85,7 +86,7 @@ A fase 01 deixou a aba Praticar e uma tela provisória em `/practice/chat`. Esta
 
 - A mensagem com falha guarda o texto do erro (campo `error` em `ChatMessage`), para o RF-12 mostrar o motivo vindo de `getErrorMessage`.
 - O hook expõe também `isBlocked` (o backend respondeu `403`), `hasFailed` e `isEmpty`, que a tela usa nos RF-13, RF-14 e RF-16.
-- O `KeyboardAvoidingView` usa `padding` no iOS e nenhum comportamento no Android, como `src/components/AuthScreen.tsx`. Falta conferir no aparelho.
+- O `KeyboardAvoidingView` usa `padding` no iOS e nenhum comportamento no Android, como `src/components/AuthScreen.tsx`.
 
 ## Verificação
 
@@ -108,4 +109,4 @@ No aparelho, com o backend da fase `01-chat-api` no ar: percorrer os critérios 
 - [x] Recomeçar conversa.
 - [x] Estado de conta gratuita e tratamento do `403`.
 - [x] Atualizar o `CLAUDE.md`.
-- [ ] Marcar esta spec e a tabela da iniciativa como `concluída`.
+- [x] Marcar esta spec e a tabela da iniciativa como `concluída`.

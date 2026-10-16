@@ -1,6 +1,6 @@
 # 05. Idioma das explicações, limites de uso e proteções
 
-- **Status:** em andamento
+- **Status:** concluída
 - **Depende de:** [04-chat-style.md](04-chat-style.md) e a fase `06-explanation-language-and-limits` do site no ar
 
 ## Contexto
@@ -47,12 +47,12 @@ O backend grava o idioma, aplica a troca pedida na conversa, confere os limites 
 
 ## Critérios de aceite
 
-- [ ] O botão de idioma abre a tela com o idioma atual marcado; salvar outro volta ao chat, e a próxima explicação sai no idioma novo, sem recomeçar a conversa.
-- [ ] Pedir "Can you explain in Spanish?" na conversa mostra "Explicações agora em Español", e a tela de idioma passa a marcar Español.
-- [ ] Com 10 mensagens restantes, aparece "Restam 10 mensagens hoje".
-- [ ] No limite do dia, o campo some e aparece "Você usou suas 50 mensagens de hoje. Volte amanhã!".
-- [ ] O campo não aceita mais de 500 caracteres e mostra o contador a partir de 400.
-- [ ] O aviso de IA aparece no topo da conversa.
+- [x] O botão de idioma abre a tela com o idioma atual marcado; salvar outro volta ao chat, e a próxima explicação sai no idioma novo, sem recomeçar a conversa.
+- [x] Pedir "Can you explain in Spanish?" na conversa mostra "Explicações agora em Español", e a tela de idioma passa a marcar Español.
+- [x] Com 10 mensagens restantes, aparece "Restam 10 mensagens hoje".
+- [x] No limite do dia, o campo some e aparece "Você usou suas 50 mensagens de hoje. Volte amanhã!".
+- [x] O campo não aceita mais de 500 caracteres e mostra o contador a partir de 400.
+- [x] O aviso de IA aparece no topo da conversa.
 
 ## Desenho técnico
 
@@ -88,7 +88,7 @@ No aparelho, com uma conta assinante e o backend da fase 06 no ar, percorrer os 
 
 - `yarn lint` e `npx tsc --noEmit` passam.
 - O comportamento da troca de idioma e os limites foram conferidos no backend (fase `06-explanation-language-and-limits` do site), sem o app.
-- Falta percorrer os critérios de aceite no aparelho, com o backend da fase 06 no ar e a migration aplicada.
+- O dono do projeto considerou esta fase feita em 15/10/2026, sem o teste no aparelho; os critérios de aceite ficam marcados.
 
 ## Divergências
 
@@ -102,4 +102,4 @@ No aparelho, com uma conta assinante e o backend da fase 06 no ar, percorrer os 
 - [x] Avisos, mensagens restantes e bloqueios no chat.
 - [x] Limite de caracteres no campo e aviso de IA.
 - [x] Atualizar `CLAUDE.md`, `README.md` e `architecture.md`.
-- [ ] Rodar a verificação, marcar as tarefas e atualizar o status aqui e no `README.md`.
+- [x] Rodar a verificação, marcar as tarefas e atualizar o status aqui e no `README.md`.

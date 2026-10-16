@@ -83,13 +83,13 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 
 ## Fases
 
-| Fase                                                                        | Entrega                                                       | Status       |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------ |
-| [01-practice-tab](01-practice-tab.md)                                       | Aba Praticar, Cursos fora das abas e link no Perfil           | em andamento |
-| [02-chat-screen](02-chat-screen.md)                                         | Tela do chat com a Gisa, cartão de correção e estados de erro | em andamento |
-| [03-personalized-opening](03-personalized-opening.md)                       | Abertura gerada pelo backend, com a fixa de reserva           | em andamento |
-| [04-chat-style](04-chat-style.md)                                           | Gisa como IA e escolha do estilo da conversa                  | em andamento |
-| [05-explanation-language-and-limits](05-explanation-language-and-limits.md) | Idioma das explicações, limites de uso e aviso de IA          | em andamento |
+| Fase                                                                        | Entrega                                                       | Status    |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------- | --------- |
+| [01-practice-tab](01-practice-tab.md)                                       | Aba Praticar, Cursos fora das abas e link no Perfil           | concluída |
+| [02-chat-screen](02-chat-screen.md)                                         | Tela do chat com a Gisa, cartão de correção e estados de erro | concluída |
+| [03-personalized-opening](03-personalized-opening.md)                       | Abertura gerada pelo backend, com a fixa de reserva           | concluída |
+| [04-chat-style](04-chat-style.md)                                           | Gisa como IA e escolha do estilo da conversa                  | concluída |
+| [05-explanation-language-and-limits](05-explanation-language-and-limits.md) | Idioma das explicações, limites de uso e aviso de IA          | concluída |
 
 O desenho compartilhado está em [architecture.md](architecture.md).
 
