@@ -40,7 +40,14 @@ Resposta `200`:
 ```
 
 - `reply` vira a primeira mensagem `assistant` da conversa; `replyTranslation`, a tradução dela. Pode vir vazia.
-- Erros: `401`, `403` e `500`, como na rota do turno.
+- `remainingToday` (fase 06 do site): quantas mensagens ainda cabem no dia; a abertura também conta.
+- Erros: `401`, `403`, `429` e `500`, como na rota do turno.
+
+### Idioma das explicações (fase 06 do site)
+
+- `GET /api/mobile/preferences` traz `preferences.explanationLanguage` (`ENGLISH`, `SPANISH` ou `PORTUGUESE`, já resolvido: o escolhido ou o que segue do idioma nativo) e `options.explanationLanguages`, com `id`, `title`, `emoji` e `description`.
+- `PUT /api/mobile/preferences/chat-language`, com `{ "explanationLanguage": "SPANISH" }`, grava só o idioma e responde `{ "explanationLanguage": "SPANISH" }`. Erros: `401`, `400`, `409` e `500`, como a rota do estilo.
+- Em `PORTUGUESE`, a explicação sai em português simples e a tradução continua no idioma nativo.
 
 ### Estilo da Gisa (fase 05 do site)
 
@@ -81,16 +88,34 @@ Resposta `200`:
     "mistakes": ["uma hospital"]
   },
   "reply": "Que legal! O que você faz no hospital?",
-  "replyTranslation": "How nice! What do you do at the hospital?"
+  "replyTranslation": "How nice! What do you do at the hospital?",
+  "explanationLanguage": null,
+  "remainingToday": 42
 }
 ```
 
 - `mistakes`: trechos da mensagem do aluno, como ele escreveu.
 - `replyTranslation`: a fala da Gisa traduzida, mostrada só quando o aluno pede.
-- `explanation` e `replyTranslation` vêm no idioma nativo do aluno: espanhol ou inglês. O app mostra os textos como chegam.
+- `explanation` vem no idioma das explicações do aluno e `replyTranslation` no da tradução. O app mostra os textos como chegam.
 - Sem erros: `hasErrors` falso, `explanation` vazia e `mistakes` vazio.
+- `explanationLanguage` (fase 06 do site): o idioma que o aluno pediu nesta mensagem, já gravado; `null` sem pedido.
+- `remainingToday` (fase 06 do site): quantas mensagens ainda cabem no dia.
 
-Erros, como `{ "error": string }`: `401` (sessão; o `api` já encerra o login), `403` (gratuito), `400` (corpo inválido) e `500` (falha do modelo).
+Erros, como `{ "error": string }`, alguns com `code`:
+
+| Status | `code`                  | Quando                                                 |
+| ------ | ----------------------- | ------------------------------------------------------ |
+| 401    |                         | Sessão; o `api` já encerra o login                     |
+| 403    |                         | Aluno gratuito                                         |
+| 400    |                         | Corpo inválido                                         |
+| 400    | `MESSAGE_TOO_LONG`      | Mensagem do aluno com mais de 500 caracteres           |
+| 400    | `CONVERSATION_TOO_LONG` | Conversa com mais de 60 mensagens ou 20.000 caracteres |
+| 429    | `DAILY_LIMIT`           | 50 mensagens no dia (aberturas contam)                 |
+| 429    | `RATE_LIMIT`            | 10 mensagens no último minuto                          |
+| 429    | `MONTHLY_LIMIT`         | Teto de custo do mês                                   |
+| 500    |                         | Falha do modelo                                        |
+
+Os `429` trazem também `resetAt`, a hora em que o limite zera. O app mostra a mensagem do backend (`error`) como chega.
 
 ## Estado da conversa
 
@@ -113,6 +138,14 @@ type ChatMessage =
       status: 'sending' | 'sent' | 'failed';
       // Preenchida quando o backend responde
       correction?: PracticeCorrection;
+      error?: string;
+    }
+  | {
+      // Aviso do app no meio da conversa (troca de idioma); não vai para o
+      // backend
+      id: string;
+      role: 'notice';
+      content: string;
     };
 ```
 
@@ -121,26 +154,29 @@ type ChatMessage =
 - `send` acrescenta a mensagem do aluno como `sending`, chama o serviço com a conversa e, na resposta, grava a correção nela e acrescenta a fala da Gisa.
 - Só uma mensagem fica pendente por vez: enquanto `isReplying`, a tela não envia outra.
 - Uma mensagem `failed` não entra na conversa enviada ao backend, a não ser no `retry` dela mesma.
+- Fase 05: o hook guarda `remainingToday` da última resposta e `limit`. `limit` é `blocked` (`DAILY_LIMIT` ou `MONTHLY_LIMIT`, até sair do chat) ou `restart` (`CONVERSATION_TOO_LONG`, até recomeçar); com ele, a tela troca o campo de mensagem por um aviso. `RATE_LIMIT` é uma falha comum, com "Tentar de novo".
 
 ## Arquivos
 
-| Arquivo                                                           | Papel                                                              | Fase |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------ | ---- |
-| `src/app/(app)/(tabs)/practice.tsx`                               | Aba Praticar                                                       | 01   |
-| `src/app/(app)/courses.tsx`                                       | Lista de cursos, movida de `(tabs)/courses.tsx`                    | 01   |
-| `src/utils/practice.ts`                                           | Regra de assinante, texto da abertura e divisão do texto em grifos | 01   |
-| `src/app/(app)/practice/chat.tsx`                                 | Tela do chat                                                       | 02   |
-| `src/services/practice.ts`                                        | Chamada à rota e tipos do contrato                                 | 02   |
-| `src/hooks/usePracticeChat.ts`                                    | Estado da conversa                                                 | 02   |
-| `src/components/practice/`                                        | Balões, cartão de correção, campo de envio, indicador de digitação | 02   |
-| `src/services/practice.ts`                                        | Chamada à rota da abertura (`startPracticeChat`)                   | 03   |
-| `src/hooks/usePracticeChat.ts`                                    | Abertura pelo backend, com a fixa de reserva                       | 03   |
-| `src/app/(app)/practice/style.tsx`                                | Troca do estilo da Gisa                                            | 04   |
-| `src/components/practice/ChatStyleSelector.tsx` e `StyleCard.tsx` | Escolha do estilo, na primeira vez no chat e na troca              | 04   |
+| Arquivo                                                                   | Papel                                                              | Fase |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------ | ---- |
+| `src/app/(app)/(tabs)/practice.tsx`                                       | Aba Praticar                                                       | 01   |
+| `src/app/(app)/courses.tsx`                                               | Lista de cursos, movida de `(tabs)/courses.tsx`                    | 01   |
+| `src/utils/practice.ts`                                                   | Regra de assinante, texto da abertura e divisão do texto em grifos | 01   |
+| `src/app/(app)/practice/chat.tsx`                                         | Tela do chat                                                       | 02   |
+| `src/services/practice.ts`                                                | Chamada à rota e tipos do contrato                                 | 02   |
+| `src/hooks/usePracticeChat.ts`                                            | Estado da conversa                                                 | 02   |
+| `src/components/practice/`                                                | Balões, cartão de correção, campo de envio, indicador de digitação | 02   |
+| `src/services/practice.ts`                                                | Chamada à rota da abertura (`startPracticeChat`)                   | 03   |
+| `src/hooks/usePracticeChat.ts`                                            | Abertura pelo backend, com a fixa de reserva                       | 03   |
+| `src/app/(app)/practice/style.tsx`                                        | Troca do estilo da Gisa                                            | 04   |
+| `src/components/practice/ChatStyleSelector.tsx` e `StyleCard.tsx`         | Escolha do estilo, na primeira vez no chat e na troca              | 04   |
+| `src/app/(app)/practice/language.tsx` e `ExplanationLanguageSelector.tsx` | Escolha do idioma das explicações                                  | 05   |
+| `src/components/practice/ChatNotice.tsx`                                  | Aviso de IA, aviso de troca de idioma e aviso no lugar do campo    | 05   |
 
 ## Reaproveitado sem alterar
 
-- `api`, `ApiError` e `getErrorMessage` (`src/lib/api.ts`).
+- `api` e `getErrorMessage` (`src/lib/api.ts`). `ApiError` ganhou `code` na fase 05.
 - `useAuth` (`src/contexts/AuthContext.tsx`) e `getFirstName` (`src/utils/format.ts`).
 - `LessonHeader` (`src/components/lesson/ClassicLesson.tsx`), o cabeçalho com botão de voltar.
 - `Button` (`src/components/Button.tsx`) e `colors` (`src/constants/theme.ts`).
