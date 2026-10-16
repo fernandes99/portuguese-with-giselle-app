@@ -41,7 +41,6 @@ export function usePushRegistration() {
     }
 
     const pushToken = await getDevicePushToken();
-    console.log('Push token:', pushToken);
     if (!pushToken) {
       return;
     }
