@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { LessonMaterials } from '@/components/lesson/LessonMaterials';
+import { TranscriptionButton } from '@/components/lesson/TranscriptionButton';
 import { Confetti } from '@/components/lesson-flow/Confetti';
 import { DiscussionsSheet } from '@/components/lesson-flow/DiscussionsSheet';
 import { FlowFooter } from '@/components/lesson-flow/FlowFooter';
@@ -23,7 +24,8 @@ interface CongratulationsProps {
   onContinue: () => void;
 }
 
-// Fim da aula guiada: comemoração, recursos da aula e acesso às discussões
+// Fim da aula guiada: comemoração, transcrição, recursos da aula e acesso às
+// discussões
 export function Congratulations({ lesson, onContinue }: CongratulationsProps) {
   const { user } = useAuth();
   const player = useAudioPlayer(completeSound);
@@ -75,6 +77,10 @@ export function Congratulations({ lesson, onContinue }: CongratulationsProps) {
             </Text>
           </View>
         </View>
+
+        {lesson.hasTranscription ? (
+          <TranscriptionButton lessonId={lesson.id} />
+        ) : null}
 
         {lesson.materials.length > 0 ? (
           <LessonMaterials materials={lesson.materials} />

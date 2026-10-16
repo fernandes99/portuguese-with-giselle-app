@@ -94,6 +94,8 @@ export interface Lesson {
   materials: LessonMaterial[];
   activities: Activity[];
   isCompleted: boolean;
+  // Há PDF da transcrição para baixar. Opcional: o site antigo não manda
+  hasTranscription?: boolean;
 }
 
 export interface LessonDetail {
@@ -120,6 +122,13 @@ export function setLessonCompleted(
 ) {
   return api<{ isCompleted: boolean }>(API_ROUTES.lessonComplete(lessonId), {
     method: completed ? 'POST' : 'DELETE',
+    token,
+  });
+}
+
+// URL assinada do PDF da transcrição, válida por 60 segundos
+export function getLessonTranscriptionUrl(token: string, lessonId: string) {
+  return api<{ url: string }>(API_ROUTES.lessonTranscription(lessonId), {
     token,
   });
 }

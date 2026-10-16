@@ -13,19 +13,20 @@ A convenção é a mesma do site (`portuguese-with-giselle`, em `.specs/README.m
 
 Iniciativas atuais:
 
-| Iniciativa                                    | Assunto                                                                                        |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [guided-lesson](guided-lesson/)               | Aula em etapas, com parabéns e desbloqueio                                                     |
-| [practice-chat](practice-chat/)               | Aba Praticar e chat de texto com IA                                                            |
-| [practice-flashcards](practice-flashcards/)   | Flashcards do site na aba Praticar                                                             |
-| [study-progress](study-progress/)             | Dias de estudo, gráfico de 7 dias, sequência e conquistas na aba Progresso                     |
-| [achievements-history](achievements-history/) | Aviso de conquista com som e tela de histórico no Perfil                                       |
-| [private-lessons](private-lessons/)           | Aulas particulares na aba Praticar: saldo, compra, agendamento e lista                         |
-| [teacher-chat](teacher-chat/)                 | Chat do aluno assinante com a professora, aberto pelo Perfil                                   |
-| [subscription-plans](subscription-plans/)     | Tela do plano Premium com a comparação e assinatura pelo Checkout do Stripe                    |
-| [notifications](notifications/)               | Sino nas abas, lista e detalhe de notificações e push no aparelho                              |
-| [billing](billing/)                           | Tela de pagamentos no Perfil: assinatura, cartão, saldo de aulas e histórico único             |
-| [onboarding](onboarding/)                     | Perguntas de boas-vindas (nível, objetivo e 3 interesses) depois do login e edição pelo Perfil |
+| Iniciativa                                      | Assunto                                                                                        |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [guided-lesson](guided-lesson/)                 | Aula em etapas, com parabéns e desbloqueio                                                     |
+| [practice-chat](practice-chat/)                 | Aba Praticar e chat de texto com IA                                                            |
+| [practice-flashcards](practice-flashcards/)     | Flashcards do site na aba Praticar                                                             |
+| [study-progress](study-progress/)               | Dias de estudo, gráfico de 7 dias, sequência e conquistas na aba Progresso                     |
+| [achievements-history](achievements-history/)   | Aviso de conquista com som e tela de histórico no Perfil                                       |
+| [private-lessons](private-lessons/)             | Aulas particulares na aba Praticar: saldo, compra, agendamento e lista                         |
+| [teacher-chat](teacher-chat/)                   | Chat do aluno assinante com a professora, aberto pelo Perfil                                   |
+| [subscription-plans](subscription-plans/)       | Tela do plano Premium com a comparação e assinatura pelo Checkout do Stripe                    |
+| [notifications](notifications/)                 | Sino nas abas, lista e detalhe de notificações e push no aparelho                              |
+| [billing](billing/)                             | Tela de pagamentos no Perfil: assinatura, cartão, saldo de aulas e histórico único             |
+| [onboarding](onboarding/)                       | Perguntas de boas-vindas (nível, objetivo e 3 interesses) depois do login e edição pelo Perfil |
+| [lesson-transcriptions](lesson-transcriptions/) | Botão para baixar a transcrição da aula em PDF                                                 |
 
 ## Modelo de spec
 

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { HtmlContent } from '@/components/lesson/HtmlContent';
+import { TranscriptionButton } from '@/components/lesson/TranscriptionButton';
 import { colors } from '@/constants/theme';
 import type { Lesson, LessonLink } from '@/services/lesson';
 import { formatLessonNumber } from '@/utils/lesson';
@@ -18,7 +19,8 @@ interface LessonContentProps {
   onOpenNextLesson: () => void;
 }
 
-// Aba "Conteúdo": resumo da aula, o texto, o botão de concluir e a próxima aula
+// Aba "Conteúdo": resumo da aula, o texto, a transcrição, o botão de concluir
+// e a próxima aula
 export function LessonContent({
   lesson,
   moduleTitle,
@@ -74,6 +76,10 @@ export function LessonContent({
       </View>
 
       {lesson.content ? <HtmlContent html={lesson.content} /> : null}
+
+      {lesson.hasTranscription ? (
+        <TranscriptionButton lessonId={lesson.id} />
+      ) : null}
 
       <Pressable
         accessibilityRole="button"
