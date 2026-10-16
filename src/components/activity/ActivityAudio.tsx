@@ -21,6 +21,8 @@ interface ActivityAudioValue {
   // URL tocando agora; null se nada estiver tocando
   playingUrl: string | null;
   toggle: (url: string) => void;
+  // Toca do começo, mesmo que já esteja tocando
+  play: (url: string) => void;
   stop: () => void;
 }
 
@@ -60,6 +62,23 @@ export function ActivityAudioProvider({ children }: { children: ReactNode }) {
     [player, currentUrl, status.playing]
   );
 
+  const play = useCallback(
+    (url: string) => {
+      if (url !== currentUrl) {
+        player.replace({ uri: url });
+        player.play();
+        setCurrentUrl(url);
+        return;
+      }
+
+      player
+        .seekTo(0)
+        .then(() => player.play())
+        .catch(() => undefined);
+    },
+    [player, currentUrl]
+  );
+
   const stop = useCallback(() => {
     player.pause();
   }, [player]);
@@ -68,9 +87,10 @@ export function ActivityAudioProvider({ children }: { children: ReactNode }) {
     () => ({
       playingUrl: status.playing ? currentUrl : null,
       toggle,
+      play,
       stop,
     }),
-    [status.playing, currentUrl, toggle, stop]
+    [status.playing, currentUrl, toggle, play, stop]
   );
 
   return (

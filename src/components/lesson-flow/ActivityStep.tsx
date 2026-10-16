@@ -28,34 +28,37 @@ export function ActivityStep({
   return (
     // A key evita que o áudio de uma atividade vaze para a seguinte
     <ActivityAudioProvider key={activity.id}>
-      <View className="gap-4">
+      {/* grow: a múltipla escolha ocupa a tela, com o botão no pé */}
+      <View className="grow gap-4">
         <Text className="font-poppins-semibold text-xs uppercase tracking-widest text-green-700">
           Atividade {number} de {total}
         </Text>
 
-        <ActivityCard activity={activity} number={number}>
-          {activity.type === 'multiple_choice' ? (
-            <MultipleChoiceActivity
-              activity={activity}
-              onProgress={onProgress}
-              onFinishedChange={onFinishedChange}
-            />
-          ) : null}
-          {activity.type === 'fill_blank' ? (
-            <FillBlankActivity
-              activity={activity}
-              onProgress={onProgress}
-              onFinishedChange={onFinishedChange}
-            />
-          ) : null}
-          {activity.type === 'drag_drop' ? (
-            <DragDropActivity
-              activity={activity}
-              onProgress={onProgress}
-              onFinishedChange={onFinishedChange}
-            />
-          ) : null}
-        </ActivityCard>
+        {/* A múltipla escolha mostra um exercício por tela, sem o cartão */}
+        {activity.type === 'multiple_choice' ? (
+          <MultipleChoiceActivity
+            activity={activity}
+            onProgress={onProgress}
+            onFinishedChange={onFinishedChange}
+          />
+        ) : (
+          <ActivityCard activity={activity} number={number}>
+            {activity.type === 'fill_blank' ? (
+              <FillBlankActivity
+                activity={activity}
+                onProgress={onProgress}
+                onFinishedChange={onFinishedChange}
+              />
+            ) : null}
+            {activity.type === 'drag_drop' ? (
+              <DragDropActivity
+                activity={activity}
+                onProgress={onProgress}
+                onFinishedChange={onFinishedChange}
+              />
+            ) : null}
+          </ActivityCard>
+        )}
       </View>
     </ActivityAudioProvider>
   );

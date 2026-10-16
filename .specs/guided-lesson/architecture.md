@@ -69,10 +69,11 @@ Reaproveitados **sem alteração**:
 - `LessonMedia` (`src/components/lesson/LessonMedia.tsx`): vídeo do Veed ou apresentação do Canva; devolve `null` quando a aula não tem nenhum dos dois. É a exceção ao "sem alteração": ganhou a prop opcional `onPlay`, que avisa o toque no play e libera o "Continuar" da introdução; sem a prop, como na tela clássica, nada muda.
 - `HtmlContent` (`src/components/lesson/HtmlContent.tsx`): texto da aula.
 - `ActivityCard`, `MultipleChoiceActivity`, `FillBlankActivity`, `DragDropActivity` e `ActivityAudioProvider` (`src/components/activity/`). As três atividades recebem `onProgress(completed)` e `onFinishedChange(finished)`; a segunda avisa quando a atividade chega ao resultado e quando o aluno recomeça.
+- Depois desta iniciativa, a múltipla escolha passou a mostrar um exercício por tela, sem o `ActivityCard`: instrução curta conforme o arquivo do exercício (áudio, imagem ou alternativas de áudio), o botão "Verificar" no pé da tela e um painel de acerto ou erro (`ChoiceFeedbackSheet`) com o "Continuar". O título e o enunciado longo da atividade ficam no botão "Instruções". Enquanto ela está em andamento, a aula guiada esconde o `FlowFooter`, que volta no placar. As regras estão em `src/utils/choice.ts`; exercícios sem alternativa correta (erro de cadastro) ficam de fora.
 - `LessonMaterials` (`src/components/lesson/LessonMaterials.tsx`) e `LessonDiscussions` (`src/components/lesson/LessonDiscussions.tsx`, recebe `lessonId`).
 - `Button` com `size="lg"` (`src/components/Button.tsx`).
 
-`LessonActivities` e `LessonContent` **não** são usados no fluxo: o primeiro tem introdução, resumo e "pular", e o segundo traz o botão de marcar como concluída. Eles continuam servindo à tela clássica.
+`LessonActivities` e `LessonContent` **não** são usados no fluxo: o primeiro tem introdução, resumo e "pular", e o segundo traz o botão de marcar como concluída. Eles continuam servindo à tela clássica, onde `LessonActivities` abre as atividades num modal de tela cheia, sem as abas da aula.
 
 ## Volta ao Aprender
 

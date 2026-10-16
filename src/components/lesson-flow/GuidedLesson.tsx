@@ -1,7 +1,10 @@
 import { Stack, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert, BackHandler, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, BackHandler, ScrollView, View } from 'react-native';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 import { ActivityStep } from '@/components/lesson-flow/ActivityStep';
 import { Congratulations } from '@/components/lesson-flow/Congratulations';
@@ -12,6 +15,7 @@ import type { ToastMessage } from '@/components/lesson-flow/FlowToast';
 import { hasLessonMedia, IntroStep } from '@/components/lesson-flow/IntroStep';
 import { getErrorMessage } from '@/lib/api';
 import type { LessonDetail } from '@/services/lesson';
+import { getAnswerableExercises } from '@/utils/choice';
 import { getLessonFlow } from '@/utils/lessonFlow';
 
 interface GuidedLessonProps {
@@ -30,6 +34,7 @@ export function GuidedLesson({
   saveActivityProgress,
 }: GuidedLessonProps) {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { lesson } = data;
 
   // Calculada uma vez: salvar o progresso de uma atividade atualiza a aula,
@@ -151,6 +156,12 @@ export function GuidedLesson({
   const needsVideo =
     step.kind === 'intro' && hasLessonMedia(lesson) && !hasPlayed;
   const needsAnswer = step.kind === 'activity' && !isActivityFinished;
+  // A múltipla escolha tem o próprio botão (Verificar, depois Continuar no
+  // painel): o rodapé some até o placar, para a tela ter um botão só
+  const isFooterHidden =
+    needsAnswer &&
+    activity?.type === 'multiple_choice' &&
+    getAnswerableExercises(activity.exercises).length > 0;
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
@@ -185,21 +196,26 @@ export function GuidedLesson({
         ) : null}
       </ScrollView>
 
-      <FlowFooter
-        onPress={handleContinue}
-        disabled={needsVideo || needsAnswer}
-        onDisabledPress={() =>
-          setToast((current) => ({
-            text: needsVideo
-              ? 'Inicie o vídeo da aula para continuar.'
-              : 'Conclua a atividade para continuar.',
-            id: (current?.id ?? 0) + 1,
-          }))
-        }
-        toast={toast}
-        loading={isSaving}
-        error={error}
-      />
+      {isFooterHidden ? (
+        // Sem o rodapé, a área segura de baixo fica por conta da tela
+        <View style={{ height: insets.bottom }} />
+      ) : (
+        <FlowFooter
+          onPress={handleContinue}
+          disabled={needsVideo || needsAnswer}
+          onDisabledPress={() =>
+            setToast((current) => ({
+              text: needsVideo
+                ? 'Inicie o vídeo da aula para continuar.'
+                : 'Conclua a atividade para continuar.',
+              id: (current?.id ?? 0) + 1,
+            }))
+          }
+          toast={toast}
+          loading={isSaving}
+          error={error}
+        />
+      )}
     </SafeAreaView>
   );
 }
