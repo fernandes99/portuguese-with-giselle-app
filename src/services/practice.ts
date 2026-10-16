@@ -1,5 +1,6 @@
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
+import type { ExplanationLanguage } from '@/services/preferences';
 
 export interface PracticeMessage {
   role: 'assistant' | 'user';
@@ -20,9 +21,21 @@ export interface PracticeTurn {
   correction: PracticeCorrection;
   // Fala seguinte da Gisa
   reply: string;
-  // A mesma fala no idioma nativo do aluno; pode vir vazia
+  // A mesma fala no idioma da tradução do aluno; pode vir vazia
   replyTranslation?: string;
+  // Idioma que o aluno pediu nesta mensagem, já gravado; null sem pedido
+  explanationLanguage?: ExplanationLanguage | null;
+  // Mensagens que ainda cabem no dia; ausente no backend antigo
+  remainingToday?: number;
 }
+
+// Códigos de erro do chat que mudam a tela (o resto é falha comum)
+export const PRACTICE_ERROR_CODES = {
+  // Limite do dia ou do mês: o chat fica bloqueado
+  blocked: ['DAILY_LIMIT', 'MONTHLY_LIMIT'],
+  // A conversa passou do tamanho: só recomeçando
+  restart: ['CONVERSATION_TOO_LONG'],
+} as const;
 
 // `messages` é a conversa inteira e termina na mensagem nova do aluno
 export function sendPracticeMessage(
@@ -40,8 +53,10 @@ export function sendPracticeMessage(
 // objetivo do aluno
 export interface PracticeOpening {
   reply: string;
-  // A mesma fala no idioma nativo do aluno; pode vir vazia
+  // A mesma fala no idioma da tradução do aluno; pode vir vazia
   replyTranslation?: string;
+  // Mensagens que ainda cabem no dia; ausente no backend antigo
+  remainingToday?: number;
 }
 
 export function startPracticeChat(token: string) {

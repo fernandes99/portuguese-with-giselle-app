@@ -5,6 +5,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,15 +17,22 @@ import {
   StudentMessage,
 } from '@/components/practice/ChatBubble';
 import { ChatComposer } from '@/components/practice/ChatComposer';
+import { ChatNotice, ChatStopNotice } from '@/components/practice/ChatNotice';
 import { ChatStyleSelector } from '@/components/practice/ChatStyleSelector';
 import { TypingIndicator } from '@/components/practice/TypingIndicator';
 import { PremiumLock } from '@/components/premium/PremiumLock';
 import { useAuth } from '@/contexts/AuthContext';
 import { type ChatMessage, usePracticeChat } from '@/hooks/usePracticeChat';
-import { canUsePractice } from '@/utils/practice';
+import {
+  canUsePractice,
+  getRemainingLabel,
+  REMAINING_WARNING_AT,
+} from '@/utils/practice';
 
 const TITLE = 'Gisa';
 const SUBTITLE = 'Parceira de conversação com IA';
+const AI_NOTICE =
+  'A Gisa é uma IA e pode errar. Não compartilhe dados pessoais sensíveis.';
 
 // Chat de texto com a Gisa, parceira de conversação com IA: ela corrige
 // cada frase do aluno e continua a conversa com uma pergunta, no estilo que
@@ -38,6 +46,8 @@ export default function PracticeChatScreen() {
     isReplying,
     isBlocked,
     hasFailed,
+    limit,
+    remainingToday,
     isEmpty,
     send,
     retry,
@@ -115,6 +125,11 @@ export default function PracticeChatScreen() {
         right={
           <View className="flex-row gap-2">
             <HeaderButton
+              icon="language-outline"
+              label="Idioma das explicações"
+              onPress={() => router.push('/practice/language')}
+            />
+            <HeaderButton
               icon="color-palette-outline"
               label="Estilo da Gisa"
               onPress={openStyle}
@@ -138,8 +153,11 @@ export default function PracticeChatScreen() {
           keyExtractor={(message) => message.id}
           keyboardShouldPersistTaps="handled"
           contentContainerClassName="gap-4 px-4 py-4"
+          ListHeaderComponent={<ChatNotice text={AI_NOTICE} />}
           renderItem={({ item }) =>
-            item.role === 'assistant' ? (
+            item.role === 'notice' ? (
+              <ChatNotice text={item.content} />
+            ) : item.role === 'assistant' ? (
               <GisaMessage
                 content={item.content}
                 translation={item.translation}
@@ -158,10 +176,25 @@ export default function PracticeChatScreen() {
           }
         />
 
-        <ChatComposer
-          disabled={isOpening || isReplying || hasFailed}
-          onSend={send}
-        />
+        {limit ? (
+          <ChatStopNotice
+            message={limit.message}
+            onRestart={limit.kind === 'restart' ? restart : undefined}
+          />
+        ) : (
+          <>
+            {remainingToday !== null &&
+            remainingToday <= REMAINING_WARNING_AT ? (
+              <Text className="bg-amber-50 px-4 py-1.5 text-center font-poppins text-xs text-amber-800">
+                {getRemainingLabel(remainingToday)}
+              </Text>
+            ) : null}
+            <ChatComposer
+              disabled={isOpening || isReplying || hasFailed}
+              onSend={send}
+            />
+          </>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

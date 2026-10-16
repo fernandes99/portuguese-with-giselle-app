@@ -3,11 +3,14 @@ import { API_URL } from '@/constants/config';
 export class ApiError extends Error {
   // 0 quando a requisição nem chegou ao servidor
   status: number;
+  // Código do erro, quando o backend manda um (ex.: limites do chat)
+  code: string | null;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, code: string | null = null) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -74,12 +77,17 @@ export async function api<T>(
   }
 
   if (!response.ok) {
-    // O backend responde erros como { error: string }
+    // O backend responde erros como { error: string }, às vezes com
+    // { code: string }
     const message =
       typeof data?.error === 'string'
         ? data.error
         : 'Ocorreu um erro. Tente novamente.';
-    throw new ApiError(message, response.status);
+    throw new ApiError(
+      message,
+      response.status,
+      typeof data?.code === 'string' ? data.code : null
+    );
   }
 
   if (

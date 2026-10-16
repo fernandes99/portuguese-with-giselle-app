@@ -47,6 +47,7 @@ export const API_ROUTES = {
   practiceChat: '/api/mobile/practice/chat',
   practiceOpening: '/api/mobile/practice/opening',
   chatStyle: '/api/mobile/preferences/chat-style',
+  chatLanguage: '/api/mobile/preferences/chat-language',
   flashcards: '/api/mobile/flashcards',
   flashcard: (slug: string) =>
     `/api/mobile/flashcards/${encodeURIComponent(slug)}`,
@@ -79,3 +80,7 @@ export const API_ROUTES = {
   verifyCode: '/api/auth/verify-code',
   register: '/api/auth/register',
 };
+
+// Tamanho máximo de uma mensagem do aluno no chat com IA; o backend recusa
+// acima disso
+export const PRACTICE_MESSAGE_MAX_LENGTH = 500;

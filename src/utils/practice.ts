@@ -1,4 +1,5 @@
 import type { User } from '@/services/auth';
+import type { ExplanationLanguage } from '@/services/preferences';
 import { getFirstName } from '@/utils/format';
 
 // A prática com IA é só para assinantes; o backend aplica a mesma regra
@@ -70,4 +71,24 @@ export function splitByMistakes(text: string, mistakes: string[]): TextPart[] {
   }
 
   return parts;
+}
+
+// Nome de cada idioma das explicações no aviso de troca, como na escolha
+export const EXPLANATION_LANGUAGE_TITLES: Record<ExplanationLanguage, string> =
+  {
+    ENGLISH: 'English',
+    SPANISH: 'Español',
+    PORTUGUESE: 'Português',
+  };
+
+// Com tão poucas mensagens restantes no dia, o chat avisa o aluno
+export const REMAINING_WARNING_AT = 10;
+
+export function getRemainingLabel(remaining: number) {
+  if (remaining <= 0) {
+    return 'Você não tem mais mensagens hoje';
+  }
+  return remaining === 1
+    ? 'Resta 1 mensagem hoje'
+    : `Restam ${remaining} mensagens hoje`;
 }
