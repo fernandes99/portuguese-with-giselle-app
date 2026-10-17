@@ -56,8 +56,8 @@ function PracticeOption({
   );
 }
 
-// Formas de praticar o idioma: o chat com a IA, os flashcards e as aulas
-// particulares com a professora
+// Formas de praticar o idioma: o chat com a IA, os flashcards, o vocabulário
+// e as aulas particulares com a professora
 export default function PracticeScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -90,6 +90,12 @@ export default function PracticeScreen() {
             title="Flashcards"
             description="Memorize palavras e frases virando os cards."
             onPress={() => router.push('/practice/flashcards')}
+          />
+          <PracticeOption
+            icon="language"
+            title="Vocabulário"
+            description="Gírias e expressões do dia a dia, com áudio."
+            onPress={() => router.push('/practice/vocabulary')}
           />
           <PracticeOption
             icon="calendar"

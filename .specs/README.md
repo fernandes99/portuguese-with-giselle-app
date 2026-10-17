@@ -27,6 +27,7 @@ Iniciativas atuais:
 | [billing](billing/)                             | Tela de pagamentos no Perfil: assinatura, cartão, saldo de aulas e histórico único             |
 | [onboarding](onboarding/)                       | Perguntas de boas-vindas (nível, objetivo e 3 interesses) depois do login e edição pelo Perfil |
 | [lesson-transcriptions](lesson-transcriptions/) | Botão para baixar a transcrição da aula em PDF                                                 |
+| [vocabulary](vocabulary/)                       | Vocabulário na aba Praticar: busca, filtros, salvos e áudios                                   |
 
 ## Modelo de spec
 

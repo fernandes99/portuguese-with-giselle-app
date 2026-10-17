@@ -55,6 +55,9 @@ export const API_ROUTES = {
     `/api/mobile/flashcards/${encodeURIComponent(slug)}`,
   flashcardCardProgress: (slug: string, cardId: string) =>
     `/api/mobile/flashcards/${encodeURIComponent(slug)}/cards/${encodeURIComponent(cardId)}/progress`,
+  vocabulary: '/api/mobile/vocabulary',
+  vocabularySave: (id: string) =>
+    `/api/mobile/vocabulary/${encodeURIComponent(id)}/save`,
   privateLessons: '/api/mobile/private-lessons',
   privateLessonsCheckout: '/api/mobile/private-lessons/checkout',
   privateLessonPurchase: (sessionId: string) =>
