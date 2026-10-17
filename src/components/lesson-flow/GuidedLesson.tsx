@@ -1,6 +1,6 @@
 import { Stack, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert, BackHandler, ScrollView, View } from 'react-native';
+import { Alert, BackHandler, View } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -14,6 +14,10 @@ import { FlowHeader } from '@/components/lesson-flow/FlowHeader';
 import type { ToastMessage } from '@/components/lesson-flow/FlowToast';
 import { hasLessonMedia, IntroStep } from '@/components/lesson-flow/IntroStep';
 import { getErrorMessage } from '@/lib/api';
+import {
+  KEYBOARD_BOTTOM_OFFSET,
+  KeyboardAwareScrollView,
+} from '@/lib/keyboard';
 import type { LessonDetail } from '@/services/lesson';
 import { getLessonFlow } from '@/utils/lessonFlow';
 
@@ -163,11 +167,11 @@ export function GuidedLesson({
       {screenOptions}
       <FlowHeader progress={index / steps.length} onClose={confirmExit} />
 
-      <ScrollView
+      {/* Rola o campo focado das atividades para cima do teclado */}
+      <KeyboardAwareScrollView
         // A key leva a rolagem de volta ao topo a cada etapa
         key={index}
-        // Para os campos das atividades não ficarem atrás do teclado
-        automaticallyAdjustKeyboardInsets
+        bottomOffset={KEYBOARD_BOTTOM_OFFSET}
         keyboardShouldPersistTaps="handled"
         contentContainerClassName="flex-grow px-5 pb-8 pt-2"
       >
@@ -189,7 +193,7 @@ export function GuidedLesson({
             onFinishedChange={setIsActivityFinished}
           />
         ) : null}
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {needsAnswer ? (
         // Sem o rodapé, a área segura de baixo fica por conta da tela

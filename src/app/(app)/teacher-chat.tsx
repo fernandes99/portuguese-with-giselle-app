@@ -3,10 +3,8 @@ import { useEffect, useMemo, useRef } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  KeyboardAvoidingView,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
-  Platform,
   RefreshControl,
   Text,
   View,
@@ -26,6 +24,7 @@ import { PremiumLock } from '@/components/premium/PremiumLock';
 import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { type PendingMessage, useTeacherChat } from '@/hooks/useTeacherChat';
+import { KeyboardAvoidingView } from '@/lib/keyboard';
 import type { TeacherChatMessage } from '@/services/teacherChat';
 import {
   canUseTeacherChat,
@@ -168,9 +167,11 @@ export default function TeacherChatScreen() {
     <SafeAreaView className="flex-1 bg-background">
       <ChatHeader />
 
+      {/* O campo de mensagem sobe junto com o teclado */}
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior="padding"
+        automaticOffset
       >
         {messages === null ? (
           <View className="flex-1 items-center justify-center gap-4 px-6">
@@ -197,6 +198,13 @@ export default function TeacherChatScreen() {
             keyboardShouldPersistTaps="handled"
             contentContainerClassName="flex-grow gap-3 px-4 py-4"
             onScroll={handleScroll}
+            // A lista encolhe aos poucos quando o teclado abre: quem estava
+            // no fim continua vendo a última mensagem
+            onLayout={() => {
+              if (atBottom.current) {
+                listRef.current?.scrollToEnd({ animated: false });
+              }
+            }}
             scrollEventThrottle={100}
             // Mensagens antigas entram no topo sem tirar a leitura do lugar
             maintainVisibleContentPosition={{ minIndexForVisible: 0 }}

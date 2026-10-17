@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
   SafeAreaView,
@@ -21,6 +21,10 @@ import {
 } from '@/components/lesson/LessonTabBar';
 import { colors } from '@/constants/theme';
 import { getErrorMessage } from '@/lib/api';
+import {
+  KEYBOARD_BOTTOM_OFFSET,
+  KeyboardAwareScrollView,
+} from '@/lib/keyboard';
 import type { LessonDetail } from '@/services/lesson';
 import { findLessonPosition } from '@/utils/lesson';
 
@@ -183,11 +187,11 @@ export function ClassicLesson({
         }
       />
 
-      <ScrollView
+      {/* Rola o campo focado (discussões) para cima do teclado */}
+      <KeyboardAwareScrollView
         // A barra de abas gruda no topo enquanto o conteúdo rola
         stickyHeaderIndices={[1]}
-        // Para os campos das atividades não ficarem atrás do teclado
-        automaticallyAdjustKeyboardInsets
+        bottomOffset={KEYBOARD_BOTTOM_OFFSET}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
       >
@@ -235,7 +239,7 @@ export function ClassicLesson({
             ) : null}
           </View>
         </GestureDetector>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <CourseOutlineSheet
         visible={isOutlineOpen}

@@ -4,8 +4,6 @@ import {
   ActivityIndicator,
   Alert,
   BackHandler,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   Text,
   View,
@@ -26,6 +24,7 @@ import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { KeyboardAvoidingView } from '@/lib/keyboard';
 import {
   getPreferences,
   type LearningGoal,
@@ -268,9 +267,11 @@ export function PreferencesFlow({
         }
       />
 
+      {/* O rodapé sobe junto com o teclado no passo do nome */}
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior="padding"
+        automaticOffset
       >
         {step === 'welcome' ? (
           <WelcomeStep name={name} />

@@ -1,13 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import {
-  Alert,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  View,
-} from 'react-native';
+import { Alert, FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HeaderButton, LessonHeader } from '@/components/lesson/ClassicLesson';
@@ -23,6 +16,7 @@ import { TypingIndicator } from '@/components/practice/TypingIndicator';
 import { PremiumLock } from '@/components/premium/PremiumLock';
 import { useAuth } from '@/contexts/AuthContext';
 import { type ChatMessage, usePracticeChat } from '@/hooks/usePracticeChat';
+import { KeyboardAvoidingView } from '@/lib/keyboard';
 import {
   canUsePractice,
   getRemainingLabel,
@@ -143,12 +137,17 @@ export default function PracticeChatScreen() {
         }
       />
 
+      {/* O campo de mensagem sobe junto com o teclado */}
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior="padding"
+        automaticOffset
       >
         <FlatList
           ref={listRef}
+          // A lista encolhe aos poucos quando o teclado abre: a última
+          // mensagem continua à vista
+          onLayout={() => listRef.current?.scrollToEnd({ animated: false })}
           data={messages}
           keyExtractor={(message) => message.id}
           keyboardShouldPersistTaps="handled"

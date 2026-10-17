@@ -1,17 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
-import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Modal, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LessonDiscussions } from '@/components/lesson/LessonDiscussions';
 import { colors } from '@/constants/theme';
+import {
+  KEYBOARD_BOTTOM_OFFSET,
+  KeyboardAwareScrollView,
+} from '@/lib/keyboard';
 
 interface DiscussionsSheetProps {
   visible: boolean;
@@ -35,10 +31,7 @@ export function DiscussionsSheet({
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      <KeyboardAvoidingView
-        className="flex-1 justify-end"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      <View className="flex-1 justify-end">
         <Pressable
           accessibilityLabel="Fechar as discussões"
           onPress={onClose}
@@ -63,14 +56,16 @@ export function DiscussionsSheet({
             </Pressable>
           </View>
 
-          <ScrollView
+          {/* Rola o campo do comentário para cima do teclado */}
+          <KeyboardAwareScrollView
+            bottomOffset={KEYBOARD_BOTTOM_OFFSET}
             keyboardShouldPersistTaps="handled"
             contentContainerClassName="pb-6"
           >
             <LessonDiscussions lessonId={lessonId} />
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }

@@ -17,6 +17,7 @@ import { WelcomeScreen } from '@/components/WelcomeScreen';
 import { colors } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { WelcomeProvider } from '@/contexts/WelcomeContext';
+import { KeyboardProvider } from '@/lib/keyboard';
 import { clearLastPushResponse } from '@/lib/push';
 import { hasSeenWelcome, markWelcomeSeen } from '@/lib/storage';
 
@@ -109,10 +110,20 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
-        <StatusBar style="dark" />
-        <RootNavigator fontsReady={fontsLoaded || fontError !== null} />
-      </AuthProvider>
+      {/* Acompanha o teclado para os campos não ficarem atrás dele. O app
+          desenha atrás das barras do sistema (edge-to-edge) e cuida da área
+          segura sozinho: sem as três props, o Android ganharia uma margem
+          em cima e embaixo */}
+      <KeyboardProvider
+        statusBarTranslucent
+        navigationBarTranslucent
+        preserveEdgeToEdge
+      >
+        <AuthProvider>
+          <StatusBar style="dark" />
+          <RootNavigator fontsReady={fontsLoaded || fontError !== null} />
+        </AuthProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }

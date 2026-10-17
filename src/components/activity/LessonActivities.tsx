@@ -1,14 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useMemo, useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Modal, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActivityAudioProvider } from '@/components/activity/ActivityAudio';
@@ -16,6 +8,10 @@ import { ActivityExercises } from '@/components/activity/ActivityExercises';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/lesson/EmptyState';
 import { colors } from '@/constants/theme';
+import {
+  KEYBOARD_BOTTOM_OFFSET,
+  KeyboardAwareScrollView,
+} from '@/lib/keyboard';
 import type { Activity } from '@/services/lesson';
 import { isPlayableActivity } from '@/utils/activityScreens';
 
@@ -246,9 +242,8 @@ function ActivityRunner({
       onRequestClose={() => goTo('intro')}
     >
       {/* O Modal é outra janela: a área segura vem da tela de fora */}
-      <KeyboardAvoidingView
+      <View
         className="flex-1 bg-background"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ paddingTop: insets.top + 8, paddingBottom: insets.bottom }}
       >
         <ActivityAudioProvider key={activity.id}>
@@ -281,9 +276,11 @@ function ActivityRunner({
             </View>
           </View>
 
-          <ScrollView
+          {/* Rola o campo focado das lacunas para cima do teclado */}
+          <KeyboardAwareScrollView
             // A key leva a rolagem de volta ao topo a cada atividade
             key={step}
+            bottomOffset={KEYBOARD_BOTTOM_OFFSET}
             keyboardShouldPersistTaps="handled"
             contentContainerClassName="flex-grow gap-4 px-5 pb-4 pt-4"
           >
@@ -305,9 +302,9 @@ function ActivityRunner({
                 onPress={() => goTo(next)}
               />
             )}
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </ActivityAudioProvider>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
