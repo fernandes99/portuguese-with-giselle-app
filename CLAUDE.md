@@ -83,6 +83,7 @@ Iniciativas em andamento:
 - Cores da marca ficam em `tailwind.config.js` e, para props sem `className`, em `src/constants/theme.ts`. Mantenha os dois iguais.
 - `.env` não é versionado. Variáveis `EXPO_PUBLIC_*` vão para o bundle: nada de segredos.
 - Bibliotecas com código nativo exigem novo development build.
+- Teclado: o Android roda em tela cheia (edge-to-edge) e não encolhe a tela quando o teclado abre, então o `KeyboardAvoidingView` e o `automaticallyAdjustKeyboardInsets` do React Native deixam os campos atrás dele. Telas com campo de texto usam os componentes do `react-native-keyboard-controller` importados de `src/lib/keyboard.ts` (que os liga ao `className`): `KeyboardAwareScrollView` com `bottomOffset={KEYBOARD_BOTTOM_OFFSET}` nas telas que rolam, e `KeyboardAvoidingView` com `behavior="padding"` e `automaticOffset` nas que têm o campo ou o botão fixo no pé (chats, boas-vindas). Os dois funcionam dentro de `Modal`.
 
 ## Commits
 
