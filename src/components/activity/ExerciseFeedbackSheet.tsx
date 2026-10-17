@@ -17,6 +17,9 @@ interface ExerciseFeedbackSheetProps {
   answerLabel: string;
   answer: ReactNode;
   onContinue: () => void;
+  // Chamado quando o painel termina de descer. Só funciona no iOS: o Modal do
+  // Android não avisa.
+  onDismiss?: () => void;
 }
 
 // Painel que sobe depois de "Verificar": diz se o aluno acertou e, no erro,
@@ -28,6 +31,7 @@ export function ExerciseFeedbackSheet({
   answerLabel,
   answer,
   onContinue,
+  onDismiss,
 }: ExerciseFeedbackSheetProps) {
   const insets = useSafeAreaInsets();
   const successPlayer = useAudioPlayer(successSound);
@@ -50,6 +54,7 @@ export function ExerciseFeedbackSheet({
       animationType="slide"
       statusBarTranslucent
       onRequestClose={onContinue}
+      onDismiss={onDismiss}
     >
       <View className="flex-1 justify-end">
         <View
