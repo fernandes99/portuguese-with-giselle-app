@@ -6,6 +6,7 @@ import {
   AudioButton,
   useActivityAudio,
 } from '@/components/activity/ActivityAudio';
+import { ActivityCheck } from '@/components/activity/ActivityFooter';
 import { ActivityInfoSheet } from '@/components/activity/ActivityInfoSheet';
 import { ActivityResult } from '@/components/activity/ActivityResult';
 import {
@@ -15,7 +16,6 @@ import {
 import { ExerciseFeedbackSheet } from '@/components/activity/ExerciseFeedbackSheet';
 import { ExerciseHeader } from '@/components/activity/ExerciseHeader';
 import { SentenceText } from '@/components/activity/SentenceText';
-import { Button } from '@/components/Button';
 import { colors } from '@/constants/theme';
 import type { ActivityFile, ChoiceActivity } from '@/services/lesson';
 import { isAudio, isImage } from '@/utils/choice';
@@ -241,14 +241,10 @@ export function TrueFalseActivity({
         })}
       </View>
 
-      {/* Empurra o botão para o pé da tela na aula guiada */}
-      <View className="grow" />
-
-      <Button
-        size="lg"
-        label="Verificar"
-        onPress={check}
+      {/* O "Verificar" fica no rodapé fixo da tela (ActivityFooter) */}
+      <ActivityCheck
         disabled={answer === undefined || isChecked}
+        onCheck={check}
       />
 
       {feedback ? (

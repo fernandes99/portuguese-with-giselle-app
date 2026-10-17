@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState } from 'react';
 import { Keyboard, Platform, Text, TextInput, View } from 'react-native';
 
+import { ActivityCheck } from '@/components/activity/ActivityFooter';
 import { ActivityResult } from '@/components/activity/ActivityResult';
 import { ExerciseFeedbackSheet } from '@/components/activity/ExerciseFeedbackSheet';
 import { ExerciseHeader } from '@/components/activity/ExerciseHeader';
 import { SentenceAnswer } from '@/components/activity/SentenceAnswer';
 import { SentenceText } from '@/components/activity/SentenceText';
-import { Button } from '@/components/Button';
 import type { SentenceActivity } from '@/services/lesson';
 import {
   getAnswers,
@@ -328,15 +328,9 @@ export function FillBlankActivity({
         })}
       </View>
 
-      {/* Empurra o botão para o pé da tela, logo acima do teclado */}
-      <View className="grow" />
-
-      <Button
-        size="lg"
-        label="Verificar"
-        onPress={check}
-        disabled={!isComplete || isChecked}
-      />
+      {/* O "Verificar" fica no rodapé fixo da tela (ActivityFooter), que
+      sobe junto com o teclado */}
+      <ActivityCheck disabled={!isComplete || isChecked} onCheck={check} />
 
       {feedback ? (
         <ExerciseFeedbackSheet

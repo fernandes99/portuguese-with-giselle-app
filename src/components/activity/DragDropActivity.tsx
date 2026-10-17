@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
+import { ActivityCheck } from '@/components/activity/ActivityFooter';
 import { ActivityResult } from '@/components/activity/ActivityResult';
 import { ExerciseFeedbackSheet } from '@/components/activity/ExerciseFeedbackSheet';
 import { ExerciseHeader } from '@/components/activity/ExerciseHeader';
 import { SentenceAnswer } from '@/components/activity/SentenceAnswer';
 import { SentenceText } from '@/components/activity/SentenceText';
-import { Button } from '@/components/Button';
 import type { SentenceActivity } from '@/services/lesson';
 import {
   buildDragDropExercises,
@@ -269,15 +269,8 @@ export function DragDropActivity({
         })}
       </View>
 
-      {/* Empurra o botão para o pé da tela na aula guiada */}
-      <View className="grow" />
-
-      <Button
-        size="lg"
-        label="Verificar"
-        onPress={check}
-        disabled={!isComplete || isChecked}
-      />
+      {/* O "Verificar" fica no rodapé fixo da tela (ActivityFooter) */}
+      <ActivityCheck disabled={!isComplete || isChecked} onCheck={check} />
 
       {feedback ? (
         <ExerciseFeedbackSheet

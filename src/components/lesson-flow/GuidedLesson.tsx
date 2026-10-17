@@ -1,11 +1,13 @@
 import { Stack, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert, BackHandler, View } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { Alert, BackHandler } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+import {
+  ActivityFooter,
+  ActivityFooterProvider,
+  ActivityScrollView,
+} from '@/components/activity/ActivityFooter';
 import { ActivityStep } from '@/components/lesson-flow/ActivityStep';
 import { Congratulations } from '@/components/lesson-flow/Congratulations';
 import { ContentStep } from '@/components/lesson-flow/ContentStep';
@@ -14,10 +16,6 @@ import { FlowHeader } from '@/components/lesson-flow/FlowHeader';
 import type { ToastMessage } from '@/components/lesson-flow/FlowToast';
 import { hasLessonMedia, IntroStep } from '@/components/lesson-flow/IntroStep';
 import { getErrorMessage } from '@/lib/api';
-import {
-  KEYBOARD_BOTTOM_OFFSET,
-  KeyboardAwareScrollView,
-} from '@/lib/keyboard';
 import type { LessonDetail } from '@/services/lesson';
 import { getLessonFlow } from '@/utils/lessonFlow';
 
@@ -37,7 +35,6 @@ export function GuidedLesson({
   saveActivityProgress,
 }: GuidedLessonProps) {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { lesson } = data;
 
   // Calculada uma vez: salvar o progresso de uma atividade atualiza a aula,
@@ -157,9 +154,9 @@ export function GuidedLesson({
   // O "Continuar" espera o play na introdução, quando a aula tem vídeo
   const needsVideo =
     step.kind === 'intro' && hasLessonMedia(lesson) && !hasPlayed;
-  // As atividades têm o próprio botão (Verificar, depois Continuar no
-  // painel): o rodapé some até o placar, para a tela ter um botão só. O
-  // fluxo só traz atividades com exercícios, então elas sempre chegam lá.
+  // Até o placar, a atividade usa o rodapé com o "Verificar" (sem o "Pular",
+  // que fica só no modal da aba Atividades). O fluxo só traz atividades com
+  // exercícios, então elas sempre chegam ao placar.
   const needsAnswer = step.kind === 'activity' && !isActivityFinished;
 
   return (
@@ -167,52 +164,53 @@ export function GuidedLesson({
       {screenOptions}
       <FlowHeader progress={index / steps.length} onClose={confirmExit} />
 
-      {/* Rola o campo focado das atividades para cima do teclado */}
-      <KeyboardAwareScrollView
-        // A key leva a rolagem de volta ao topo a cada etapa
-        key={index}
-        bottomOffset={KEYBOARD_BOTTOM_OFFSET}
-        keyboardShouldPersistTaps="handled"
-        contentContainerClassName="flex-grow px-5 pb-8 pt-2"
-      >
-        {step.kind === 'intro' ? (
-          <IntroStep lesson={lesson} onPlay={() => setHasPlayed(true)} />
-        ) : null}
-        {step.kind === 'content' ? <ContentStep lesson={lesson} /> : null}
-        {step.kind === 'activity' && activity ? (
-          <ActivityStep
-            activity={activity}
-            number={step.number}
-            total={step.total}
-            onProgress={(completed) => {
-              // Refazendo, um erro não tira a conclusão que a atividade já tem
-              if (completed || !isReview) {
-                saveActivityProgress(activity.id, completed);
-              }
-            }}
-            onFinishedChange={setIsActivityFinished}
-          />
-        ) : null}
-      </KeyboardAwareScrollView>
+      <ActivityFooterProvider>
+        {/* Rola o campo focado das atividades para cima do teclado e do
+      rodapé */}
+        <ActivityScrollView
+          // A key leva a rolagem de volta ao topo a cada etapa
+          key={index}
+          keyboardShouldPersistTaps="handled"
+          contentContainerClassName="flex-grow px-5 pb-8 pt-2"
+        >
+          {step.kind === 'intro' ? (
+            <IntroStep lesson={lesson} onPlay={() => setHasPlayed(true)} />
+          ) : null}
+          {step.kind === 'content' ? <ContentStep lesson={lesson} /> : null}
+          {step.kind === 'activity' && activity ? (
+            <ActivityStep
+              activity={activity}
+              number={step.number}
+              total={step.total}
+              onProgress={(completed) => {
+                // Refazendo, um erro não tira a conclusão que a atividade já tem
+                if (completed || !isReview) {
+                  saveActivityProgress(activity.id, completed);
+                }
+              }}
+              onFinishedChange={setIsActivityFinished}
+            />
+          ) : null}
+        </ActivityScrollView>
 
-      {needsAnswer ? (
-        // Sem o rodapé, a área segura de baixo fica por conta da tela
-        <View style={{ height: insets.bottom }} />
-      ) : (
-        <FlowFooter
-          onPress={handleContinue}
-          disabled={needsVideo}
-          onDisabledPress={() =>
-            setToast((current) => ({
-              text: 'Inicie o vídeo da aula para continuar.',
-              id: (current?.id ?? 0) + 1,
-            }))
-          }
-          toast={toast}
-          loading={isSaving}
-          error={error}
-        />
-      )}
+        {needsAnswer ? (
+          <ActivityFooter />
+        ) : (
+          <FlowFooter
+            onPress={handleContinue}
+            disabled={needsVideo}
+            onDisabledPress={() =>
+              setToast((current) => ({
+                text: 'Inicie o vídeo da aula para continuar.',
+                id: (current?.id ?? 0) + 1,
+              }))
+            }
+            toast={toast}
+            loading={isSaving}
+            error={error}
+          />
+        )}
+      </ActivityFooterProvider>
     </SafeAreaView>
   );
 }

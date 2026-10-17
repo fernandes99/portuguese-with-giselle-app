@@ -2,6 +2,7 @@ import { cssInterop } from 'nativewind';
 import {
   KeyboardAvoidingView,
   KeyboardAwareScrollView,
+  KeyboardStickyView,
 } from 'react-native-keyboard-controller';
 
 // Componentes de teclado do react-native-keyboard-controller. Com a tela
@@ -14,9 +15,12 @@ import {
 // - KeyboardAvoidingView com behavior="padding" e automaticOffset: telas com
 //   um campo ou botão fixo no pé (chats, rodapé da boas-vindas), que sobe
 //   junto com o teclado.
+// - KeyboardStickyView: rodapé fixo abaixo de um KeyboardAwareScrollView
+//   (rodapé das atividades), que sobe junto com o teclado. O bottomOffset da
+//   rolagem soma a altura do rodapé, para o campo focado ficar acima dele.
 //
-// O cssInterop faz o NativeWind aceitar className nos dois, como nos
-// componentes do React Native.
+// O cssInterop faz o NativeWind aceitar className nos dois primeiros, como
+// nos componentes do React Native.
 cssInterop(KeyboardAvoidingView, { className: 'style' });
 cssInterop(KeyboardAwareScrollView, {
   className: 'style',
@@ -26,7 +30,7 @@ cssInterop(KeyboardAwareScrollView, {
 // Distância entre o campo focado e o topo do teclado
 export const KEYBOARD_BOTTOM_OFFSET = 24;
 
-export { KeyboardAvoidingView, KeyboardAwareScrollView };
+export { KeyboardAvoidingView, KeyboardAwareScrollView, KeyboardStickyView };
 export {
   KeyboardProvider,
   type KeyboardAwareScrollViewRef,

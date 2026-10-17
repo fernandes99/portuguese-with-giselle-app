@@ -5,13 +5,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActivityAudioProvider } from '@/components/activity/ActivityAudio';
 import { ActivityExercises } from '@/components/activity/ActivityExercises';
+import {
+  ActivityFooter,
+  ActivityFooterProvider,
+  ActivityScrollView,
+} from '@/components/activity/ActivityFooter';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/lesson/EmptyState';
+import { FlowFooter } from '@/components/lesson-flow/FlowFooter';
 import { colors } from '@/constants/theme';
-import {
-  KEYBOARD_BOTTOM_OFFSET,
-  KeyboardAwareScrollView,
-} from '@/lib/keyboard';
 import type { Activity } from '@/services/lesson';
 import { isPlayableActivity } from '@/utils/activityScreens';
 
@@ -241,68 +243,72 @@ function ActivityRunner({
       statusBarTranslucent
       onRequestClose={() => goTo('intro')}
     >
-      {/* O Modal é outra janela: a área segura vem da tela de fora */}
+      {/* O Modal é outra janela: a área segura vem da tela de fora. A de
+      baixo fica por conta do rodapé. */}
       <View
         className="flex-1 bg-background"
-        style={{ paddingTop: insets.top + 8, paddingBottom: insets.bottom }}
+        style={{ paddingTop: insets.top + 8 }}
       >
         <ActivityAudioProvider key={activity.id}>
-          <View className="gap-2 px-5 pb-2">
-            <View className="flex-row items-center justify-between">
-              <Text className="font-poppins-semibold text-sm text-gray-900">
-                Atividade {step + 1} de {total}
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Sair das atividades"
-                onPress={() => goTo('intro')}
-                hitSlop={10}
+          <ActivityFooterProvider>
+            <View className="gap-2 px-5 pb-2">
+              <View className="flex-row items-center justify-between">
+                <Text className="font-poppins-semibold text-sm text-gray-900">
+                  Atividade {step + 1} de {total}
+                </Text>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Sair das atividades"
+                  onPress={() => goTo('intro')}
+                  hitSlop={10}
+                >
+                  <Ionicons name="close" size={22} color={colors.gray} />
+                </Pressable>
+              </View>
+
+              <View
+                accessibilityRole="progressbar"
+                accessibilityValue={{ min: 0, max: total, now: step }}
+                className="flex-row gap-1.5"
               >
-                <Ionicons name="close" size={22} color={colors.gray} />
-              </Pressable>
+                {activities.map((item, position) => (
+                  <View
+                    key={item.id}
+                    className={`h-1.5 flex-1 rounded-full ${getSegmentClassName(position, step)}`}
+                  />
+                ))}
+              </View>
             </View>
 
-            <View
-              accessibilityRole="progressbar"
-              accessibilityValue={{ min: 0, max: total, now: step }}
-              className="flex-row gap-1.5"
+            {/* Rola o campo focado das lacunas para cima do teclado e do
+          rodapé */}
+            <ActivityScrollView
+              // A key leva a rolagem de volta ao topo a cada atividade
+              key={step}
+              keyboardShouldPersistTaps="handled"
+              contentContainerClassName="flex-grow gap-4 px-5 pb-4 pt-4"
             >
-              {activities.map((item, position) => (
-                <View
-                  key={item.id}
-                  className={`h-1.5 flex-1 rounded-full ${getSegmentClassName(position, step)}`}
-                />
-              ))}
-            </View>
-          </View>
+              <ActivityExercises
+                activity={activity}
+                onProgress={handleProgress}
+                onFinishedChange={setIsCurrentFinished}
+              />
+            </ActivityScrollView>
 
-          {/* Rola o campo focado das lacunas para cima do teclado */}
-          <KeyboardAwareScrollView
-            // A key leva a rolagem de volta ao topo a cada atividade
-            key={step}
-            bottomOffset={KEYBOARD_BOTTOM_OFFSET}
-            keyboardShouldPersistTaps="handled"
-            contentContainerClassName="flex-grow gap-4 px-5 pb-4 pt-4"
-          >
-            <ActivityExercises
-              activity={activity}
-              onProgress={handleProgress}
-              onFinishedChange={setIsCurrentFinished}
-            />
-
+            {/* Respondendo: "Verificar" e "Pular atividade", que sobem com o
+          teclado. No placar: o botão que avança. */}
             {isCurrentFinished ? (
-              <Button
+              <FlowFooter
                 label={isLast ? 'Concluir' : 'Próxima atividade'}
                 onPress={() => goTo(next)}
               />
             ) : (
-              <Button
-                variant="link"
-                label={isLast ? 'Pular e concluir' : 'Pular atividade'}
-                onPress={() => goTo(next)}
+              <ActivityFooter
+                skipLabel={isLast ? 'Pular e concluir' : 'Pular atividade'}
+                onSkip={() => goTo(next)}
               />
             )}
-          </KeyboardAwareScrollView>
+          </ActivityFooterProvider>
         </ActivityAudioProvider>
       </View>
     </Modal>

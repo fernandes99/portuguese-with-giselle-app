@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
+import { ActivityCheck } from '@/components/activity/ActivityFooter';
 import { ActivityResult } from '@/components/activity/ActivityResult';
 import {
   ChoiceAlternatives,
@@ -10,7 +11,6 @@ import {
 import { ChoicePrompt } from '@/components/activity/ChoicePrompt';
 import { ExerciseFeedbackSheet } from '@/components/activity/ExerciseFeedbackSheet';
 import { ExerciseHeader } from '@/components/activity/ExerciseHeader';
-import { Button } from '@/components/Button';
 import type { ChoiceActivity } from '@/services/lesson';
 import {
   allowsMultipleAnswers,
@@ -181,14 +181,10 @@ export function MultipleChoiceActivity({
         onSelect={select}
       />
 
-      {/* Empurra o botão para o pé da tela na aula guiada */}
-      <View className="grow" />
-
-      <Button
-        size="lg"
-        label="Verificar"
-        onPress={check}
+      {/* O "Verificar" fica no rodapé fixo da tela (ActivityFooter) */}
+      <ActivityCheck
         disabled={selected.length === 0 || isChecked}
+        onCheck={check}
       />
 
       {feedback ? (
