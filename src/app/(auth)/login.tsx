@@ -80,6 +80,7 @@ export default function LoginScreen() {
       <TextField
         label="Senha"
         icon="lock-closed-outline"
+        placeholder="Digite sua senha"
         value={password}
         onChangeText={setPassword}
         secureTextEntry

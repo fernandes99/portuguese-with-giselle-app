@@ -16,6 +16,7 @@ export function NameStep({ value, onChange, onSubmit }: NameStepProps) {
     <View className="gap-2">
       <TextField
         label="Seu nome"
+        placeholder="Digite seu nome"
         value={value}
         onChangeText={onChange}
         autoCapitalize="words"

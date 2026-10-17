@@ -176,6 +176,7 @@ export default function RegisterScreen() {
       <TextField
         label="Nome"
         icon="person-outline"
+        placeholder="Seu nome"
         value={name}
         onChangeText={setName}
         autoComplete="name"
@@ -196,6 +197,7 @@ export default function RegisterScreen() {
       <TextField
         label="Senha"
         icon="lock-closed-outline"
+        placeholder="Mínimo 8 caracteres"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -207,6 +209,7 @@ export default function RegisterScreen() {
       <TextField
         label="Confirmar senha"
         icon="lock-closed-outline"
+        placeholder="Digite a senha de novo"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
