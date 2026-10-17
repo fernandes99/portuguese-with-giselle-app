@@ -16,10 +16,12 @@ import {
 } from '@/utils/choice';
 
 // selected: escolhida antes de verificar (azul, para não se confundir com o
-// verde do acerto); faded: as que não importam depois de verificar
-type AlternativeState = 'idle' | 'selected' | 'correct' | 'wrong' | 'faded';
+// verde do acerto); faded: as que não importam depois de verificar. Valem
+// também para os botões do verdadeiro ou falso.
+export type AlternativeState =
+  'idle' | 'selected' | 'correct' | 'wrong' | 'faded';
 
-const STATE_STYLES: Record<
+export const ALTERNATIVE_STYLES: Record<
   AlternativeState,
   { box: string; chip: string; letter: string; icon: string }
 > = {
@@ -55,14 +57,14 @@ const STATE_STYLES: Record<
   },
 };
 
-function getState(
-  alternative: ChoiceAlternative,
+export function getAlternativeState(
+  isCorrect: boolean,
   isSelected: boolean,
   isChecked: boolean
 ): AlternativeState {
   if (!isChecked) return isSelected ? 'selected' : 'idle';
   // Depois de verificar, a correta fica sempre em verde
-  if (alternative.isCorrect) return 'correct';
+  if (isCorrect) return 'correct';
   return isSelected ? 'wrong' : 'faded';
 }
 
@@ -104,7 +106,9 @@ export function ChoiceAlternatives({
         {exercise.alternatives.map((alternative, position) => {
           const isSelected = selected.includes(alternative.id);
           const style =
-            STATE_STYLES[getState(alternative, isSelected, isChecked)];
+            ALTERNATIVE_STYLES[
+              getAlternativeState(alternative.isCorrect, isSelected, isChecked)
+            ];
           const url = alternative.file?.url ?? '';
           const isPlaying = playingUrl === url;
 
@@ -145,8 +149,12 @@ export function ChoiceAlternatives({
     <View className="gap-3">
       {exercise.alternatives.map((alternative, position) => {
         const isSelected = selected.includes(alternative.id);
-        const state = getState(alternative, isSelected, isChecked);
-        const style = STATE_STYLES[state];
+        const state = getAlternativeState(
+          alternative.isCorrect,
+          isSelected,
+          isChecked
+        );
+        const style = ALTERNATIVE_STYLES[state];
 
         return (
           <Pressable
@@ -196,5 +204,21 @@ export function ChoiceAlternatives({
         );
       })}
     </View>
+  );
+}
+
+// Resposta certa de um exercício, para o painel de erro
+export function ChoiceAnswer({ exercise }: { exercise: ChoiceExercise }) {
+  return exercise.alternatives.map((alternative, position) =>
+    alternative.isCorrect ? (
+      <View key={alternative.id} className="flex-row items-center gap-3">
+        <Text className="flex-1 font-poppins-medium text-base text-gray-900">
+          {alternative.title.trim() || `Alternativa ${getLetter(position)}`}
+        </Text>
+        {isAudio(alternative.file) ? (
+          <AudioButton url={alternative.file.url} />
+        ) : null}
+      </View>
+    ) : null
   );
 }

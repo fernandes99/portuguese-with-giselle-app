@@ -15,7 +15,6 @@ import type { ToastMessage } from '@/components/lesson-flow/FlowToast';
 import { hasLessonMedia, IntroStep } from '@/components/lesson-flow/IntroStep';
 import { getErrorMessage } from '@/lib/api';
 import type { LessonDetail } from '@/services/lesson';
-import { getAnswerableExercises } from '@/utils/choice';
 import { getLessonFlow } from '@/utils/lessonFlow';
 
 interface GuidedLessonProps {
@@ -151,17 +150,13 @@ export function GuidedLesson({
         step.activity)
       : null;
 
-  // O "Continuar" espera o play na introdução (quando a aula tem vídeo) e o
-  // resultado nas atividades
+  // O "Continuar" espera o play na introdução, quando a aula tem vídeo
   const needsVideo =
     step.kind === 'intro' && hasLessonMedia(lesson) && !hasPlayed;
+  // As atividades têm o próprio botão (Verificar, depois Continuar no
+  // painel): o rodapé some até o placar, para a tela ter um botão só. O
+  // fluxo só traz atividades com exercícios, então elas sempre chegam lá.
   const needsAnswer = step.kind === 'activity' && !isActivityFinished;
-  // A múltipla escolha tem o próprio botão (Verificar, depois Continuar no
-  // painel): o rodapé some até o placar, para a tela ter um botão só
-  const isFooterHidden =
-    needsAnswer &&
-    activity?.type === 'multiple_choice' &&
-    getAnswerableExercises(activity.exercises).length > 0;
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
@@ -196,18 +191,16 @@ export function GuidedLesson({
         ) : null}
       </ScrollView>
 
-      {isFooterHidden ? (
+      {needsAnswer ? (
         // Sem o rodapé, a área segura de baixo fica por conta da tela
         <View style={{ height: insets.bottom }} />
       ) : (
         <FlowFooter
           onPress={handleContinue}
-          disabled={needsVideo || needsAnswer}
+          disabled={needsVideo}
           onDisabledPress={() =>
             setToast((current) => ({
-              text: needsVideo
-                ? 'Inicie o vídeo da aula para continuar.'
-                : 'Conclua a atividade para continuar.',
+              text: 'Inicie o vídeo da aula para continuar.',
               id: (current?.id ?? 0) + 1,
             }))
           }

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Modal,
@@ -12,22 +12,24 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActivityAudioProvider } from '@/components/activity/ActivityAudio';
-import {
-  ACTIVITY_TYPE_LABELS,
-  ActivityCard,
-} from '@/components/activity/ActivityCard';
-import { DragDropActivity } from '@/components/activity/DragDropActivity';
-import { FillBlankActivity } from '@/components/activity/FillBlankActivity';
-import { MultipleChoiceActivity } from '@/components/activity/MultipleChoiceActivity';
+import { ActivityExercises } from '@/components/activity/ActivityExercises';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/lesson/EmptyState';
 import { colors } from '@/constants/theme';
 import type { Activity } from '@/services/lesson';
+import { isPlayableActivity } from '@/utils/activityScreens';
 
 interface LessonActivitiesProps {
   activities: Activity[];
   onProgress: (activityId: string, completed: boolean) => void;
 }
+
+const ACTIVITY_TYPE_LABELS: Record<Activity['type'], string> = {
+  multiple_choice: 'MÚLTIPLA ESCOLHA',
+  true_or_false: 'VERDADEIRO OU FALSO',
+  fill_blank: 'PREENCHER LACUNAS',
+  drag_drop: 'ARRASTAR E SOLTAR',
+};
 
 // intro: apresentação; número: atividade em andamento; summary: fechamento
 type Step = 'intro' | 'summary' | number;
@@ -45,9 +47,14 @@ function getSegmentClassName(position: number, current: number) {
 // Aba "Atividades" da aula: uma introdução e, ao começar, um modal de tela
 // cheia com uma atividade por vez
 export function LessonActivities({
-  activities,
+  activities: allActivities,
   onProgress,
 }: LessonActivitiesProps) {
+  // Atividades sem nenhum exercício (só com o enunciado no CMS) ficam de fora
+  const activities = useMemo(
+    () => allActivities.filter(isPlayableActivity),
+    [allActivities]
+  );
   const [step, setStep] = useState<Step>('intro');
   // Última atividade aberta: o modal continua mostrando ela enquanto desce
   const [runnerStep, setRunnerStep] = useState(0);
@@ -280,38 +287,11 @@ function ActivityRunner({
             keyboardShouldPersistTaps="handled"
             contentContainerClassName="flex-grow gap-4 px-5 pb-4 pt-4"
           >
-            {/* A múltipla escolha mostra um exercício por tela, sem o cartão */}
-            {activity.type === 'multiple_choice' ? (
-              <MultipleChoiceActivity
-                activity={activity}
-                onProgress={handleProgress}
-                onFinishedChange={setIsCurrentFinished}
-              />
-            ) : (
-              <ActivityCard activity={activity} number={step + 1}>
-                {activity.type === 'fill_blank' ? (
-                  <FillBlankActivity
-                    activity={activity}
-                    onProgress={handleProgress}
-                    onFinishedChange={setIsCurrentFinished}
-                  />
-                ) : activity.type === 'drag_drop' ? (
-                  <DragDropActivity
-                    activity={activity}
-                    onProgress={handleProgress}
-                    onFinishedChange={setIsCurrentFinished}
-                  />
-                ) : (
-                  // Verdadeiro ou falso ainda não foi portado para o app
-                  <View className="rounded-xl bg-gray-50 p-4">
-                    <Text className="text-center font-poppins text-sm text-gray-600">
-                      Este tipo de atividade ainda não está disponível no app.
-                      Por enquanto, faça pelo site.
-                    </Text>
-                  </View>
-                )}
-              </ActivityCard>
-            )}
+            <ActivityExercises
+              activity={activity}
+              onProgress={handleProgress}
+              onFinishedChange={setIsCurrentFinished}
+            />
 
             {isCurrentFinished ? (
               <Button

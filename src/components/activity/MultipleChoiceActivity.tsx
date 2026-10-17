@@ -1,19 +1,16 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
-import { ActivityInfoSheet } from '@/components/activity/ActivityInfoSheet';
 import { ActivityResult } from '@/components/activity/ActivityResult';
-import { ChoiceAlternatives } from '@/components/activity/ChoiceAlternatives';
 import {
-  type ChoiceFeedback,
-  ChoiceFeedbackSheet,
-} from '@/components/activity/ChoiceFeedbackSheet';
+  ChoiceAlternatives,
+  ChoiceAnswer,
+} from '@/components/activity/ChoiceAlternatives';
 import { ChoicePrompt } from '@/components/activity/ChoicePrompt';
+import { ExerciseFeedbackSheet } from '@/components/activity/ExerciseFeedbackSheet';
+import { ExerciseHeader } from '@/components/activity/ExerciseHeader';
 import { Button } from '@/components/Button';
-import { ProgressBar } from '@/components/ProgressBar';
-import { colors } from '@/constants/theme';
 import type { ChoiceActivity } from '@/services/lesson';
 import {
   allowsMultipleAnswers,
@@ -23,6 +20,12 @@ import {
   isAnsweredCorrectly,
   isAudio,
 } from '@/utils/choice';
+
+interface ChoiceFeedback {
+  exercise: ChoiceExercise;
+  isCorrect: boolean;
+  isLast: boolean;
+}
 
 interface MultipleChoiceActivityProps {
   activity: ChoiceActivity;
@@ -51,7 +54,6 @@ export function MultipleChoiceActivity({
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<ChoiceFeedback | null>(null);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const hasStarted = useRef(false);
   // Exercício cujo áudio já tocou sozinho; volta a null ao recomeçar
@@ -102,8 +104,6 @@ export function MultipleChoiceActivity({
   const selected = selections[exercise.id] ?? [];
   const isChecked = checkedIds.includes(exercise.id);
   const isLast = index === total - 1;
-  const hasInfo = Boolean(activity.title.trim() || activity.content?.trim());
-  const answeredCount = index + (isChecked ? 1 : 0);
 
   function select(alternativeId: string) {
     if (!exercise || isChecked) {
@@ -158,32 +158,13 @@ export function MultipleChoiceActivity({
 
   return (
     <View className="grow gap-6">
-      <View className="flex-row items-center gap-3">
-        <View className="flex-1">
-          <ProgressBar percentage={Math.round((answeredCount / total) * 100)} />
-        </View>
-        <Text className="font-poppins-medium text-xs text-gray-500">
-          {index + 1}/{total}
-        </Text>
-        {hasInfo ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Ver as instruções da atividade"
-            onPress={() => setIsInfoOpen(true)}
-            hitSlop={8}
-            className="flex-row items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1.5 active:bg-gray-50"
-          >
-            <Ionicons
-              name="information-circle-outline"
-              size={16}
-              color={colors.gray}
-            />
-            <Text className="font-poppins-medium text-xs text-gray-600">
-              Instruções
-            </Text>
-          </Pressable>
-        ) : null}
-      </View>
+      <ExerciseHeader
+        index={index}
+        total={total}
+        isChecked={isChecked}
+        title={activity.title}
+        content={activity.content}
+      />
 
       <ChoicePrompt
         exercise={exercise}
@@ -210,18 +191,20 @@ export function MultipleChoiceActivity({
         disabled={selected.length === 0 || isChecked}
       />
 
-      <ChoiceFeedbackSheet
-        visible={isFeedbackOpen}
-        feedback={feedback}
-        onContinue={goNext}
-      />
-
-      <ActivityInfoSheet
-        visible={isInfoOpen}
-        title={activity.title}
-        content={activity.content}
-        onClose={() => setIsInfoOpen(false)}
-      />
+      {feedback ? (
+        <ExerciseFeedbackSheet
+          visible={isFeedbackOpen}
+          isCorrect={feedback.isCorrect}
+          isLast={feedback.isLast}
+          answerLabel={
+            allowsMultipleAnswers(feedback.exercise)
+              ? 'Respostas certas:'
+              : 'Resposta certa:'
+          }
+          answer={<ChoiceAnswer exercise={feedback.exercise} />}
+          onContinue={goNext}
+        />
+      ) : null}
     </View>
   );
 }

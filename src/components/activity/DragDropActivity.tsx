@@ -1,12 +1,19 @@
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { ActivityResult } from '@/components/activity/ActivityResult';
+import { ExerciseFeedbackSheet } from '@/components/activity/ExerciseFeedbackSheet';
+import { ExerciseHeader } from '@/components/activity/ExerciseHeader';
+import { SentenceAnswer } from '@/components/activity/SentenceAnswer';
 import { SentenceText } from '@/components/activity/SentenceText';
 import { Button } from '@/components/Button';
-import { ProgressBar } from '@/components/ProgressBar';
 import type { SentenceActivity } from '@/services/lesson';
-import { getAnswers, isSameAnswer, parseSentence } from '@/utils/sentence';
+import {
+  buildDragDropExercises,
+  type DragDropExercise,
+  type Slots,
+} from '@/utils/dragDrop';
+import { isSameAnswer } from '@/utils/sentence';
 
 interface DragDropActivityProps {
   activity: SentenceActivity;
@@ -16,80 +23,49 @@ interface DragDropActivityProps {
   onFinishedChange: (finished: boolean) => void;
 }
 
-type Slots = (string | null)[];
-
-function shuffle<T>(items: T[]) {
-  const shuffled = [...items];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
+interface SentenceFeedback {
+  exercise: DragDropExercise;
+  isCorrect: boolean;
+  isLast: boolean;
 }
 
-// Verde e vermelho só aparecem depois de verificar; enquanto o aluno
-// preenche, o destaque é em cinza escuro para não parecer um acerto.
-function getSlotClassName(
-  value: string | null,
-  isActive: boolean,
-  isChecked: boolean,
-  isCorrect: boolean
-) {
-  if (isChecked) {
-    return isCorrect
-      ? 'border-green-600 bg-green-50'
-      : 'border-red-500 bg-red-50';
-  }
-  if (value) {
-    return 'border-gray-900 bg-white';
-  }
-  return isActive
-    ? 'border-dashed border-gray-900 bg-gray-100'
+// Frases mais longas que isso aparecem em letra menor, para caber na tela
+const LONG_SENTENCE_LENGTH = 160;
+
+// result: null antes de verificar; depois, se a lacuna está certa
+function getSlotClassName(isFilled: boolean, result: boolean | null) {
+  if (result === true) return 'border-green-600 bg-green-50';
+  if (result === false) return 'border-red-500 bg-red-50';
+  return isFilled
+    ? 'border-gray-300 bg-white'
     : 'border-dashed border-gray-300 bg-gray-50';
 }
 
-function getSlotTextClassName(isChecked: boolean, isCorrect: boolean) {
-  if (!isChecked) {
-    return 'text-gray-900';
-  }
-  return isCorrect ? 'text-green-700' : 'text-red-700';
+function getSlotTextClassName(result: boolean | null) {
+  if (result === true) return 'text-green-700';
+  if (result === false) return 'text-red-700';
+  return 'text-gray-900';
 }
 
-// Versão para toque do "arrastar e soltar" do site: uma frase por vez, e o
-// aluno toca na opção para preencher a lacuna destacada.
+// Uma frase por tela, no estilo dos apps de idioma: o aluno toca nas opções
+// do banco para preencher as lacunas, verifica e vê o painel de acerto ou
+// erro. No fim mostra o placar, contado por lacuna.
 export function DragDropActivity({
   activity,
   onProgress,
   onFinishedChange,
 }: DragDropActivityProps) {
-  const exercises = useMemo(
-    () =>
-      activity.exercises
-        .map((exercise) => {
-          const parts = parseSentence(exercise.sentence);
-          return { id: exercise.id, parts, answers: getAnswers(parts) };
-        })
-        .filter((exercise) => exercise.answers.length > 0),
-    [activity.exercises]
+  // Montado uma vez: o banco de cada frase não pode ser embaralhado de novo
+  // a cada atualização da aula
+  const [exercises] = useState(() =>
+    buildDragDropExercises(activity.exercises)
   );
-
-  // Como no site, as opções são as respostas de todas as frases, sem
-  // repetição e embaralhadas. Uma mesma opção pode ser usada várias vezes.
-  const [options] = useState(() => {
-    const unique = new Map<string, string>();
-    for (const answer of exercises.flatMap((exercise) => exercise.answers)) {
-      const key = answer.toLowerCase();
-      if (!unique.has(key)) {
-        unique.set(key, answer);
-      }
-    }
-    return shuffle([...unique.values()]);
-  });
 
   const [index, setIndex] = useState(0);
   const [filled, setFilled] = useState<Record<string, Slots>>({});
-  const [activeSlot, setActiveSlot] = useState(0);
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
+  const [feedback, setFeedback] = useState<SentenceFeedback | null>(null);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const hasStarted = useRef(false);
 
@@ -98,24 +74,35 @@ export function DragDropActivity({
     return null;
   }
 
+  function getSlots(item: DragDropExercise): Slots {
+    return filled[item.id] ?? item.answers.map(() => null);
+  }
+
+  function getChipText(item: DragDropExercise, chipId: string | null) {
+    return item.bank.find((chip) => chip.id === chipId)?.text ?? null;
+  }
+
+  function countCorrect(item: DragDropExercise) {
+    const itemSlots = getSlots(item);
+    return item.answers.filter((answer, slot) =>
+      isSameAnswer(getChipText(item, itemSlots[slot]), answer)
+    ).length;
+  }
+
   const totalBlanks = exercises.reduce(
-    (acc, exercise) => acc + exercise.answers.length,
+    (acc, item) => acc + item.answers.length,
     0
   );
   const correctBlanks = exercises.reduce(
-    (acc, exercise) =>
-      acc +
-      exercise.answers.filter((answer, slot) =>
-        isSameAnswer(filled[exercise.id]?.[slot], answer)
-      ).length,
+    (acc, item) => acc + countCorrect(item),
     0
   );
 
   function reset() {
     setIndex(0);
     setFilled({});
-    setActiveSlot(0);
     setCheckedIds([]);
+    setFeedback(null);
     setIsFinished(false);
     onFinishedChange(false);
   }
@@ -132,20 +119,26 @@ export function DragDropActivity({
   }
 
   const exercise = exercises[index];
-  const slots: Slots = filled[exercise.id] ?? exercise.answers.map(() => null);
+  const slots = getSlots(exercise);
+  const usedChipIds = new Set(slots);
   const isChecked = checkedIds.includes(exercise.id);
   const isLast = index === total - 1;
   const isComplete = slots.every((slot) => slot !== null);
-  const wrongAnswers = exercise.answers.filter(
-    (answer, slot) => !isSameAnswer(slots[slot], answer)
+  const sentenceLength = exercise.parts.reduce(
+    (acc, part) =>
+      acc + (part.type === 'text' ? part.text.length : part.answer.length),
+    0
   );
+  const sentenceSize = sentenceLength > LONG_SENTENCE_LENGTH ? 'base' : 'md';
 
   function setSlots(next: Slots) {
     setFilled((previous) => ({ ...previous, [exercise.id]: next }));
   }
 
-  function handleOptionPress(option: string) {
-    if (isChecked) {
+  // A opção vai para a primeira lacuna vazia
+  function placeChip(chipId: string) {
+    const slot = slots.indexOf(null);
+    if (isChecked || slot === -1) {
       return;
     }
 
@@ -155,35 +148,36 @@ export function DragDropActivity({
     }
 
     const next = [...slots];
-    next[activeSlot] = option;
+    next[slot] = chipId;
     setSlots(next);
-
-    // Passa para a próxima lacuna vazia, começando pela seguinte
-    const order = next.map((_, slot) => (activeSlot + 1 + slot) % next.length);
-    const nextEmpty = order.find((slot) => next[slot] === null);
-    if (nextEmpty !== undefined) {
-      setActiveSlot(nextEmpty);
-    }
   }
 
-  // Tocar em uma lacuna a seleciona; se já estava preenchida, esvazia
-  function handleSlotPress(slot: number) {
-    if (isChecked) {
+  // Tocar numa lacuna preenchida devolve a opção ao banco
+  function clearSlot(slot: number) {
+    if (isChecked || slots[slot] === null) {
       return;
     }
 
-    setActiveSlot(slot);
-    if (slots[slot] !== null) {
-      const next = [...slots];
-      next[slot] = null;
-      setSlots(next);
-    }
+    const next = [...slots];
+    next[slot] = null;
+    setSlots(next);
+  }
+
+  function check() {
+    setCheckedIds((previous) => [...previous, exercise.id]);
+    setFeedback({
+      exercise,
+      isCorrect: countCorrect(exercise) === exercise.answers.length,
+      isLast,
+    });
+    setIsFeedbackOpen(true);
   }
 
   function goNext() {
+    setIsFeedbackOpen(false);
+
     if (!isLast) {
       setIndex(index + 1);
-      setActiveSlot(0);
       return;
     }
 
@@ -193,25 +187,37 @@ export function DragDropActivity({
   }
 
   return (
-    <View className="gap-4">
-      {total > 1 ? (
-        <View className="gap-2">
-          <Text className="font-poppins-medium text-xs text-gray-500">
-            Frase {index + 1} de {total}
-          </Text>
-          <ProgressBar percentage={Math.round((index / total) * 100)} />
-        </View>
-      ) : null}
+    <View className="grow gap-6">
+      <ExerciseHeader
+        index={index}
+        total={total}
+        isChecked={isChecked}
+        title={activity.title}
+        content={activity.content}
+      />
 
-      <View className="flex-row flex-wrap items-center gap-x-1.5 gap-y-2 rounded-xl bg-gray-50 p-3">
+      <Text className="text-center font-poppins-bold text-xl text-gray-900">
+        {exercise.answers.length > 1
+          ? 'Complete as lacunas'
+          : 'Complete a frase'}
+      </Text>
+
+      {/* Palavra por palavra, para a frase quebrar de linha em volta das lacunas */}
+      <View className="flex-row flex-wrap items-center gap-x-2 gap-y-3 rounded-2xl border border-gray-100 bg-white p-4">
         {exercise.parts.map((part, partIndex) => {
           if (part.type === 'text') {
-            // biome-ignore lint/suspicious/noArrayIndexKey: as partes de uma frase não mudam de ordem
-            return <SentenceText key={partIndex} text={part.text} />;
+            return (
+              <SentenceText
+                // biome-ignore lint/suspicious/noArrayIndexKey: as partes de uma frase não mudam de ordem
+                key={partIndex}
+                text={part.text}
+                size={sentenceSize}
+              />
+            );
           }
 
-          const value = slots[part.index];
-          const isCorrect = isSameAnswer(value, part.answer);
+          const value = getChipText(exercise, slots[part.index]);
+          const result = isChecked ? isSameAnswer(value, part.answer) : null;
 
           return (
             <Pressable
@@ -219,16 +225,16 @@ export function DragDropActivity({
               accessibilityRole="button"
               accessibilityLabel={
                 value
-                  ? `Lacuna ${part.index + 1}: ${value}. Toque para esvaziar`
+                  ? `Lacuna ${part.index + 1}: ${value}. Toque para devolver ao banco`
                   : `Lacuna ${part.index + 1}, vazia`
               }
-              onPress={() => handleSlotPress(part.index)}
-              disabled={isChecked}
-              className={`min-h-9 min-w-16 max-w-full items-center justify-center rounded-lg border px-2.5 py-1.5 ${getSlotClassName(value, part.index === activeSlot, isChecked, isCorrect)}`}
+              onPress={() => clearSlot(part.index)}
+              disabled={isChecked || !value}
+              className={`min-h-11 min-w-20 max-w-full items-center justify-center rounded-xl border-2 px-3 py-1.5 ${getSlotClassName(value !== null, result)}`}
             >
               {value ? (
                 <Text
-                  className={`text-center font-poppins-medium text-sm ${getSlotTextClassName(isChecked, isCorrect)}`}
+                  className={`text-center font-poppins-medium text-base ${getSlotTextClassName(result)}`}
                 >
                   {value}
                 </Text>
@@ -238,58 +244,51 @@ export function DragDropActivity({
         })}
       </View>
 
-      {isChecked ? (
-        <View className="gap-1">
-          <Text
-            className={`font-poppins-semibold text-sm ${wrongAnswers.length === 0 ? 'text-green-700' : 'text-red-700'}`}
-          >
-            {wrongAnswers.length === 0
-              ? 'Resposta correta!'
-              : 'Resposta incorreta.'}
-          </Text>
-          {wrongAnswers.length > 0 ? (
-            <Text className="font-poppins text-sm text-gray-600">
-              {exercise.answers.length === 1 ? 'Correto: ' : 'Na ordem: '}
-              <Text className="font-poppins-semibold text-green-700">
-                {exercise.answers.join(' · ')}
-              </Text>
-            </Text>
-          ) : null}
-        </View>
-      ) : (
-        <View className="gap-2">
-          <Text className="font-poppins text-xs text-gray-500">
-            Toque em uma opção para preencher a lacuna destacada.
-          </Text>
-          <View className="flex-row flex-wrap gap-2">
-            {options.map((option) => (
-              <Pressable
-                key={option}
-                accessibilityRole="button"
-                onPress={() => handleOptionPress(option)}
-                className="max-w-full rounded-full border border-gray-200 bg-white px-3.5 py-2 active:border-gray-900 active:bg-gray-100"
-              >
-                <Text className="font-poppins-medium text-sm text-gray-900">
-                  {option}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-      )}
+      <View className="flex-row flex-wrap justify-center gap-2.5">
+        {exercise.bank.map((chip) => {
+          const isUsed = !exercise.reusesChips && usedChipIds.has(chip.id);
 
-      {isChecked ? (
-        <Button
-          label={isLast ? 'Ver resultado' : 'Próxima frase'}
-          onPress={goNext}
+          return (
+            <Pressable
+              key={chip.id}
+              accessibilityRole="button"
+              accessibilityLabel={chip.text}
+              accessibilityState={{ disabled: isUsed || isChecked }}
+              disabled={isUsed || isChecked}
+              onPress={() => placeChip(chip.id)}
+              // A opção usada deixa o espaço marcado no banco, como no Duolingo
+              className={`max-w-full rounded-xl border-2 border-b-4 px-4 py-2.5 ${isUsed ? 'border-gray-200 bg-gray-200' : 'border-gray-200 bg-white active:bg-gray-50'}`}
+            >
+              <Text
+                className={`text-center font-poppins-medium text-base ${isUsed ? 'text-gray-200' : 'text-gray-900'}`}
+              >
+                {chip.text}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      {/* Empurra o botão para o pé da tela na aula guiada */}
+      <View className="grow" />
+
+      <Button
+        size="lg"
+        label="Verificar"
+        onPress={check}
+        disabled={!isComplete || isChecked}
+      />
+
+      {feedback ? (
+        <ExerciseFeedbackSheet
+          visible={isFeedbackOpen}
+          isCorrect={feedback.isCorrect}
+          isLast={feedback.isLast}
+          answerLabel="Resposta certa:"
+          answer={<SentenceAnswer parts={feedback.exercise.parts} />}
+          onContinue={goNext}
         />
-      ) : (
-        <Button
-          label="Verificar resposta"
-          onPress={() => setCheckedIds([...checkedIds, exercise.id])}
-          disabled={!isComplete}
-        />
-      )}
+      ) : null}
     </View>
   );
 }

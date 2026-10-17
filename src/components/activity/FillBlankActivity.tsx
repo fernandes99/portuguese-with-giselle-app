@@ -1,12 +1,20 @@
 import { useMemo, useRef, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Keyboard, Text, TextInput, View } from 'react-native';
 
 import { ActivityResult } from '@/components/activity/ActivityResult';
+import { ExerciseFeedbackSheet } from '@/components/activity/ExerciseFeedbackSheet';
+import { ExerciseHeader } from '@/components/activity/ExerciseHeader';
+import { SentenceAnswer } from '@/components/activity/SentenceAnswer';
 import { SentenceText } from '@/components/activity/SentenceText';
 import { Button } from '@/components/Button';
 import { colors } from '@/constants/theme';
 import type { SentenceActivity } from '@/services/lesson';
-import { getAnswers, isSameAnswer, parseSentence } from '@/utils/sentence';
+import {
+  getAnswers,
+  isSameAnswer,
+  parseSentence,
+  type SentencePart,
+} from '@/utils/sentence';
 
 interface FillBlankActivityProps {
   activity: SentenceActivity;
@@ -16,17 +24,20 @@ interface FillBlankActivityProps {
   onFinishedChange: (finished: boolean) => void;
 }
 
-// editing: digitando; checked: corrigido; revealed: mostrando as respostas
-type Status = 'editing' | 'checked' | 'revealed';
-
-function getInputClassName(status: Status, isCorrect: boolean) {
-  if (status === 'editing') {
-    return 'border-gray-300 bg-gray-50 text-gray-900 focus:border-green-600';
-  }
-  return isCorrect
-    ? 'border-green-600 bg-green-50 text-green-700'
-    : 'border-red-500 bg-red-50 text-red-700';
+interface FillBlankExercise {
+  id: string;
+  parts: SentencePart[];
+  answers: string[];
 }
+
+interface SentenceFeedback {
+  exercise: FillBlankExercise;
+  isCorrect: boolean;
+  isLast: boolean;
+}
+
+// Frases mais longas que isso aparecem em letra menor, para caber na tela
+const LONG_SENTENCE_LENGTH = 160;
 
 const INPUT_MIN_WIDTH = 96;
 const INPUT_PADDING = 32;
@@ -39,7 +50,16 @@ function getInputWidth(value: string) {
   );
 }
 
-// Todas as frases em lista, com um campo de texto no lugar de cada lacuna
+// result: null antes de verificar; depois, se a lacuna está certa
+function getInputClassName(result: boolean | null) {
+  if (result === true) return 'border-green-600 bg-green-50 text-green-700';
+  if (result === false) return 'border-red-500 bg-red-50 text-red-700';
+  return 'border-gray-300 bg-gray-50 text-gray-900 focus:border-blue-500';
+}
+
+// Uma frase por tela, no estilo dos apps de idioma: o aluno digita a palavra
+// que falta, verifica e vê o painel de acerto ou erro. No fim mostra o
+// placar, contado por lacuna.
 export function FillBlankActivity({
   activity,
   onProgress,
@@ -47,197 +67,216 @@ export function FillBlankActivity({
 }: FillBlankActivityProps) {
   const exercises = useMemo(
     () =>
-      activity.exercises.map((exercise) => {
-        const parts = parseSentence(exercise.sentence);
-        return { id: exercise.id, parts, answers: getAnswers(parts) };
-      }),
+      activity.exercises
+        .map((exercise) => {
+          const parts = parseSentence(exercise.sentence);
+          return { id: exercise.id, parts, answers: getAnswers(parts) };
+        })
+        .filter((exercise) => exercise.answers.length > 0),
     [activity.exercises]
   );
 
-  const [userAnswers, setUserAnswers] = useState<Record<string, string[]>>({});
-  const [status, setStatus] = useState<Status>('editing');
+  const [index, setIndex] = useState(0);
+  const [typed, setTyped] = useState<Record<string, string[]>>({});
+  const [checkedIds, setCheckedIds] = useState<string[]>([]);
+  const [feedback, setFeedback] = useState<SentenceFeedback | null>(null);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const hasStarted = useRef(false);
+  // Campos da frase atual, na ordem, para o Enter pular para o próximo
+  const inputs = useRef<(TextInput | null)[]>([]);
 
-  // Campos na ordem em que aparecem, para o Enter pular para o próximo
-  const inputs = useRef<Record<string, TextInput | null>>({});
-  const blankKeys = useMemo(
-    () =>
-      exercises.flatMap((exercise) =>
-        exercise.answers.map((_, index) => `${exercise.id}:${index}`)
-      ),
-    [exercises]
-  );
-
-  const totalBlanks = exercises.reduce(
-    (acc, exercise) => acc + exercise.answers.length,
-    0
-  );
-  if (totalBlanks === 0) {
+  const total = exercises.length;
+  if (total === 0) {
     return null;
   }
 
-  const correctCount = exercises.reduce(
-    (acc, exercise) =>
-      acc +
-      exercise.answers.filter((answer, index) =>
-        isSameAnswer(userAnswers[exercise.id]?.[index], answer)
-      ).length,
+  function getValues(item: FillBlankExercise) {
+    return item.answers.map((_, slot) => typed[item.id]?.[slot] ?? '');
+  }
+
+  function countCorrect(item: FillBlankExercise) {
+    const values = getValues(item);
+    return item.answers.filter((answer, slot) =>
+      isSameAnswer(values[slot], answer)
+    ).length;
+  }
+
+  const totalBlanks = exercises.reduce(
+    (acc, item) => acc + item.answers.length,
     0
   );
-  const hasAnyAnswer = Object.values(userAnswers).some((answers) =>
-    answers.some((answer) => answer?.trim())
+  const correctBlanks = exercises.reduce(
+    (acc, item) => acc + countCorrect(item),
+    0
   );
 
-  // Conferiu e acertou todas (revelar as respostas não conta)
-  const isAllCorrect = status === 'checked' && correctCount === totalBlanks;
+  function reset() {
+    setIndex(0);
+    setTyped({});
+    setCheckedIds([]);
+    setFeedback(null);
+    setIsFinished(false);
+    onFinishedChange(false);
+  }
 
-  function handleChange(exerciseId: string, index: number, value: string) {
+  if (isFinished) {
+    return (
+      <ActivityResult
+        correct={correctBlanks}
+        total={totalBlanks}
+        unit={totalBlanks === 1 ? 'lacuna' : 'lacunas'}
+        onRetry={reset}
+      />
+    );
+  }
+
+  const exercise = exercises[index];
+  const values = getValues(exercise);
+  const isChecked = checkedIds.includes(exercise.id);
+  const isLast = index === total - 1;
+  const isComplete = values.every((value) => value.trim());
+  const sentenceLength = exercise.parts.reduce(
+    (acc, part) =>
+      acc + (part.type === 'text' ? part.text.length : part.answer.length),
+    0
+  );
+  const sentenceSize = sentenceLength > LONG_SENTENCE_LENGTH ? 'base' : 'md';
+
+  function type(slot: number, value: string) {
     if (!hasStarted.current) {
       hasStarted.current = true;
       onProgress(false);
     }
 
-    setUserAnswers((previous) => {
-      const next = [...(previous[exerciseId] ?? [])];
-      next[index] = value;
-      return { ...previous, [exerciseId]: next };
+    setTyped((previous) => {
+      const next = [...getValues(exercise)];
+      next[slot] = value;
+      return { ...previous, [exercise.id]: next };
     });
   }
 
-  function handleCheck() {
-    setStatus('checked');
-    onFinishedChange(true);
-    onProgress(correctCount === totalBlanks);
-  }
-
-  // Depois de corrigir, mantém os acertos e limpa só o que estava errado.
-  // Com tudo certo ou com as respostas reveladas, recomeça do zero.
-  function handleRetry() {
-    setStatus('editing');
-    onFinishedChange(false);
-
-    if (status === 'revealed' || correctCount === totalBlanks) {
-      setUserAnswers({});
+  function check() {
+    if (isChecked || !isComplete) {
       return;
     }
 
-    setUserAnswers((previous) =>
-      Object.fromEntries(
-        exercises.map((exercise) => [
-          exercise.id,
-          exercise.answers.map((answer, index) =>
-            isSameAnswer(previous[exercise.id]?.[index], answer)
-              ? previous[exercise.id][index]
-              : ''
-          ),
-        ])
-      )
-    );
+    // O teclado sai para o painel aparecer inteiro
+    Keyboard.dismiss();
+    setCheckedIds((previous) => [...previous, exercise.id]);
+    setFeedback({
+      exercise,
+      isCorrect: countCorrect(exercise) === exercise.answers.length,
+      isLast,
+    });
+    setIsFeedbackOpen(true);
   }
 
-  function handleReveal() {
-    setUserAnswers(
-      Object.fromEntries(
-        exercises.map((exercise) => [exercise.id, exercise.answers])
-      )
-    );
-    setStatus('revealed');
+  function goNext() {
+    setIsFeedbackOpen(false);
+
+    if (!isLast) {
+      setIndex(index + 1);
+      return;
+    }
+
+    setIsFinished(true);
+    onFinishedChange(true);
+    onProgress(correctBlanks === totalBlanks);
   }
 
   return (
-    <View className="gap-4">
-      <View className="gap-3 rounded-xl bg-gray-50 p-3">
-        {exercises.map((exercise, position) => (
-          <View key={exercise.id} className="flex-row gap-3">
-            <Text className="w-6 pt-2 font-poppins-semibold text-sm text-gray-500">
-              {position + 1}.
-            </Text>
+    <View className="grow gap-6">
+      <ExerciseHeader
+        index={index}
+        total={total}
+        isChecked={isChecked}
+        title={activity.title}
+        content={activity.content}
+      />
 
-            {/* Palavra por palavra, para a frase quebrar de linha em volta do campo */}
-            <View className="flex-1 flex-row flex-wrap items-center gap-x-1.5 gap-y-2">
-              {exercise.parts.map((part, partIndex) => {
-                if (part.type === 'text') {
-                  // biome-ignore lint/suspicious/noArrayIndexKey: as partes de uma frase não mudam de ordem
-                  return <SentenceText key={partIndex} text={part.text} />;
+      <Text className="text-center font-poppins-bold text-xl text-gray-900">
+        {exercise.answers.length > 1
+          ? 'Complete as lacunas'
+          : 'Complete a frase'}
+      </Text>
+
+      {/* Palavra por palavra, para a frase quebrar de linha em volta dos campos */}
+      <View className="flex-row flex-wrap items-center gap-x-2 gap-y-3 rounded-2xl border border-gray-100 bg-white p-4">
+        {exercise.parts.map((part, partIndex) => {
+          if (part.type === 'text') {
+            return (
+              <SentenceText
+                // biome-ignore lint/suspicious/noArrayIndexKey: as partes de uma frase não mudam de ordem
+                key={partIndex}
+                text={part.text}
+                size={sentenceSize}
+              />
+            );
+          }
+
+          const value = values[part.index];
+          const hasNext = part.index < exercise.answers.length - 1;
+          const result = isChecked ? isSameAnswer(value, part.answer) : null;
+
+          return (
+            <TextInput
+              // A key com a frase recria os campos a cada tela, e o autoFocus
+              // abre o teclado no primeiro
+              key={`${exercise.id}:${part.index}`}
+              ref={(input) => {
+                inputs.current[part.index] = input;
+              }}
+              autoFocus={part.index === 0}
+              accessibilityLabel={`Lacuna ${part.index + 1}`}
+              value={value}
+              onChangeText={(text) => type(part.index, text)}
+              editable={!isChecked}
+              autoCapitalize="none"
+              autoCorrect={false}
+              spellCheck={false}
+              // Enter pula para a próxima lacuna; na última, verifica
+              returnKeyType={hasNext ? 'next' : 'done'}
+              submitBehavior={hasNext ? 'submit' : 'blurAndSubmit'}
+              onSubmitEditing={() => {
+                if (hasNext) {
+                  inputs.current[part.index + 1]?.focus();
+                  return;
                 }
-
-                const value = userAnswers[exercise.id]?.[part.index] ?? '';
-                const blankKey = `${exercise.id}:${part.index}`;
-                const nextKey = blankKeys[blankKeys.indexOf(blankKey) + 1];
-
-                return (
-                  <TextInput
-                    key={`blank-${part.index}`}
-                    accessibilityLabel={`Lacuna ${part.index + 1} da frase ${position + 1}`}
-                    value={value}
-                    onChangeText={(text) =>
-                      handleChange(exercise.id, part.index, text)
-                    }
-                    editable={status === 'editing'}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    spellCheck={false}
-                    ref={(input) => {
-                      inputs.current[blankKey] = input;
-                    }}
-                    // No último campo o Enter só fecha o teclado
-                    returnKeyType={nextKey ? 'next' : 'done'}
-                    submitBehavior={nextKey ? 'submit' : 'blurAndSubmit'}
-                    onSubmitEditing={() => {
-                      if (nextKey) {
-                        inputs.current[nextKey]?.focus();
-                      }
-                    }}
-                    placeholderTextColor={colors.placeholder}
-                    textAlignVertical="center"
-                    // A largura acompanha o texto digitado; o campo não cresce
-                    // sozinho no Android e cortava respostas longas.
-                    style={{ width: getInputWidth(value), maxWidth: '100%' }}
-                    // text-[16px] em vez de text-base: a altura de linha fixa
-                    // cortava a Poppins, que é alta, dentro do campo.
-                    className={`h-11 rounded-lg border px-3 py-0 text-center font-poppins-medium text-[16px] ${getInputClassName(status, isSameAnswer(value, part.answer))}`}
-                  />
-                );
-              })}
-            </View>
-          </View>
-        ))}
+                check();
+              }}
+              placeholderTextColor={colors.placeholder}
+              textAlignVertical="center"
+              // A largura acompanha o texto digitado; o campo não cresce
+              // sozinho no Android e cortava respostas longas.
+              style={{ width: getInputWidth(value), maxWidth: '100%' }}
+              // text-[16px] em vez de text-base: a altura de linha fixa
+              // cortava a Poppins, que é alta, dentro do campo.
+              className={`h-11 rounded-xl border-2 px-3 py-0 text-center font-poppins-medium text-[16px] ${getInputClassName(result)}`}
+            />
+          );
+        })}
       </View>
 
-      {isAllCorrect ? (
-        <ActivityResult
-          correct={correctCount}
-          total={totalBlanks}
-          unit={totalBlanks === 1 ? 'lacuna' : 'lacunas'}
-          onRetry={handleRetry}
+      {/* Empurra o botão para o pé da tela, logo acima do teclado */}
+      <View className="grow" />
+
+      <Button
+        size="lg"
+        label="Verificar"
+        onPress={check}
+        disabled={!isComplete || isChecked}
+      />
+
+      {feedback ? (
+        <ExerciseFeedbackSheet
+          visible={isFeedbackOpen}
+          isCorrect={feedback.isCorrect}
+          isLast={feedback.isLast}
+          answerLabel="Resposta certa:"
+          answer={<SentenceAnswer parts={feedback.exercise.parts} />}
+          onContinue={goNext}
         />
-      ) : null}
-
-      {status === 'checked' && !isAllCorrect ? (
-        <Text className="font-poppins-semibold text-sm text-gray-900">
-          Você acertou {correctCount} de {totalBlanks}.
-        </Text>
-      ) : null}
-
-      {status === 'editing' ? (
-        <Button
-          label="Verificar respostas"
-          onPress={handleCheck}
-          disabled={!hasAnyAnswer}
-        />
-      ) : null}
-
-      {status !== 'editing' && !isAllCorrect ? (
-        <View>
-          <Button label="Tentar de novo" onPress={handleRetry} />
-          {status === 'checked' ? (
-            <Button
-              variant="link"
-              label="Ver respostas"
-              onPress={handleReveal}
-            />
-          ) : null}
-        </View>
       ) : null}
     </View>
   );

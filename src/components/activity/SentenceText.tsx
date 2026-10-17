@@ -1,25 +1,31 @@
 import { useMemo, useState } from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { tokenizeText } from '@/utils/sentence';
 
-// lg: frase em destaque, como o enunciado de uma pergunta
-type SentenceSize = 'base' | 'lg';
+// md: frase com lacunas em destaque; lg: enunciado de uma pergunta
+export type SentenceSize = 'base' | 'md' | 'lg';
 
-const SIZE_CLASS_NAMES: Record<SentenceSize, string> = {
-  base: 'font-poppins text-base',
-  lg: 'font-poppins-semibold text-2xl',
+// Fonte normal e em negrito de cada tamanho
+const SIZE_CLASS_NAMES: Record<SentenceSize, [string, string]> = {
+  base: ['font-poppins text-base', 'font-poppins-bold text-base'],
+  md: ['font-poppins text-xl', 'font-poppins-bold text-xl'],
+  lg: ['font-poppins-semibold text-2xl', 'font-poppins-bold text-2xl'],
 };
+
+function getFontClassName(size: SentenceSize, bold: boolean) {
+  return SIZE_CLASS_NAMES[size][bold ? 1 : 0];
+}
 
 // Termo com tradução: toque para mostrar ou esconder o significado
 function TipWord({
   text,
   tip,
-  size,
+  className,
 }: {
   text: string;
   tip: string;
-  size: SentenceSize;
+  className: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -28,7 +34,7 @@ function TipWord({
       accessibilityRole="button"
       accessibilityHint="Mostra a tradução"
       onPress={() => setIsOpen((value) => !value)}
-      className={`${SIZE_CLASS_NAMES[size]} text-cyan-700 underline`}
+      className={`${className} text-cyan-700 underline`}
     >
       {text}
       {isOpen ? (
@@ -52,18 +58,31 @@ export function SentenceText({
 }) {
   const tokens = useMemo(() => tokenizeText(text), [text]);
 
-  return tokens.map((token, index) =>
-    token.type === 'tip' ? (
+  return tokens.map((token, index) => {
+    if (token.type === 'break') {
+      // Ocupa a linha inteira do flex-wrap: o que vem depois desce
       // biome-ignore lint/suspicious/noArrayIndexKey: as palavras de uma frase não mudam de ordem
-      <TipWord key={index} text={token.text} tip={token.tip} size={size} />
+      return <View key={index} className="w-full" />;
+    }
+
+    const className = getFontClassName(size, token.bold);
+
+    return token.type === 'tip' ? (
+      <TipWord
+        // biome-ignore lint/suspicious/noArrayIndexKey: as palavras de uma frase não mudam de ordem
+        key={index}
+        text={token.text}
+        tip={token.tip}
+        className={className}
+      />
     ) : (
       <Text
         // biome-ignore lint/suspicious/noArrayIndexKey: as palavras de uma frase não mudam de ordem
         key={index}
-        className={`${SIZE_CLASS_NAMES[size]} text-gray-900`}
+        className={`${className} text-gray-900`}
       >
         {token.text}
       </Text>
-    )
-  );
+    );
+  });
 }
