@@ -19,8 +19,10 @@ import { VocabularyDetail } from '@/components/vocabulary/VocabularyDetail';
 import { VocabularyFilters } from '@/components/vocabulary/VocabularyFilters';
 import { VocabularyRow } from '@/components/vocabulary/VocabularyRow';
 import { colors } from '@/constants/theme';
+import { useAuth } from '@/contexts/AuthContext';
 import { useVocabulary } from '@/hooks/useVocabulary';
 import {
+  canCheckPronunciation,
   filterVocabulary,
   VOCABULARY_FILTER_ALL,
   type VocabularyFilter,
@@ -31,6 +33,7 @@ import {
 // leva aos planos.
 export default function VocabularyScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const { data, error, refreshing, refresh, savedIds, toggleSaved } =
     useVocabulary();
   const [query, setQuery] = useState('');
@@ -184,8 +187,13 @@ export default function VocabularyScreen() {
         item={openItem}
         getCategory={getCategory}
         savedIds={savedIds}
+        canCheckPronunciation={canCheckPronunciation(user)}
         onClose={() => setOpenId(null)}
         onToggleSaved={toggleSaved}
+        onOpenPlans={() => {
+          setOpenId(null);
+          router.push('/plans');
+        }}
       />
     </SafeAreaView>
   );

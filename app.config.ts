@@ -51,6 +51,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-font',
     'expo-web-browser',
     [
+      'expo-audio',
+      {
+        microphonePermission:
+          'Permita o acesso ao microfone para praticar a pronúncia.',
+        // Sem áudio em segundo plano: os áudios só tocam com a tela aberta
+        enableBackgroundPlayback: false,
+      },
+    ],
+    [
       'expo-notifications',
       {
         // Cor de destaque do push na barra do Android

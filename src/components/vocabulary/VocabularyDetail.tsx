@@ -1,6 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Modal, Pressable, Text, View } from 'react-native';
+import {
+  GestureHandlerRootView,
+  ScrollView,
+} from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
@@ -8,9 +12,10 @@ import {
   AudioButton,
   useActivityAudio,
 } from '@/components/activity/ActivityAudio';
-import { Button } from '@/components/Button';
 import { CategoryLabel } from '@/components/vocabulary/CategoryLabel';
+import { PronunciationPractice } from '@/components/vocabulary/PronunciationPractice';
 import { colors } from '@/constants/theme';
+import { useModalBottomInset } from '@/hooks/useModalBottomInset';
 import type { VocabularyCategory, VocabularyItem } from '@/services/vocabulary';
 
 interface VocabularyDetailProps {
@@ -18,16 +23,24 @@ interface VocabularyDetailProps {
   item: VocabularyItem | null;
   getCategory: (item: VocabularyItem) => VocabularyCategory | undefined;
   savedIds: Set<string>;
+  // Só assinantes verificam a pronúncia
+  canCheckPronunciation: boolean;
   onClose: () => void;
   onToggleSaved: (id: string) => void;
+  // Fecha o detalhe e abre a tela de planos
+  onOpenPlans: () => void;
 }
 
 interface DetailContentProps {
   item: VocabularyItem;
+  // false enquanto o Modal desce, depois de fechar
+  isVisible: boolean;
   category: VocabularyCategory | undefined;
   isSaved: boolean;
+  canCheckPronunciation: boolean;
   onClose: () => void;
   onToggleSaved: () => void;
+  onOpenPlans: () => void;
 }
 
 function SectionLabel({ children }: { children: string }) {
@@ -40,12 +53,16 @@ function SectionLabel({ children }: { children: string }) {
 
 function DetailContent({
   item,
+  isVisible,
   category,
   isSaved,
+  canCheckPronunciation,
   onClose,
   onToggleSaved,
+  onOpenPlans,
 }: DetailContentProps) {
   const insets = useSafeAreaInsets();
+  const bottomInset = useModalBottomInset();
   const { stop } = useActivityAudio();
 
   // Fechar o detalhe para o áudio
@@ -69,17 +86,37 @@ function DetailContent({
         </Pressable>
       </View>
 
-      <ScrollView contentContainerClassName="flex-grow gap-5 px-5 pb-6 pt-2">
-        <View className="gap-2">
+      <ScrollView contentContainerClassName="flex-grow gap-4 px-5 pb-6 pt-2">
+        <View className="gap-3 pb-2">
           <CategoryLabel category={category} />
-          <Text className="font-poppins-bold text-3xl text-gray-900">
-            {item.term}
-          </Text>
-          {item.pronunciation ? (
-            <Text className="font-poppins text-base text-gray-500">
-              {item.pronunciation}
-            </Text>
-          ) : null}
+          <View className="flex-row items-start gap-3">
+            <View className="flex-1 gap-1">
+              <Text className="font-poppins-bold text-4xl leading-tight text-gray-900">
+                {item.term}
+              </Text>
+              {item.pronunciation ? (
+                <Text className="font-poppins text-base text-gray-500">
+                  {item.pronunciation}
+                </Text>
+              ) : null}
+            </View>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={
+                isSaved ? 'Salvo. Tirar dos salvos' : 'Salvar'
+              }
+              accessibilityState={{ selected: isSaved }}
+              onPress={onToggleSaved}
+              hitSlop={6}
+              className={`mt-1 h-11 w-11 items-center justify-center rounded-full border active:bg-gray-50 ${isSaved ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-white'}`}
+            >
+              <Ionicons
+                name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                size={22}
+                color={isSaved ? colors.green : colors.gray}
+              />
+            </Pressable>
+          </View>
           {item.termAudioUrl ? (
             <AudioButton url={item.termAudioUrl} label="Ouvir" />
           ) : null}
@@ -110,16 +147,18 @@ function DetailContent({
         ) : null}
       </ScrollView>
 
+      {/* Embaixo, perto do polegar. A chave muda ao fechar: desmontar para a
+          gravação e limpa o resultado */}
       <View
-        className="border-t border-gray-100 bg-white px-5 pt-3"
-        style={{ paddingBottom: insets.bottom + 12 }}
+        className="border-t border-gray-100 bg-white px-4 pt-3"
+        style={{ paddingBottom: bottomInset + 12 }}
       >
-        <Button
-          size="lg"
-          variant={isSaved ? 'outline' : 'primary'}
-          label={isSaved ? 'Salvo' : 'Salvar'}
-          accessibilityLabel={isSaved ? 'Salvo. Tirar dos salvos' : 'Salvar'}
-          onPress={onToggleSaved}
+        <PronunciationPractice
+          key={isVisible ? item.id : 'closed'}
+          itemId={item.id}
+          termAudioUrl={item.termAudioUrl}
+          canCheck={canCheckPronunciation}
+          onOpenPlans={onOpenPlans}
         />
       </View>
     </View>
@@ -131,8 +170,10 @@ export function VocabularyDetail({
   item,
   getCategory,
   savedIds,
+  canCheckPronunciation,
   onClose,
   onToggleSaved,
+  onOpenPlans,
 }: VocabularyDetailProps) {
   // Guarda o último item para o conteúdo não sumir enquanto o Modal desce
   const [shownItem, setShownItem] = useState(item);
@@ -151,17 +192,24 @@ export function VocabularyDetail({
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      {current ? (
-        <ActivityAudioProvider>
-          <DetailContent
-            item={current}
-            category={getCategory(current)}
-            isSaved={savedIds.has(current.id)}
-            onClose={onClose}
-            onToggleSaved={() => onToggleSaved(current.id)}
-          />
-        </ActivityAudioProvider>
-      ) : null}
+      {/* O Modal é outra janela: os gestos (o microfone) precisam da própria
+          raiz */}
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {current ? (
+          <ActivityAudioProvider>
+            <DetailContent
+              item={current}
+              isVisible={!!item}
+              category={getCategory(current)}
+              isSaved={savedIds.has(current.id)}
+              canCheckPronunciation={canCheckPronunciation}
+              onClose={onClose}
+              onToggleSaved={() => onToggleSaved(current.id)}
+              onOpenPlans={onOpenPlans}
+            />
+          </ActivityAudioProvider>
+        ) : null}
+      </GestureHandlerRootView>
     </Modal>
   );
 }

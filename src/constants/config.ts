@@ -58,6 +58,8 @@ export const API_ROUTES = {
   vocabulary: '/api/mobile/vocabulary',
   vocabularySave: (id: string) =>
     `/api/mobile/vocabulary/${encodeURIComponent(id)}/save`,
+  vocabularyPronunciation: (id: string) =>
+    `/api/mobile/vocabulary/${encodeURIComponent(id)}/pronunciation`,
   privateLessons: '/api/mobile/private-lessons',
   privateLessonsCheckout: '/api/mobile/private-lessons/checkout',
   privateLessonPurchase: (sessionId: string) =>

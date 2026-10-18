@@ -43,12 +43,14 @@ export function setAchievementHandler(
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: unknown;
+  // Corpo multipart (envio de arquivo); vai no lugar de `body`
+  formData?: FormData;
   token?: string;
 }
 
 export async function api<T>(
   path: string,
-  { method = 'GET', body, token }: RequestOptions = {}
+  { method = 'GET', body, formData, token }: RequestOptions = {}
 ): Promise<T> {
   let response: Response;
   try {
@@ -56,10 +58,12 @@ export async function api<T>(
       method,
       headers: {
         Accept: 'application/json',
-        ...(body !== undefined && { 'Content-Type': 'application/json' }),
+        // Com FormData o fetch põe o Content-Type com o boundary
+        ...(body !== undefined &&
+          !formData && { 'Content-Type': 'application/json' }),
         ...(token && { Authorization: `Bearer ${token}` }),
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: formData ?? (body !== undefined ? JSON.stringify(body) : undefined),
     });
   } catch {
     throw new ApiError(

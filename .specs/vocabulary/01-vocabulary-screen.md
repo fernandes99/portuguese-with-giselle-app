@@ -24,7 +24,7 @@ O backend já entrega a lista do aluno e as rotas de salvar. Esta fase cria a en
 - **RF-03:** a busca filtra enquanto o aluno digita, pela palavra, pelo significado e pelo exemplo, sem diferenciar maiúsculas e acentos.
 - **RF-04:** cada item da lista mostra a primeira categoria em letra pequena e maiúscula, na cor dela; a palavra; o significado em até duas linhas; e, à direita, o ícone de salvo (marcador cheio ou vazio), que salva e tira dos salvos com um toque.
 - **RF-05:** o item exclusivo aparece esmaecido, com o `PremiumBadge` no lugar do ícone de salvo. O toque nele abre `/plans`.
-- **RF-06:** o toque num item liberado abre o detalhe em tela cheia, com o botão de fechar no topo, a palavra, a pronúncia (quando houver), o botão de ouvir a palavra, o significado, o exemplo com o botão de ouvir e a tradução embaixo, e um botão largo "Salvar" (ou "Salvo") no pé.
+- **RF-06:** o toque num item liberado abre o detalhe em tela cheia, com o botão de fechar no topo, a palavra, a pronúncia (quando houver), o botão de ouvir a palavra, o significado, o exemplo com o botão de ouvir e a tradução embaixo, e o ícone de marcador para salvar, no topo, à direita da palavra. (Era um botão largo "Salvar" no pé; o pé passou a ser do box de pronúncia, na fase 02.)
 - **RF-07:** só um áudio toca por vez, e fechar o detalhe para o áudio. O botão de um áudio que não existe não aparece.
 - **RF-08:** salvar e tirar mudam o ícone na hora, na lista e no detalhe. Se a rota falhar, o ícone volta e aparece a mensagem de erro. Com os salvos ligados, tirar um item o remove da lista.
 - **RF-09:** a tela mostra o carregamento na primeira vez, o erro com "Tentar de novo" se a rota falhar, e recarrega ao puxar a lista para baixo.

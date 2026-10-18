@@ -1,4 +1,11 @@
+import type { User } from '@/services/auth';
 import type { VocabularyItem } from '@/services/vocabulary';
+
+// A verificação de pronúncia é só para assinantes, também nos itens
+// liberados; o backend aplica a mesma regra
+export function canCheckPronunciation(user: User | null) {
+  return !!user && user.role !== 'FREE_STUDENT';
+}
 
 export const VOCABULARY_FILTER_ALL = 'all';
 
