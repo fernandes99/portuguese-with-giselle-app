@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LessonDiscussions } from '@/components/lesson/LessonDiscussions';
 import { colors } from '@/constants/theme';
+import { useModalBottomInset } from '@/hooks/useModalBottomInset';
 import {
   KEYBOARD_BOTTOM_OFFSET,
   KeyboardAwareScrollView,
@@ -21,7 +21,7 @@ export function DiscussionsSheet({
   lessonId,
   onClose,
 }: DiscussionsSheetProps) {
-  const insets = useSafeAreaInsets();
+  const bottomInset = useModalBottomInset();
 
   return (
     <Modal
@@ -40,7 +40,7 @@ export function DiscussionsSheet({
 
         <View
           className="h-[85%] rounded-t-2xl bg-background px-5 pt-4"
-          style={{ paddingBottom: insets.bottom }}
+          style={{ paddingBottom: bottomInset }}
         >
           <View className="mb-3 flex-row items-center justify-between">
             <Text className="font-poppins-semibold text-base text-gray-900">

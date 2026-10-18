@@ -2,9 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 import { type ReactNode, useEffect } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
+import { useModalBottomInset } from '@/hooks/useModalBottomInset';
 import successSound from '@assets/sounds/success.wav';
 
 interface ExerciseFeedbackSheetProps {
@@ -33,7 +33,7 @@ export function ExerciseFeedbackSheet({
   onContinue,
   onDismiss,
 }: ExerciseFeedbackSheetProps) {
-  const insets = useSafeAreaInsets();
+  const bottomInset = useModalBottomInset();
   const successPlayer = useAudioPlayer(successSound);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export function ExerciseFeedbackSheet({
         <View
           accessibilityLiveRegion="polite"
           className={`gap-4 rounded-t-3xl border-t-2 px-5 pt-5 ${isCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}
-          style={{ paddingBottom: insets.bottom + 16 }}
+          style={{ paddingBottom: bottomInset + 16 }}
         >
           <View className="flex-row items-center gap-3">
             <View

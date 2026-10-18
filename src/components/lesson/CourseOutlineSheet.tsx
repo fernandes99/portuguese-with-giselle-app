@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CourseProgressHeader } from '@/components/lesson/CourseProgressHeader';
 import { colors } from '@/constants/theme';
+import { useModalBottomInset } from '@/hooks/useModalBottomInset';
 import type { CourseOutline, OutlineLesson } from '@/services/lesson';
 
 interface CourseOutlineSheetProps {
@@ -45,7 +45,7 @@ export function CourseOutlineSheet({
   onClose,
   onSelectLesson,
 }: CourseOutlineSheetProps) {
-  const insets = useSafeAreaInsets();
+  const bottomInset = useModalBottomInset();
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
 
   // Ao abrir, só o módulo da aula atual começa expandido
@@ -89,7 +89,7 @@ export function CourseOutlineSheet({
 
         <View
           className="h-[85%] rounded-t-2xl bg-white px-4 pt-4"
-          style={{ paddingBottom: insets.bottom }}
+          style={{ paddingBottom: bottomInset }}
         >
           <View className="mb-3 flex-row items-center justify-between">
             <Text className="font-poppins-semibold text-base text-gray-900">

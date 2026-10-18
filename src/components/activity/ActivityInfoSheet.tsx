@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
 import { HtmlContent } from '@/components/lesson/HtmlContent';
 import { colors } from '@/constants/theme';
+import { useModalBottomInset } from '@/hooks/useModalBottomInset';
 
 interface ActivityInfoSheetProps {
   visible: boolean;
@@ -22,7 +22,7 @@ export function ActivityInfoSheet({
   content,
   onClose,
 }: ActivityInfoSheetProps) {
-  const insets = useSafeAreaInsets();
+  const bottomInset = useModalBottomInset();
 
   return (
     <Modal
@@ -41,7 +41,7 @@ export function ActivityInfoSheet({
 
         <View
           className="max-h-[85%] gap-4 rounded-t-2xl bg-background px-5 pt-4"
-          style={{ paddingBottom: insets.bottom + 16 }}
+          style={{ paddingBottom: bottomInset + 16 }}
         >
           <View className="flex-row items-center justify-between gap-3">
             <Text className="flex-1 font-poppins-semibold text-lg text-gray-900">

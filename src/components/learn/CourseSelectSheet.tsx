@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ProgressBar } from '@/components/ProgressBar';
 import { colors } from '@/constants/theme';
+import { useModalBottomInset } from '@/hooks/useModalBottomInset';
 import type { Course } from '@/services/courses';
 import { formatLessons, getCourseProgress } from '@/utils/course';
 
@@ -23,7 +23,7 @@ export function CourseSelectSheet({
   onClose,
   onSelect,
 }: CourseSelectSheetProps) {
-  const insets = useSafeAreaInsets();
+  const bottomInset = useModalBottomInset();
 
   return (
     <Modal
@@ -42,7 +42,7 @@ export function CourseSelectSheet({
 
         <View
           className="max-h-[75%] rounded-t-2xl bg-white px-4 pt-4"
-          style={{ paddingBottom: insets.bottom }}
+          style={{ paddingBottom: bottomInset }}
         >
           <View className="mb-3 flex-row items-center justify-between">
             <Text className="font-poppins-semibold text-base text-gray-900">
