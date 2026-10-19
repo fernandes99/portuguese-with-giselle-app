@@ -90,6 +90,9 @@ export interface PracticeSpeech {
   // MP3 em base64
   audio: string;
   format: 'mp3';
+  // Segundo em que cada palavra da fala começa (as partes separadas por
+  // espaço); null sem alinhamento, ausente no backend antigo
+  wordStarts?: number[] | null;
 }
 
 // Voz de uma fala da Gisa ou de uma frase corrigida. O texto vai como veio

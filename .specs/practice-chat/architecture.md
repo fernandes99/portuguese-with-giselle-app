@@ -124,7 +124,7 @@ A abertura e o turno trazem, todos opcionais (ausentes no backend antigo):
 - `suggestion` e `suggestionTranslation`: uma resposta possível do aluno à pergunta da fala, e a tradução. Podem vir vazias.
 - `replySignature`: a assinatura de `reply`. No turno, `correctedSignature`, só quando `correction.hasErrors` é verdadeiro: a assinatura de `correction.corrected`.
 
-`POST /api/mobile/practice/speech`, com `{ "text": string, "signature": string }`, devolve `{ "audio": "<MP3 em base64>", "format": "mp3" }`. O texto vai exatamente como veio do backend: é o que a assinatura cobre.
+`POST /api/mobile/practice/speech`, com `{ "text": string, "signature": string }`, devolve `{ "audio": "<MP3 em base64>", "format": "mp3", "wordStarts": number[] | null }`. O texto vai exatamente como veio do backend: é o que a assinatura cobre. `wordStarts` é o segundo em que cada palavra da fala começa, na ordem das partes do texto separadas por espaço, para o app destacar a palavra que está sendo falada; vem `null` quando a ElevenLabs não devolve o alinhamento.
 
 `POST /api/mobile/practice/transcription`, multipart com a gravação no campo `audio` (até 1 MB), devolve `{ "text": string }`, vazio quando não há fala. O app envia o texto pela rota do turno.
 

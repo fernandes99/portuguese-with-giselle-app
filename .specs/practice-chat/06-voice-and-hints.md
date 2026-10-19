@@ -157,6 +157,11 @@ yarn tsc --noEmit
 
 ## Divergências
 
+- **Ajustes pedidos depois da primeira versão** (mudança pequena, combinada no chat):
+  - a foto da Gisa foi trocada por uma ilustração nova, enviada pelo dono do projeto;
+  - enquanto a Gisa fala, a borda do balão fica verde, a foto ganha um anel verde pulsando e a palavra que está sendo falada ganha fundo `bg-green-100`, acompanhando o áudio pelos tempos `wordStarts` da rota da voz (`activeWordOf`, em `useGisaVoice`, com o tempo do player a cada 100 ms); sem os tempos, fica só a borda e o anel;
+  - o balão do aluno passou a verde sólido (`bg-green-600`) com texto branco, e os erros, a sublinhado amarelo. Substitui o `bg-green-50` de RF-14.
+
 - **`diffWords` ficou em `src/utils/diffWords.ts`**, sem imports, para ser testado com o Node direto.
 - **`HoldToTalkButton` ganhou `compact`, além de `size`:** sem a barra de progresso e com o tempo junto do aviso, para caber na barra do chat ao lado do teclado e da dica.
 - **`useHoldToTalk` não tem `stop()`:** sair da tela já para a gravação no próprio hook. Ele ganhou a fase `sending`, enquanto a gravação é entregue, que a pronúncia mostra como "conferindo".

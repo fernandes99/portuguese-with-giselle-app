@@ -25,17 +25,35 @@ export type VoiceState = 'idle' | 'loading' | 'playing';
 // `<id>-corrected`) e só marca qual botão está tocando; o arquivo é guardado
 // pela assinatura, única para cada texto: a abertura tem o mesmo id em toda
 // conversa, mas não o mesmo texto.
+//
+// Com os tempos das palavras que o backend devolve, `activeWordOf` diz qual
+// palavra está sendo falada, para o balão destacar como uma legenda.
+
+// Frequência com que o player informa o tempo: curta para a palavra
+// destacada acompanhar a fala
+const STATUS_INTERVAL_MS = 100;
+
+interface CachedSpeech {
+  uri: string;
+  wordStarts: number[] | null;
+}
+
 export function useGisaVoice() {
   const { token } = useAuth();
-  const player = useAudioPlayer();
+  const player = useAudioPlayer(undefined, {
+    updateInterval: STATUS_INTERVAL_MS,
+  });
   const status = useAudioPlayerStatus(player);
-  // Assinatura da fala para o arquivo no cache
-  const files = useRef(new Map<string, string>());
+  // Assinatura da fala para o arquivo no cache e os tempos das palavras
+  const files = useRef(new Map<string, CachedSpeech>());
   // Sobe a cada pedido e a cada `stop`: a resposta de um pedido antigo não toca
   const request = useRef(0);
   const isMountedRef = useRef(true);
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [currentKey, setCurrentKey] = useState<string | null>(null);
+  const [currentWordStarts, setCurrentWordStarts] = useState<number[] | null>(
+    null
+  );
   // A mesma chave e o arquivo carregado no player, lidos depois de um pedido
   // que demorou
   const currentKeyRef = useRef<string | null>(null);
@@ -66,7 +84,7 @@ export function useGisaVoice() {
       } catch {
         // player já liberado
       }
-      for (const uri of cached.values()) {
+      for (const { uri } of cached.values()) {
         try {
           new File(uri).delete();
         } catch {
@@ -78,7 +96,8 @@ export function useGisaVoice() {
   }, [player]);
 
   // `current` é o pedido que mandou tocar: um `stop` no meio cancela
-  function play(key: string, uri: string, current: number) {
+  function play(key: string, speech: CachedSpeech, current: number) {
+    const { uri } = speech;
     if (key === currentKeyRef.current && uri === currentUriRef.current) {
       // Depois de tocar até o fim o player fica parado no final do áudio
       player
@@ -95,6 +114,7 @@ export function useGisaVoice() {
       currentKeyRef.current = key;
       currentUriRef.current = uri;
       setCurrentKey(key);
+      setCurrentWordStarts(speech.wordStarts);
     }
   }
 
@@ -126,9 +146,13 @@ export function useGisaVoice() {
       }
       const file = new File(Paths.cache, `gisa-${Date.now()}-${current}.mp3`);
       file.write(speech.audio, { encoding: 'base64' });
-      files.current.set(signature, file.uri);
+      const entry: CachedSpeech = {
+        uri: file.uri,
+        wordStarts: speech.wordStarts ?? null,
+      };
+      files.current.set(signature, entry);
       if (current === request.current) {
-        play(key, file.uri, current);
+        play(key, entry, current);
       }
     } catch (err) {
       if (!isMountedRef.current) {
@@ -162,6 +186,21 @@ export function useGisaVoice() {
     return currentKey === key && status.playing ? 'playing' : 'idle';
   }
 
+  // Índice da palavra que está sendo falada na fala `key` (as partes do texto
+  // separadas por espaço); null quando ela não está tocando ou não tem tempos
+  function activeWordOf(key: string): number | null {
+    if (stateOf(key) !== 'playing' || !currentWordStarts?.length) {
+      return null;
+    }
+    let index = 0;
+    for (let i = 0; i < currentWordStarts.length; i++) {
+      if (currentWordStarts[i] <= status.currentTime) {
+        index = i;
+      }
+    }
+    return index;
+  }
+
   // Toque do aluno no botão de ouvir: toca, ou para o que está tocando
   function toggle(key: string, text: string, signature: string) {
     if (stateOf(key) !== 'idle') {
@@ -193,6 +232,7 @@ export function useGisaVoice() {
 
   return {
     stateOf,
+    activeWordOf,
     toggle,
     autoplay,
     stop,

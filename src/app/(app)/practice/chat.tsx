@@ -365,6 +365,8 @@ export default function PracticeChatScreen() {
                 <GisaMessage
                   content={item.content}
                   translation={item.translation}
+                  speaking={voice.stateOf(item.id) === 'playing'}
+                  activeWord={voice.activeWordOf(item.id)}
                   listen={
                     signature ? (
                       <ListenButton
