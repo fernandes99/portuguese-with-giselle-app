@@ -13,7 +13,7 @@ import Animated, {
 
 import { colors } from '@/constants/theme';
 
-const BUTTON_SIZE = 88;
+const DEFAULT_SIZE = 88;
 // Arrastar para a esquerda além disso cancela a gravação
 const CANCEL_DISTANCE = 96;
 // O botão para de acompanhar o dedo aqui
@@ -29,6 +29,10 @@ interface HoldToTalkButtonProps {
   metering: number | undefined;
   // Duração máxima, para a barra de progresso
   maxDurationMs: number;
+  // Diâmetro do botão; 88 na pronúncia
+  size?: number;
+  // Sem a barra de progresso: só o tempo, enquanto grava (barra do chat)
+  compact?: boolean;
   onPressIn: () => void;
   onRelease: (cancel: boolean) => void;
 }
@@ -42,7 +46,8 @@ function toLevel(metering: number | undefined) {
 }
 
 function formatSeconds(ms: number) {
-  return `0:${String(Math.min(9, Math.floor(ms / 1000))).padStart(2, '0')}`;
+  const seconds = Math.floor(ms / 1000);
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
 // Microfone de segurar para falar: soltar envia, arrastar para a esquerda e
@@ -53,6 +58,8 @@ export function HoldToTalkButton({
   disabled,
   metering,
   maxDurationMs,
+  size = DEFAULT_SIZE,
+  compact = false,
   onPressIn,
   onRelease,
 }: HoldToTalkButtonProps) {
@@ -156,11 +163,14 @@ export function HoldToTalkButton({
     width: `${progress.value * 100}%`,
   }));
 
-  const hint = isInCancelZone
+  const action = isInCancelZone
     ? 'Solte para cancelar'
     : isHolding
       ? '‹ Deslize para cancelar'
       : 'Segure para falar';
+  // Sem a barra, o tempo vai junto do aviso
+  const hint =
+    compact && isRecording ? `${formatSeconds(elapsedMs)}  ${action}` : action;
 
   return (
     <View className="items-center gap-3">
@@ -184,8 +194,8 @@ export function HoldToTalkButton({
           accessibilityHint="Solte para enviar. Arraste para a esquerda para cancelar."
           accessibilityState={{ disabled, busy: isRecording }}
           style={{
-            width: BUTTON_SIZE,
-            height: BUTTON_SIZE,
+            width: size,
+            height: size,
             marginVertical: 12,
             alignItems: 'center',
             justifyContent: 'center',
@@ -196,9 +206,9 @@ export function HoldToTalkButton({
             style={[
               {
                 position: 'absolute',
-                width: BUTTON_SIZE,
-                height: BUTTON_SIZE,
-                borderRadius: BUTTON_SIZE / 2,
+                width: size,
+                height: size,
+                borderRadius: size / 2,
                 backgroundColor: isInCancelZone ? colors.gray : colors.red,
               },
               haloStyle,
@@ -207,9 +217,9 @@ export function HoldToTalkButton({
           <Animated.View
             style={[
               {
-                width: BUTTON_SIZE,
-                height: BUTTON_SIZE,
-                borderRadius: BUTTON_SIZE / 2,
+                width: size,
+                height: size,
+                borderRadius: size / 2,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: disabled
@@ -225,26 +235,28 @@ export function HoldToTalkButton({
           >
             <Ionicons
               name={isInCancelZone ? 'close' : 'mic'}
-              size={40}
+              size={Math.round(size * 0.45)}
               color="#ffffff"
             />
           </Animated.View>
         </View>
       </GestureDetector>
 
-      <View className="w-44 gap-1.5">
-        <View className="h-1.5 overflow-hidden rounded-full bg-gray-100">
-          <Animated.View
-            style={[
-              { height: '100%', backgroundColor: colors.red },
-              progressStyle,
-            ]}
-          />
+      {compact ? null : (
+        <View className="w-44 gap-1.5">
+          <View className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+            <Animated.View
+              style={[
+                { height: '100%', backgroundColor: colors.red },
+                progressStyle,
+              ]}
+            />
+          </View>
+          <Text className="text-center font-poppins text-xs text-gray-400">
+            {formatSeconds(elapsedMs)} / {formatSeconds(maxDurationMs)}
+          </Text>
         </View>
-        <Text className="text-center font-poppins text-xs text-gray-400">
-          {formatSeconds(elapsedMs)} / {formatSeconds(maxDurationMs)}
-        </Text>
-      </View>
+      )}
     </View>
   );
 }

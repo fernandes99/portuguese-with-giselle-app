@@ -45,16 +45,20 @@ Tomadas com o dono do projeto:
 
 Da fase 03 em diante, também com o dono do projeto (o detalhe está em `.specs/practice-chat/` do site):
 
-| Decisão                                                                                                                                                                  | Motivo                                                               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| A abertura passa a ser gerada pelo backend, sobre um dos temas ou o objetivo do aluno e no nível dele; substitui a decisão da abertura fixa                              | Varia a cada conversa e parte do que o aluno gosta                   |
-| A Gisa fala e corrige no nível do aluno, de A0 a C2                                                                                                                      | Pedido direto; é feito no backend, sem mudança no app                |
-| A Gisa deixa de ser "Professora Gisa" e passa a "Gisa, sua parceira de conversação com IA"                                                                               | Deixar claro para o aluno que ele conversa com uma IA                |
-| O aluno escolhe o estilo da Gisa (Amigável, Tutora, Brasileira ou Tranquila) na primeira vez no chat e troca pelo chat ou pelo Perfil                                    | Pedido direto; o tom muda no backend                                 |
-| A explicação do erro e a tradução saem no idioma nativo do aluno (espanhol ou inglês); substitui a decisão da explicação em inglês                                       | O aluno entende melhor a regra no próprio idioma; é feito no backend |
-| O aluno troca o idioma das explicações (inglês, espanhol ou português) por um botão no chat ou pedindo à Gisa; a conversa continua em português e não recomeça (fase 05) | Pedido direto                                                        |
-| Limite de 50 mensagens por dia, 10 por minuto e um teto mensal escondido, por aluno; a mensagem tem até 500 caracteres; substitui a decisão sem limites (fase 05)        | Escolha do dono do projeto, contra abuso e custo                     |
-| O chat avisa que a Gisa é uma IA, pode errar e não deve receber dados pessoais sensíveis (fase 05)                                                                       | A conversa passa pelo provedor de IA                                 |
+| Decisão                                                                                                                                                                       | Motivo                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| A abertura passa a ser gerada pelo backend, sobre um dos temas ou o objetivo do aluno e no nível dele; substitui a decisão da abertura fixa                                   | Varia a cada conversa e parte do que o aluno gosta                   |
+| A Gisa fala e corrige no nível do aluno, de A0 a C2                                                                                                                           | Pedido direto; é feito no backend, sem mudança no app                |
+| A Gisa deixa de ser "Professora Gisa" e passa a "Gisa, sua parceira de conversação com IA"                                                                                    | Deixar claro para o aluno que ele conversa com uma IA                |
+| O aluno escolhe o estilo da Gisa (Amigável, Tutora, Brasileira ou Tranquila) na primeira vez no chat e troca pelo chat ou pelo Perfil                                         | Pedido direto; o tom muda no backend                                 |
+| A explicação do erro e a tradução saem no idioma nativo do aluno (espanhol ou inglês); substitui a decisão da explicação em inglês                                            | O aluno entende melhor a regra no próprio idioma; é feito no backend |
+| O aluno troca o idioma das explicações (inglês, espanhol ou português) por um botão no chat ou pedindo à Gisa; a conversa continua em português e não recomeça (fase 05)      | Pedido direto                                                        |
+| Limite de 50 mensagens por dia, 10 por minuto e um teto mensal escondido, por aluno; a mensagem tem até 500 caracteres; substitui a decisão sem limites (fase 05)             | Escolha do dono do projeto, contra abuso e custo                     |
+| O chat avisa que a Gisa é uma IA, pode errar e não deve receber dados pessoais sensíveis (fase 05)                                                                            | A conversa passa pelo provedor de IA                                 |
+| A tela segue apps de conversação por voz, com a identidade do app: foto da Gisa, balões claros, cartão de correção com a frase riscada e corrigida e "Boa resposta" (fase 06) | Pedido direto                                                        |
+| A Gisa fala as respostas, tocando sozinha, com a opção de desligar na folha de configurações; substitui a decisão de só texto (fase 06)                                       | Escolha do dono do projeto; parece mais conversa                     |
+| O aluno responde segurando o microfone, como na pronúncia do vocabulário; soltar envia o texto transcrito (fase 06)                                                           | Escolha do dono do projeto                                           |
+| A dica "O que eu deveria dizer?" mostra uma resposta possível à última pergunta, com tradução (fase 06)                                                                       | Pedido direto; o aluno não fica travado                              |
 
 Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs afetadas):
 
@@ -70,7 +74,7 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 
 ## Fora do escopo
 
-- Voz, áudio e avaliação de pronúncia.
+- Avaliação de pronúncia no chat (a voz e o microfone entram na fase 06).
 - Versão gratuita limitada e limites diferentes por plano.
 - Salvar ou retomar conversas.
 - Outras formas de prática na aba.
@@ -83,13 +87,14 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 
 ## Fases
 
-| Fase                                                                        | Entrega                                                       | Status    |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------- | --------- |
-| [01-practice-tab](01-practice-tab.md)                                       | Aba Praticar, Cursos fora das abas e link no Perfil           | concluída |
-| [02-chat-screen](02-chat-screen.md)                                         | Tela do chat com a Gisa, cartão de correção e estados de erro | concluída |
-| [03-personalized-opening](03-personalized-opening.md)                       | Abertura gerada pelo backend, com a fixa de reserva           | concluída |
-| [04-chat-style](04-chat-style.md)                                           | Gisa como IA e escolha do estilo da conversa                  | concluída |
-| [05-explanation-language-and-limits](05-explanation-language-and-limits.md) | Idioma das explicações, limites de uso e aviso de IA          | concluída |
+| Fase                                                                        | Entrega                                                       | Status       |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------ |
+| [01-practice-tab](01-practice-tab.md)                                       | Aba Praticar, Cursos fora das abas e link no Perfil           | concluída    |
+| [02-chat-screen](02-chat-screen.md)                                         | Tela do chat com a Gisa, cartão de correção e estados de erro | concluída    |
+| [03-personalized-opening](03-personalized-opening.md)                       | Abertura gerada pelo backend, com a fixa de reserva           | concluída    |
+| [04-chat-style](04-chat-style.md)                                           | Gisa como IA e escolha do estilo da conversa                  | concluída    |
+| [05-explanation-language-and-limits](05-explanation-language-and-limits.md) | Idioma das explicações, limites de uso e aviso de IA          | concluída    |
+| [06-voice-and-hints](06-voice-and-hints.md)                                 | Nova tela: foto da Gisa, voz, microfone e dica                | em andamento |
 
 O desenho compartilhado está em [architecture.md](architecture.md).
 

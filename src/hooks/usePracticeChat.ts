@@ -8,6 +8,7 @@ import {
   type PracticeMessage,
   sendPracticeMessage,
   startPracticeChat,
+  transcribePracticeAnswer,
 } from '@/services/practice';
 import {
   canUsePractice,
@@ -23,15 +24,24 @@ export type ChatMessage =
       content: string;
       // No idioma nativo do aluno; sem ela, o balão não tem o botão de traduzir
       translation?: string;
+      // Assinatura do backend para pedir a voz; sem ela, não há botão de
+      // ouvir (abertura de reserva e backend antigo)
+      signature?: string;
+      // Resposta possível do aluno à pergunta desta fala, e a tradução
+      suggestion?: string;
+      suggestionTranslation?: string;
     }
   | {
       id: string;
       role: 'user';
       content: string;
+      // transcribing: a gravação está virando texto (content vazio);
       // sending: aguardando o backend; failed: o envio falhou
-      status: 'sending' | 'sent' | 'failed';
+      status: 'transcribing' | 'sending' | 'sent' | 'failed';
       // Preenchida quando o backend responde
       correction?: PracticeCorrection;
+      // Assinatura da frase corrigida, só quando há erros
+      correctedSignature?: string;
       // Motivo da falha, para mostrar junto do "Tentar de novo"
       error?: string;
     }
@@ -47,6 +57,18 @@ export type ChatMessage =
 export interface PracticeLimit {
   kind: 'blocked' | 'restart';
   message: string;
+}
+
+// Resultado de uma resposta falada: `ok` quando virou mensagem (ou a
+// conversa mudou no meio); senão, o aviso para mostrar acima da barra
+export type VoiceAnswerResult =
+  { ok: true } | { ok: false; message: string; code?: string };
+
+const NOT_UNDERSTOOD = 'Não entendi, tente de novo.';
+
+// Campo opcional do backend: vazio vira ausente
+function optional(value: string | undefined) {
+  return value ? value : undefined;
 }
 
 // Lê o bloqueio de um erro do backend; null para as falhas comuns
@@ -109,7 +131,10 @@ export function usePracticeChat() {
         id: 'opening',
         role: 'assistant',
         content: result.reply,
-        translation: result.replyTranslation || undefined,
+        translation: optional(result.replyTranslation),
+        signature: optional(result.replySignature),
+        suggestion: optional(result.suggestion),
+        suggestionTranslation: optional(result.suggestionTranslation),
       };
     } catch (err) {
       if (err instanceof ApiError && err.status === 403) {
@@ -182,12 +207,20 @@ export function usePracticeChat() {
         const replyId = `gisa-${nextId.current++}`;
         const next: ChatMessage[] = [
           ...history,
-          { ...pending, status: 'sent', correction: turn.correction },
+          {
+            ...pending,
+            status: 'sent',
+            correction: turn.correction,
+            correctedSignature: optional(turn.correctedSignature),
+          },
           {
             id: replyId,
             role: 'assistant',
             content: turn.reply,
-            translation: turn.replyTranslation || undefined,
+            translation: optional(turn.replyTranslation),
+            signature: optional(turn.replySignature),
+            suggestion: optional(turn.suggestion),
+            suggestionTranslation: optional(turn.suggestionTranslation),
           },
         ];
         // O aluno pediu outro idioma na conversa, e o backend já gravou
@@ -233,10 +266,16 @@ export function usePracticeChat() {
 
   const last: ChatMessage | undefined = messages[messages.length - 1];
   const hasFailed = last?.role === 'user' && last.status === 'failed';
+  const isTranscribing = messages.some(
+    (message) => message.role === 'user' && message.status === 'transcribing'
+  );
+  // Enquanto algo está a caminho, nada novo sai
+  const isBusy =
+    isOpening || isReplying || isTranscribing || hasFailed || !!limit;
 
   function send(text: string) {
     const content = text.trim();
-    if (!content || isOpening || isReplying || hasFailed || limit) {
+    if (!content || isBusy) {
       return;
     }
 
@@ -248,12 +287,61 @@ export function usePracticeChat() {
     });
   }
 
+  // Resposta falada: a mensagem aparece como "Ouvindo..." enquanto a
+  // gravação vira texto, e depois segue como uma mensagem digitada
+  async function sendVoice(uri: string): Promise<VoiceAnswerResult> {
+    if (!token || isBusy) {
+      return { ok: true };
+    }
+
+    const current = conversation.current;
+    const history = messages;
+    const id = `aluno-${nextId.current++}`;
+    setMessages([
+      ...history,
+      { id, role: 'user', content: '', status: 'transcribing' },
+    ]);
+
+    let text: string;
+    try {
+      text = (await transcribePracticeAnswer(token, uri)).text.trim();
+    } catch (err) {
+      if (conversation.current !== current) {
+        return { ok: true };
+      }
+      if (err instanceof ApiError && err.status === 403) {
+        setIsBlocked(true);
+      }
+      setMessages(history);
+      return {
+        ok: false,
+        message: getErrorMessage(
+          err,
+          'Não foi possível ouvir seu áudio. Tente de novo.'
+        ),
+        code: err instanceof ApiError ? (err.code ?? undefined) : undefined,
+      };
+    }
+
+    if (conversation.current !== current) {
+      return { ok: true };
+    }
+    if (!text) {
+      setMessages(history);
+      return { ok: false, message: NOT_UNDERSTOOD };
+    }
+
+    deliver(history, { id, role: 'user', content: text, status: 'sending' });
+    return { ok: true };
+  }
+
   // Reenvia a mensagem que falhou
   function retry() {
     if (
       last?.role !== 'user' ||
       last.status !== 'failed' ||
       isReplying ||
+      isTranscribing ||
       limit
     ) {
       return;
@@ -261,6 +349,48 @@ export function usePracticeChat() {
 
     deliver(messages.slice(0, -1), last);
   }
+
+  // "Tentar de novo" da correção: tira a última resposta do aluno (com
+  // erros) e a fala da Gisa a ela, e a pergunta anterior volta a ser a
+  // última. Os avisos ficam. Devolve o texto tirado, para o campo.
+  function redo(): string | null {
+    if (isOpening || isReplying || isTranscribing) {
+      return null;
+    }
+
+    let index = -1;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        index = i;
+        break;
+      }
+    }
+    const answer = messages[index];
+    if (
+      answer?.role !== 'user' ||
+      answer.status !== 'sent' ||
+      !answer.correction?.hasErrors
+    ) {
+      return null;
+    }
+
+    const reply = messages.findIndex(
+      (message, i) => i > index && message.role === 'assistant'
+    );
+    setMessages(messages.filter((_, i) => i !== index && i !== reply));
+    return answer.content;
+  }
+
+  // Dica da última fala da Gisa, quando ela é a última da conversa
+  const spoken = messages.filter((message) => message.role !== 'notice');
+  const lastSpoken = spoken[spoken.length - 1];
+  const lastSuggestion =
+    lastSpoken?.role === 'assistant' && lastSpoken.suggestion
+      ? {
+          text: lastSpoken.suggestion,
+          translation: lastSpoken.suggestionTranslation,
+        }
+      : null;
 
   function restart() {
     conversation.current += 1;
@@ -272,14 +402,18 @@ export function usePracticeChat() {
     messages,
     isOpening,
     isReplying,
+    isTranscribing,
     isBlocked,
     hasFailed,
     limit,
     remainingToday,
+    lastSuggestion,
     // Sem mensagens do aluno: não há o que recomeçar
     isEmpty: !messages.some((message) => message.role === 'user'),
     send,
+    sendVoice,
     retry,
+    redo,
     restart,
   };
 }

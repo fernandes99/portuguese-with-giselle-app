@@ -70,3 +70,19 @@ export function savePushTokenLocally(token: string) {
 export function clearPushToken() {
   return SecureStore.deleteItemAsync(PUSH_TOKEN_KEY);
 }
+
+const CHAT_AUTOPLAY_KEY = 'pwg.chatAutoplay';
+
+// A Gisa lê as respostas em voz alta sozinha; ligado até o aluno desligar
+// na folha de configurações do chat
+export async function getChatAutoplay(): Promise<boolean> {
+  try {
+    return (await SecureStore.getItemAsync(CHAT_AUTOPLAY_KEY)) !== '0';
+  } catch {
+    return true;
+  }
+}
+
+export function setChatAutoplay(enabled: boolean) {
+  return SecureStore.setItemAsync(CHAT_AUTOPLAY_KEY, enabled ? '1' : '0');
+}

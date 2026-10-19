@@ -1,3 +1,5 @@
+import { File } from 'expo-file-system';
+
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
 import type { ExplanationLanguage } from '@/services/preferences';
@@ -27,6 +29,14 @@ export interface PracticeTurn {
   explanationLanguage?: ExplanationLanguage | null;
   // Mensagens que ainda cabem no dia; ausente no backend antigo
   remainingToday?: number;
+  // Resposta possível do aluno à pergunta da fala, e a tradução; ausentes
+  // no backend antigo, podem vir vazias
+  suggestion?: string;
+  suggestionTranslation?: string;
+  // Assinaturas da fala e da frase corrigida (só com erros), para pedir a
+  // voz; ausentes no backend antigo
+  replySignature?: string;
+  correctedSignature?: string;
 }
 
 // Códigos de erro do chat que mudam a tela (o resto é falha comum)
@@ -57,11 +67,53 @@ export interface PracticeOpening {
   replyTranslation?: string;
   // Mensagens que ainda cabem no dia; ausente no backend antigo
   remainingToday?: number;
+  // Como no turno; ausentes no backend antigo
+  suggestion?: string;
+  suggestionTranslation?: string;
+  replySignature?: string;
 }
 
 export function startPracticeChat(token: string) {
   return api<PracticeOpening>(API_ROUTES.practiceOpening, {
     method: 'POST',
+    token,
+  });
+}
+
+// Códigos de erro das rotas de áudio que mudam a tela
+export const PRACTICE_AUDIO_ERROR_CODES = {
+  speechLimit: 'SPEECH_DAILY_LIMIT',
+  transcriptionLimit: 'TRANSCRIPTION_DAILY_LIMIT',
+} as const;
+
+export interface PracticeSpeech {
+  // MP3 em base64
+  audio: string;
+  format: 'mp3';
+}
+
+// Voz de uma fala da Gisa ou de uma frase corrigida. O texto vai como veio
+// do backend, sem mudar nada: é o que a assinatura cobre.
+export function getPracticeSpeech(
+  token: string,
+  text: string,
+  signature: string
+) {
+  return api<PracticeSpeech>(API_ROUTES.practiceSpeech, {
+    method: 'POST',
+    body: { text, signature },
+    token,
+  });
+}
+
+// Transcreve a resposta falada do aluno; "" quando não há fala
+export function transcribePracticeAnswer(token: string, uri: string) {
+  const formData = new FormData();
+  formData.append('audio', new File(uri), 'answer.m4a');
+
+  return api<{ text: string }>(API_ROUTES.practiceTranscription, {
+    method: 'POST',
+    formData,
     token,
   });
 }

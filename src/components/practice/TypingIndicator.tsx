@@ -31,7 +31,7 @@ function Dot({ delay }: { delay: number }) {
   const style = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
   return (
-    <Animated.View className="h-2 w-2 rounded-full bg-white" style={style} />
+    <Animated.View className="h-2 w-2 rounded-full bg-gray-400" style={style} />
   );
 }
 
@@ -41,7 +41,9 @@ export function TypingIndicator() {
 
   if (reducedMotion) {
     return (
-      <Text className="font-poppins text-[15px] text-white">Digitando...</Text>
+      <Text className="font-poppins text-[15px] text-gray-500">
+        Digitando...
+      </Text>
     );
   }
 

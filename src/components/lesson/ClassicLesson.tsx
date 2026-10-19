@@ -56,10 +56,13 @@ export function LessonHeader({
   title,
   subtitle,
   right,
+  avatar,
 }: {
   title: string;
   subtitle?: string;
   right?: ReactNode;
+  // Foto à esquerda do título; com ela, o título fica alinhado à esquerda
+  avatar?: ReactNode;
 }) {
   const router = useRouter();
 
@@ -70,21 +73,26 @@ export function LessonHeader({
         label="Voltar"
         onPress={() => router.back()}
       />
-      <View className="flex-1 items-center">
-        <Text
-          numberOfLines={1}
-          className="text-center font-poppins-semibold text-sm text-gray-900"
-        >
-          {title}
-        </Text>
-        {subtitle ? (
+      <View
+        className={`flex-1 ${avatar ? 'flex-row items-center gap-2.5' : 'items-center'}`}
+      >
+        {avatar}
+        <View className={avatar ? 'flex-1' : 'items-center'}>
           <Text
             numberOfLines={1}
-            className="text-center font-poppins text-xs text-gray-500"
+            className={`font-poppins-semibold text-sm text-gray-900 ${avatar ? '' : 'text-center'}`}
           >
-            {subtitle}
+            {title}
           </Text>
-        ) : null}
+          {subtitle ? (
+            <Text
+              numberOfLines={1}
+              className={`font-poppins text-xs text-gray-500 ${avatar ? '' : 'text-center'}`}
+            >
+              {subtitle}
+            </Text>
+          ) : null}
+        </View>
       </View>
       {/* Mantém o título centralizado quando não há botão à direita */}
       {right ?? <View className="w-10" />}

@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { GisaAvatar } from '@/components/practice/GisaAvatar';
 import { PremiumBadge } from '@/components/premium/PremiumBadge';
 import { TabTopBar } from '@/components/TabTopBar';
 import { colors } from '@/constants/theme';
@@ -17,6 +18,8 @@ interface PracticeOptionProps {
   // Exclusiva do plano Premium e a conta não assina: mostra a etiqueta, e o
   // toque leva à tela de planos (quem chama decide para onde)
   isPremiumOnly?: boolean;
+  // Imagem no lugar do ícone (a foto da Gisa no chat com IA)
+  image?: ReactNode;
   onPress: () => void;
 }
 
@@ -25,6 +28,7 @@ function PracticeOption({
   title,
   description,
   isPremiumOnly = false,
+  image,
   onPress,
 }: PracticeOptionProps) {
   return (
@@ -39,9 +43,11 @@ function PracticeOption({
       onPress={onPress}
       className="flex-row items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 active:bg-gray-50"
     >
-      <View className="h-12 w-12 items-center justify-center rounded-full bg-green-100">
-        <Ionicons name={icon} size={22} color={colors.green} />
-      </View>
+      {image ?? (
+        <View className="h-12 w-12 items-center justify-center rounded-full bg-green-100">
+          <Ionicons name={icon} size={22} color={colors.green} />
+        </View>
+      )}
       <View className="flex-1 gap-0.5">
         {isPremiumOnly ? <PremiumBadge /> : null}
         <Text className="font-poppins-semibold text-base text-gray-900">
@@ -78,6 +84,7 @@ export default function PracticeScreen() {
         <View className="gap-3">
           <PracticeOption
             icon="chatbubbles"
+            image={<GisaAvatar size={48} />}
             title="Chat com IA"
             description="Converse com a Gisa, sua parceira de conversação com IA, e receba correções a cada frase."
             isPremiumOnly={!canUsePractice(user)}

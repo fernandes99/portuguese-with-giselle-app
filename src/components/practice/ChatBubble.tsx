@@ -1,92 +1,144 @@
 import { Ionicons } from '@expo/vector-icons';
-import { type ReactNode, useState } from 'react';
+import { type ComponentProps, type ReactNode, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { CorrectionCard } from '@/components/practice/CorrectionCard';
+import { GisaAvatar } from '@/components/practice/GisaAvatar';
 import { colors } from '@/constants/theme';
 import type { ChatMessage } from '@/hooks/usePracticeChat';
 import { splitByMistakes } from '@/utils/practice';
 
-// Balão da Gisa, com o avatar ao lado
+// Balão da Gisa, com a foto ao lado
 export function GisaBubble({ children }: { children: ReactNode }) {
   return (
     <View className="max-w-[88%] flex-row items-end gap-2 self-start">
-      <View className="h-8 w-8 items-center justify-center rounded-full bg-green-100">
-        <Text className="font-poppins-bold text-sm text-green-700">G</Text>
-      </View>
-      <View className="shrink rounded-2xl rounded-bl-md bg-green-600 px-4 py-3">
+      <GisaAvatar size={40} />
+      <View className="shrink rounded-2xl rounded-bl-md border border-gray-200 bg-white px-4 py-3">
         {children}
       </View>
     </View>
   );
 }
 
-// Fala da Gisa. A tradução só aparece quando o aluno toca no botão.
+// Botão redondo da linha de ações de um balão (traduzir)
+export function BubbleAction({
+  icon,
+  label,
+  active = false,
+  onPress,
+}: {
+  icon: ComponentProps<typeof Ionicons>['name'];
+  label: string;
+  active?: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      hitSlop={6}
+      className={`h-8 w-8 items-center justify-center rounded-full active:opacity-70 ${active ? 'bg-green-100' : 'bg-gray-100'}`}
+    >
+      <Ionicons
+        name={icon}
+        size={16}
+        color={active ? colors.green : colors.gray}
+      />
+    </Pressable>
+  );
+}
+
+// Fala da Gisa, com os botões de traduzir e de ouvir. A tradução só aparece
+// quando o aluno toca no botão.
 export function GisaMessage({
   content,
   translation,
+  listen,
 }: {
   content: string;
   translation?: string;
+  // Botão de ouvir (ListenButton), quando a fala tem voz
+  listen?: ReactNode;
 }) {
   const [isTranslated, setIsTranslated] = useState(false);
 
   return (
     <GisaBubble>
-      <Text className="font-poppins text-[15px] leading-6 text-white">
+      <Text className="font-poppins text-[15px] leading-6 text-gray-900">
         {content}
       </Text>
 
       {translation && isTranslated ? (
-        <Text className="mt-2 border-t border-white/30 pt-2 font-poppins text-sm leading-5 text-green-50">
+        <Text className="mt-2 border-t border-gray-200 pt-2 font-poppins text-sm leading-5 text-gray-600">
           {translation}
         </Text>
       ) : null}
 
-      {translation ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={isTranslated ? 'Esconder tradução' : 'Traduzir'}
-          onPress={() => setIsTranslated((current) => !current)}
-          hitSlop={8}
-          className={`mt-2 h-8 w-8 items-center justify-center rounded-full active:opacity-70 ${isTranslated ? 'bg-white' : 'bg-white/20'}`}
-        >
-          <Ionicons
-            name="language"
-            size={16}
-            color={isTranslated ? colors.green : colors.white}
-          />
-        </Pressable>
+      {translation || listen ? (
+        <View className="mt-2 flex-row gap-2">
+          {translation ? (
+            <BubbleAction
+              icon="language"
+              label={isTranslated ? 'Esconder tradução' : 'Traduzir'}
+              active={isTranslated}
+              onPress={() => setIsTranslated((current) => !current)}
+            />
+          ) : null}
+          {listen}
+        </View>
       ) : null}
     </GisaBubble>
   );
 }
 
-// Mensagem do aluno, com os erros grifados, a correção e a falha de envio
+// Mensagem do aluno, com os erros sublinhados, a correção e a falha de envio
 export function StudentMessage({
   message,
+  canRedo,
+  listenCorrected,
   onRetry,
+  onRedo,
 }: {
   message: Extract<ChatMessage, { role: 'user' }>;
+  // É a última resposta do aluno e a Gisa não está respondendo
+  canRedo: boolean;
+  // Botão de ouvir a frase corrigida, quando ela tem voz
+  listenCorrected?: ReactNode;
   onRetry: () => void;
+  onRedo: () => void;
 }) {
   const { correction } = message;
+
+  if (message.status === 'transcribing') {
+    return (
+      <View
+        accessibilityLabel="Ouvindo sua resposta"
+        className="max-w-[88%] self-end rounded-2xl rounded-br-md border border-green-200 bg-green-50 px-4 py-3 opacity-60"
+      >
+        <Text className="font-poppins text-[15px] italic leading-6 text-gray-700">
+          Ouvindo...
+        </Text>
+      </View>
+    );
+  }
+
   const parts = splitByMistakes(
     message.content,
     correction?.hasErrors ? correction.mistakes : []
   );
 
   return (
-    <View className="max-w-[88%] gap-2 self-end">
+    <View className="gap-2">
       <View
         accessible
-        // O leitor de tela não depende do grifo para saber da correção
+        // O leitor de tela não depende do sublinhado para saber da correção
         accessibilityLabel={
           correction?.hasErrors
             ? `${message.content}. Correção: ${correction.corrected}`
             : message.content
         }
-        className={`self-end rounded-2xl rounded-br-md border border-gray-200 bg-white px-4 py-3 ${message.status === 'sending' ? 'opacity-60' : ''}`}
+        className={`max-w-[88%] self-end rounded-2xl rounded-br-md border border-green-200 bg-green-50 px-4 py-3 ${message.status === 'sending' ? 'opacity-60' : ''}`}
       >
         <Text className="font-poppins text-[15px] leading-6 text-gray-900">
           {parts.map((part, index) =>
@@ -94,7 +146,11 @@ export function StudentMessage({
               <Text
                 // biome-ignore lint/suspicious/noArrayIndexKey: as partes não mudam de ordem
                 key={index}
-                className="bg-red-100 text-red-700 underline"
+                className="text-red-700"
+                style={{
+                  textDecorationLine: 'underline',
+                  textDecorationColor: colors.red,
+                }}
               >
                 {part.text}
               </Text>
@@ -105,7 +161,14 @@ export function StudentMessage({
         </Text>
       </View>
 
-      {correction ? <CorrectionCard correction={correction} /> : null}
+      {correction ? (
+        <CorrectionCard
+          original={message.content}
+          correction={correction}
+          listen={listenCorrected}
+          onRedo={canRedo ? onRedo : undefined}
+        />
+      ) : null}
 
       {message.status === 'failed' ? (
         <View className="items-end gap-1">

@@ -12,11 +12,24 @@ interface ChatComposerProps {
   // Enquanto a Gisa responde ou há uma mensagem com falha de envio
   disabled: boolean;
   onSend: (text: string) => void;
+  // Texto já no campo ao aparecer ("Tentar de novo" da correção); para
+  // trocar depois, quem usa remonta o campo com outra `key`
+  initialText?: string;
+  // Abre o teclado ao aparecer (o aluno trocou do microfone para o teclado)
+  autoFocus?: boolean;
+  // Volta para o microfone; sem ele, o botão não aparece
+  onVoice?: () => void;
 }
 
 // Campo de mensagem fixo no rodapé do chat
-export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
-  const [text, setText] = useState('');
+export function ChatComposer({
+  disabled,
+  onSend,
+  initialText = '',
+  autoFocus = false,
+  onVoice,
+}: ChatComposerProps) {
+  const [text, setText] = useState(initialText);
   const canSend = !disabled && text.trim() !== '';
 
   function handleSend() {
@@ -36,6 +49,16 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
         </Text>
       ) : null}
       <View className="flex-row items-end gap-2">
+        {onVoice ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Responder falando"
+            onPress={onVoice}
+            className="h-11 w-11 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200"
+          >
+            <Ionicons name="mic" size={22} color={colors.gray} />
+          </Pressable>
+        ) : null}
         <TextInput
           accessibilityLabel="Mensagem"
           value={text}
@@ -45,6 +68,7 @@ export function ChatComposer({ disabled, onSend }: ChatComposerProps) {
           multiline
           maxLength={PRACTICE_MESSAGE_MAX_LENGTH}
           editable={!disabled}
+          autoFocus={autoFocus}
           // Cresce até cerca de quatro linhas e depois rola
           className="max-h-28 min-h-11 flex-1 rounded-2xl border border-gray-200 bg-background px-4 py-2.5 font-poppins text-[15px] text-gray-900 focus:border-green-600"
         />

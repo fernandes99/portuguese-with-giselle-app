@@ -117,6 +117,28 @@ Erros, como `{ "error": string }`, alguns com `code`:
 
 Os `429` trazem também `resetAt`, a hora em que o limite zera. O app mostra a mensagem do backend (`error`) como chega.
 
+### Voz, transcrição e dica (fase 07 do site)
+
+A abertura e o turno trazem, todos opcionais (ausentes no backend antigo):
+
+- `suggestion` e `suggestionTranslation`: uma resposta possível do aluno à pergunta da fala, e a tradução. Podem vir vazias.
+- `replySignature`: a assinatura de `reply`. No turno, `correctedSignature`, só quando `correction.hasErrors` é verdadeiro: a assinatura de `correction.corrected`.
+
+`POST /api/mobile/practice/speech`, com `{ "text": string, "signature": string }`, devolve `{ "audio": "<MP3 em base64>", "format": "mp3" }`. O texto vai exatamente como veio do backend: é o que a assinatura cobre.
+
+`POST /api/mobile/practice/transcription`, multipart com a gravação no campo `audio` (até 1 MB), devolve `{ "text": string }`, vazio quando não há fala. O app envia o texto pela rota do turno.
+
+| Rota        | Status | `code`                      | Quando                                           |
+| ----------- | ------ | --------------------------- | ------------------------------------------------ |
+| as duas     | 403    |                             | Aluno gratuito                                   |
+| voz         | 400    | `BAD_SIGNATURE`             | Assinatura que não confere                       |
+| voz         | 429    | `SPEECH_DAILY_LIMIT`        | 120 falas no dia                                 |
+| transcrição | 400    |                             | Sem áudio, mais de 1 MB ou formato fora da lista |
+| transcrição | 429    | `TRANSCRIPTION_DAILY_LIMIT` | 50 transcrições no dia                           |
+| as duas     | 502    |                             | Falha da ElevenLabs                              |
+
+Os limites de áudio são separados dos do chat: ouvir ou falar não gasta as 50 mensagens do dia.
+
 ## Estado da conversa
 
 Fica em memória, no hook `usePracticeChat` (`src/hooks/usePracticeChat.ts`). Nada vai para o armazenamento do aparelho.
@@ -129,15 +151,22 @@ type ChatMessage =
       content: string;
       // No idioma nativo do aluno; sem ela, o balão não tem o botão de traduzir
       translation?: string;
+      // Fase 06: assinatura para pedir a voz e a dica de resposta
+      signature?: string;
+      suggestion?: string;
+      suggestionTranslation?: string;
     }
   | {
       id: string;
       role: 'user';
       content: string;
+      // transcribing (fase 06): a gravação virando texto, com content vazio;
       // sending: aguardando o backend; failed: o envio falhou
-      status: 'sending' | 'sent' | 'failed';
+      status: 'transcribing' | 'sending' | 'sent' | 'failed';
       // Preenchida quando o backend responde
       correction?: PracticeCorrection;
+      // Fase 06: assinatura da frase corrigida, só com erros
+      correctedSignature?: string;
       error?: string;
     }
   | {
@@ -154,6 +183,8 @@ type ChatMessage =
 - `send` acrescenta a mensagem do aluno como `sending`, chama o serviço com a conversa e, na resposta, grava a correção nela e acrescenta a fala da Gisa.
 - Só uma mensagem fica pendente por vez: enquanto `isReplying`, a tela não envia outra.
 - Uma mensagem `failed` não entra na conversa enviada ao backend, a não ser no `retry` dela mesma.
+- Fase 06: `sendVoice(uri)` acrescenta a mensagem `transcribing`, transcreve e segue como `send`; vazia ou com falha, a mensagem sai e o hook devolve o aviso para a tela. `redo()` tira a última resposta do aluno com erros e a fala da Gisa a ela, mantendo os avisos, e devolve o texto tirado. `lastSuggestion` é a dica da última fala da Gisa, quando ela é a última da conversa.
+- Fase 06: a voz fica em `useGisaVoice`, fora do hook da conversa. Cada fala é baixada uma vez, gravada no cache e tocada de novo dali; cada pedido novo, e cada `stop()`, descarta o que ainda estava chegando. A tela chama `stop()` ao gravar, recomeçar, trocar o estilo e no "Tentar de novo".
 - Fase 05: o hook guarda `remainingToday` da última resposta e `limit`. `limit` é `blocked` (`DAILY_LIMIT` ou `MONTHLY_LIMIT`, até sair do chat) ou `restart` (`CONVERSATION_TOO_LONG`, até recomeçar); com ele, a tela troca o campo de mensagem por um aviso. `RATE_LIMIT` é uma falha comum, com "Tentar de novo".
 
 ## Arquivos
@@ -173,12 +204,18 @@ type ChatMessage =
 | `src/components/practice/ChatStyleSelector.tsx` e `StyleCard.tsx`         | Escolha do estilo, na primeira vez no chat e na troca              | 04   |
 | `src/app/(app)/practice/language.tsx` e `ExplanationLanguageSelector.tsx` | Escolha do idioma das explicações                                  | 05   |
 | `src/components/practice/ChatNotice.tsx`                                  | Aviso de IA, aviso de troca de idioma e aviso no lugar do campo    | 05   |
+| `assets/gisa-avatar.png` e `src/components/practice/GisaAvatar.tsx`       | Foto da Gisa                                                       | 06   |
+| `src/hooks/useGisaVoice.ts` e `src/components/practice/ListenButton.tsx`  | Voz das falas e botão de ouvir                                     | 06   |
+| `src/hooks/useHoldToTalk.ts`                                              | Gravador de segurar para falar, também usado pela pronúncia        | 06   |
+| `src/components/practice/ChatVoiceBar.tsx` e `HintCard.tsx`               | Barra do microfone e dica de resposta                              | 06   |
+| `src/components/practice/ChatSettingsSheet.tsx`                           | Folha de configurações (voz automática, idioma, estilo, recomeçar) | 06   |
+| `src/utils/diffWords.ts`                                                  | Comparação da frase do aluno com a corrigida, para o cartão        | 06   |
 
 ## Reaproveitado sem alterar
 
 - `api` e `getErrorMessage` (`src/lib/api.ts`). `ApiError` ganhou `code` na fase 05.
 - `useAuth` (`src/contexts/AuthContext.tsx`) e `getFirstName` (`src/utils/format.ts`).
-- `LessonHeader` (`src/components/lesson/ClassicLesson.tsx`), o cabeçalho com botão de voltar.
+- `LessonHeader` (`src/components/lesson/ClassicLesson.tsx`), o cabeçalho com botão de voltar. Ganhou a prop `avatar` na fase 06.
 - `Button` (`src/components/Button.tsx`) e `colors` (`src/constants/theme.ts`).
 
 ## Padrões visuais
