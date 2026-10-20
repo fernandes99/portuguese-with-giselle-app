@@ -7,6 +7,9 @@ import type { ExplanationLanguage } from '@/services/preferences';
 export interface PracticeMessage {
   role: 'assistant' | 'user';
   content: string;
+  // A mensagem nova do aluno foi respondida falando: a correção não conta
+  // acento, ortografia nem pontuação, que vêm da transcrição
+  spoken?: boolean;
 }
 
 // Correção da última mensagem do aluno

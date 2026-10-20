@@ -44,6 +44,8 @@ export type ChatMessage =
       correctedSignature?: string;
       // Motivo da falha, para mostrar junto do "Tentar de novo"
       error?: string;
+      // Respondida falando: o texto veio da transcrição
+      spoken?: boolean;
     }
   | {
       // Aviso do próprio app no meio da conversa; não vai para o backend
@@ -326,7 +328,13 @@ export function usePracticeChat() {
       return { ok: false, message: NOT_UNDERSTOOD };
     }
 
-    deliver(history, { id, role: 'user', content: text, status: 'sending' });
+    deliver(history, {
+      id,
+      role: 'user',
+      content: text,
+      status: 'sending',
+      spoken: true,
+    });
     return { ok: true };
   }
 

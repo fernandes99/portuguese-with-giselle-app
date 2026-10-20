@@ -7,7 +7,9 @@ type StudentMessage = Extract<ChatMessage, { role: 'user' }>;
 // na versão corrigida: com os erros originais no histórico, o modelo voltava
 // a corrigi-las no lugar da mensagem nova. A mensagem nova (`pending`) vai
 // como o aluno escreveu, porque é ela que vai ser corrigida. Os avisos do app
-// ficam de fora. Só imports de tipo, para ser testada com o Node direto.
+// ficam de fora. A mensagem nova falada vai marcada (`spoken`), para a
+// correção não contar o que veio da transcrição. Só imports de tipo, para
+// ser testada com o Node direto.
 export function buildPracticePayload(
   history: ChatMessage[],
   pending: StudentMessage
@@ -25,6 +27,10 @@ export function buildPracticePayload(
       });
     }
   }
-  payload.push({ role: 'user', content: pending.content });
+  payload.push(
+    pending.spoken
+      ? { role: 'user', content: pending.content, spoken: true }
+      : { role: 'user', content: pending.content }
+  );
   return payload;
 }

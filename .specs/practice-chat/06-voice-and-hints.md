@@ -157,6 +157,8 @@ yarn tsc --noEmit
 
 ## Divergências
 
+- **Resposta falada marcada** (pedido do dono do projeto): a mensagem do aluno que veio do microfone guarda `spoken: true` (`ChatMessage`), e `buildPracticePayload` manda o campo só na mensagem nova. O backend não conta acento, ortografia nem pontuação da transcrição como erro. Vale também nas simulações (`useSimulation`).
+
 - **Histórico corrigido** (problema relatado pelo dono do projeto: a Gisa corrigia mensagens anteriores): o app passou a mandar as mensagens anteriores do aluno na versão corrigida (`buildPracticePayload`). Num teste com o modelo, com a mensagem nova correta, a mensagem de dois turnos antes era corrigida em 5 de 6 rodadas; só com uma regra no prompt, em 2 de 6; com o histórico corrigido, em 0 de 6 (e 0 de 6 também com um erro novo).
 
 - **Uso visível e limites menores** (pedido do dono do projeto):

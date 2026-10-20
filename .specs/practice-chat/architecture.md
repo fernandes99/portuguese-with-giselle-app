@@ -76,6 +76,7 @@ Corpo:
 
 - A conversa inteira, na ordem, terminando numa mensagem `user`. A abertura vai como a primeira mensagem `assistant`.
 - Das falas da Gisa, o app envia só o texto da resposta, sem a correção.
+- A mensagem nova do aluno vai com `"spoken": true` quando ele respondeu falando. O texto veio da transcrição, então a correção não conta acento, ortografia, maiúsculas nem pontuação, só gramática, vocabulário e escolha de palavras. Nas outras mensagens, o campo não vai.
 
 Resposta `200`:
 

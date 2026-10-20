@@ -303,6 +303,7 @@ export function useSimulation(simulationId: string) {
       role: 'user',
       content: text,
       status: 'sending',
+      spoken: true,
     });
     return { ok: true };
   }
