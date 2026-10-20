@@ -28,7 +28,7 @@ export function CorrectionCard({
 }) {
   if (!correction.hasErrors) {
     return (
-      <View className="flex-row items-center gap-1.5 self-end rounded-full border border-green-200 bg-white px-3 py-1.5">
+      <View className="flex-row items-center gap-1.5 self-end rounded-full border border-gray-200 bg-white px-3 py-1.5">
         <Ionicons name="checkmark" size={16} color={colors.green} />
         <Text className="font-poppins-medium text-xs text-green-700">
           Boa resposta
