@@ -61,7 +61,7 @@ O backend devolve a dica e as assinaturas das falas na abertura e no turno, gera
 - **RF-10:** O arquivo de cada fala fica guardado enquanto a tela está aberta: ouvir de novo não chama o backend. Sair da tela para o som e apaga os arquivos.
 - **RF-11:** Só uma fala toca por vez: tocar outra, começar a gravar ou recomeçar a conversa para a que está tocando.
 - **RF-12:** Com a voz automática ligada, cada fala nova da Gisa com assinatura (a abertura do backend e as respostas) toca sozinha quando chega, se o aluno não estiver gravando. Ligar a opção não toca as falas que já estão na tela.
-- **RF-13:** Falha ao gerar a voz mostra um `Alert` "Não foi possível tocar o áudio" com a mensagem do backend, só quando o aluno tocou no botão. Na voz automática, a falha é silenciosa e o botão volta ao normal. `429` `SPEECH_DAILY_LIMIT` desliga a voz automática até sair do chat, sem mudar a opção gravada, e o toque no botão mostra a mensagem do backend.
+- **RF-13:** Falha ao gerar a voz mostra um `Alert` "Não foi possível tocar o áudio" com a mensagem do backend, só quando o aluno tocou no botão. Na voz automática, a falha é silenciosa e o botão volta ao normal. `429` `SPEECH_DAILY_LIMIT` ou `SPEECH_MONTHLY_LIMIT` (teto de custo do mês) desliga a voz automática até sair do chat, sem mudar a opção gravada, e o toque no botão mostra a mensagem do backend.
 
 ### Mensagem do aluno e correção
 
@@ -156,6 +156,13 @@ yarn tsc --noEmit
 - **Falta:** os critérios de aceite no aparelho, com o build preview e o site da fase 07 no ar (com a migration aplicada).
 
 ## Divergências
+
+- **Histórico corrigido** (problema relatado pelo dono do projeto: a Gisa corrigia mensagens anteriores): o app passou a mandar as mensagens anteriores do aluno na versão corrigida (`buildPracticePayload`). Num teste com o modelo, com a mensagem nova correta, a mensagem de dois turnos antes era corrigida em 5 de 6 rodadas; só com uma regra no prompt, em 2 de 6; com o histórico corrigido, em 0 de 6 (e 0 de 6 também com um erro novo).
+
+- **Uso visível e limites menores** (pedido do dono do projeto):
+  - a folha de configurações ganhou "Seu uso hoje" (`UsageToday`), com o que resta de mensagens, falas da Gisa e respostas por voz, lido de `GET /api/mobile/practice/usage` ao abrir a folha; os tetos do mês continuam escondidos;
+  - quando a voz para pelo limite do dia ou do mês, o chat mostra a mensagem do backend como aviso na conversa (`addNotice`, em `usePracticeChat`), uma vez;
+  - os limites do backend passaram a 30 mensagens, 30 falas e 30 respostas por voz por dia.
 
 - **Ajustes pedidos depois da primeira versão** (mudança pequena, combinada no chat):
   - a foto da Gisa foi trocada por uma ilustração nova, enviada pelo dono do projeto;

@@ -110,7 +110,7 @@ Erros, como `{ "error": string }`, alguns com `code`:
 | 400    |                         | Corpo inválido                                         |
 | 400    | `MESSAGE_TOO_LONG`      | Mensagem do aluno com mais de 500 caracteres           |
 | 400    | `CONVERSATION_TOO_LONG` | Conversa com mais de 60 mensagens ou 20.000 caracteres |
-| 429    | `DAILY_LIMIT`           | 50 mensagens no dia (aberturas contam)                 |
+| 429    | `DAILY_LIMIT`           | 30 mensagens no dia (aberturas contam)                 |
 | 429    | `RATE_LIMIT`            | 10 mensagens no último minuto                          |
 | 429    | `MONTHLY_LIMIT`         | Teto de custo do mês                                   |
 | 500    |                         | Falha do modelo                                        |
@@ -132,12 +132,15 @@ A abertura e o turno trazem, todos opcionais (ausentes no backend antigo):
 | ----------- | ------ | --------------------------- | ------------------------------------------------ |
 | as duas     | 403    |                             | Aluno gratuito                                   |
 | voz         | 400    | `BAD_SIGNATURE`             | Assinatura que não confere                       |
-| voz         | 429    | `SPEECH_DAILY_LIMIT`        | 120 falas no dia                                 |
+| voz         | 429    | `SPEECH_DAILY_LIMIT`        | 30 falas no dia                                  |
+| voz         | 429    | `SPEECH_MONTHLY_LIMIT`      | Teto de US$ 3 no custo das falas do mês          |
 | transcrição | 400    |                             | Sem áudio, mais de 1 MB ou formato fora da lista |
-| transcrição | 429    | `TRANSCRIPTION_DAILY_LIMIT` | 50 transcrições no dia                           |
+| transcrição | 429    | `TRANSCRIPTION_DAILY_LIMIT` | 30 transcrições no dia                           |
 | as duas     | 502    |                             | Falha da ElevenLabs                              |
 
-Os limites de áudio são separados dos do chat: ouvir ou falar não gasta as 50 mensagens do dia.
+Os limites de áudio são separados dos do chat: ouvir ou falar não gasta as 30 mensagens do dia.
+
+`GET /api/mobile/practice/usage` devolve `{ messages, speech, voiceAnswers }`, cada um com `remaining` e `limit` do dia. Os tetos do mês ficam escondidos: atingido um, a parte vem com `remaining` 0. A folha de configurações mostra esses números em "Seu uso hoje" (`UsageToday`).
 
 ## Estado da conversa
 
@@ -183,6 +186,7 @@ type ChatMessage =
 - `send` acrescenta a mensagem do aluno como `sending`, chama o serviço com a conversa e, na resposta, grava a correção nela e acrescenta a fala da Gisa.
 - Só uma mensagem fica pendente por vez: enquanto `isReplying`, a tela não envia outra.
 - Uma mensagem `failed` não entra na conversa enviada ao backend, a não ser no `retry` dela mesma.
+- As mensagens anteriores do aluno vão na versão corrigida (`correction.corrected`, quando `hasErrors`), e só a mensagem nova vai como ele escreveu (`buildPracticePayload`, `src/utils/practicePayload.ts`). Com os erros originais no histórico, o modelo voltava a corrigir as mensagens antigas: num teste com 6 rodadas, 5 corrigiram a mensagem de dois turnos antes quando a nova estava certa; com o histórico corrigido, 0.
 - Fase 06: `sendVoice(uri)` acrescenta a mensagem `transcribing`, transcreve e segue como `send`; vazia ou com falha, a mensagem sai e o hook devolve o aviso para a tela. `redo()` tira a última resposta do aluno com erros e a fala da Gisa a ela, mantendo os avisos, e devolve o texto tirado. `lastSuggestion` é a dica da última fala da Gisa, quando ela é a última da conversa.
 - Fase 06: a voz fica em `useGisaVoice`, fora do hook da conversa. Cada fala é baixada uma vez, gravada no cache e tocada de novo dali; cada pedido novo, e cada `stop()`, descarta o que ainda estava chegando. A tela chama `stop()` ao gravar, recomeçar, trocar o estilo e no "Tentar de novo".
 - Fase 05: o hook guarda `remainingToday` da última resposta e `limit`. `limit` é `blocked` (`DAILY_LIMIT` ou `MONTHLY_LIMIT`, até sair do chat) ou `restart` (`CONVERSATION_TOO_LONG`, até recomeçar); com ele, a tela troca o campo de mensagem por um aviso. `RATE_LIMIT` é uma falha comum, com "Tentar de novo".
