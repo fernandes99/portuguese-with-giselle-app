@@ -67,17 +67,20 @@ function SpeakingAvatar({ speaking }: { speaking: boolean }) {
 }
 
 // Balão da Gisa, com a foto ao lado. Enquanto ela fala, a borda fica verde e
-// a foto ganha o anel pulsando.
+// a foto ganha o anel pulsando. `avatar` troca a foto (a personagem das
+// simulações).
 export function GisaBubble({
   children,
   speaking = false,
+  avatar,
 }: {
   children: ReactNode;
   speaking?: boolean;
+  avatar?: ReactNode;
 }) {
   return (
     <View className="max-w-[88%] flex-row items-end gap-2 self-start">
-      <SpeakingAvatar speaking={speaking} />
+      {avatar ?? <SpeakingAvatar speaking={speaking} />}
       <View
         accessibilityState={{ busy: speaking }}
         className={`shrink rounded-2xl rounded-bl-md border bg-white px-4 py-3 ${speaking ? 'border-green-500' : 'border-gray-200'}`}
@@ -167,6 +170,7 @@ export function GisaMessage({
   listen,
   speaking = false,
   activeWord = null,
+  avatar,
 }: {
   content: string;
   translation?: string;
@@ -176,11 +180,13 @@ export function GisaMessage({
   speaking?: boolean;
   // Índice da palavra que está sendo falada; null sem destaque
   activeWord?: number | null;
+  // No lugar da foto da Gisa (a personagem das simulações)
+  avatar?: ReactNode;
 }) {
   const [isTranslated, setIsTranslated] = useState(false);
 
   return (
-    <GisaBubble speaking={speaking}>
+    <GisaBubble speaking={speaking} avatar={avatar}>
       <SpokenText content={content} active={activeWord} />
 
       {translation && isTranslated ? (

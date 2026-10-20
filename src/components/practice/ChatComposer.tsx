@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
@@ -7,6 +7,9 @@ import { colors } from '@/constants/theme';
 
 // A partir daqui, o campo mostra quantos caracteres já foram usados
 const COUNTER_FROM = 400;
+
+// Âmbar da lâmpada da dica aberta (amber-600), como na barra de voz
+const BULB_COLOR = '#d97706';
 
 interface ChatComposerProps {
   // Enquanto a Gisa responde ou há uma mensagem com falha de envio
@@ -19,6 +22,12 @@ interface ChatComposerProps {
   autoFocus?: boolean;
   // Volta para o microfone; sem ele, o botão não aparece
   onVoice?: () => void;
+  // O microfone é do Premium: o botão leva a coroa, e o toque (onVoice) leva
+  // aos planos
+  isVoiceLocked?: boolean;
+  // Botão da dica ao lado do campo; sem ele, o botão não aparece
+  onHint?: () => void;
+  isHintOpen?: boolean;
 }
 
 // Campo de mensagem fixo no rodapé do chat
@@ -28,6 +37,9 @@ export function ChatComposer({
   initialText = '',
   autoFocus = false,
   onVoice,
+  isVoiceLocked = false,
+  onHint,
+  isHintOpen = false,
 }: ChatComposerProps) {
   const [text, setText] = useState(initialText);
   const canSend = !disabled && text.trim() !== '';
@@ -52,11 +64,43 @@ export function ChatComposer({
         {onVoice ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Responder falando"
+            accessibilityLabel={
+              isVoiceLocked
+                ? 'Responder falando, exclusivo do plano Premium'
+                : 'Responder falando'
+            }
+            accessibilityHint={
+              isVoiceLocked ? 'Abre a tela do plano Premium' : undefined
+            }
             onPress={onVoice}
             className="h-11 w-11 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200"
           >
             <Ionicons name="mic" size={22} color={colors.gray} />
+            {isVoiceLocked ? (
+              <View className="absolute -right-0.5 -top-0.5 h-5 w-5 items-center justify-center rounded-full bg-green-600">
+                <MaterialCommunityIcons
+                  name="crown"
+                  size={12}
+                  color={colors.crown}
+                />
+              </View>
+            ) : null}
+          </Pressable>
+        ) : null}
+        {onHint ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="O que eu deveria dizer?"
+            accessibilityState={{ expanded: isHintOpen, disabled }}
+            disabled={disabled}
+            onPress={onHint}
+            className={`h-11 w-11 items-center justify-center rounded-full ${isHintOpen ? 'bg-amber-50' : 'bg-gray-100 active:bg-gray-200'} ${disabled ? 'opacity-40' : ''}`}
+          >
+            <Ionicons
+              name="bulb-outline"
+              size={22}
+              color={isHintOpen ? BULB_COLOR : colors.gray}
+            />
           </Pressable>
         ) : null}
         <TextInput
