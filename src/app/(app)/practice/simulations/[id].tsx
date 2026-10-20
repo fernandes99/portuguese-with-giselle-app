@@ -27,6 +27,7 @@ import {
 import { ChatComposer } from '@/components/practice/ChatComposer';
 import { ChatNotice } from '@/components/practice/ChatNotice';
 import { ChatVoiceBar } from '@/components/practice/ChatVoiceBar';
+import { GoalReminder } from '@/components/simulations/GoalReminder';
 import { HintCard } from '@/components/practice/HintCard';
 import { ListenButton } from '@/components/practice/ListenButton';
 import { TypingIndicator } from '@/components/practice/TypingIndicator';
@@ -187,14 +188,15 @@ export default function SimulationScreen() {
       lastAssistant = message;
     }
   }
-  // biome-ignore lint/correctness/useExhaustiveDependencies: toca só quando chega uma fala nova
+  // biome-ignore lint/correctness/useExhaustiveDependencies: toca só quando chega uma fala nova ou o aviso de desvio fecha
   useEffect(() => {
     if (!lastAssistant) {
       // Simulação recomeçando: a abertura nova tem o mesmo id da anterior
       spokenRef.current.clear();
       return;
     }
-    if (spokenRef.current.has(lastAssistant.id)) {
+    // Com o aviso de desvio aberto, a fala espera o aluno fechar
+    if (spokenRef.current.has(lastAssistant.id) || sim.goalReminder) {
       return;
     }
     spokenRef.current.add(lastAssistant.id);
@@ -212,7 +214,7 @@ export default function SimulationScreen() {
         lastAssistant.signature
       );
     }
-  }, [lastAssistant?.id]);
+  }, [lastAssistant?.id, sim.goalReminder]);
 
   // A voz parou pelo limite: a conversa avisa uma vez e segue por texto
   // biome-ignore lint/correctness/useExhaustiveDependencies: avisa só quando a mensagem do limite aparece
@@ -389,6 +391,7 @@ export default function SimulationScreen() {
         <SimulationSummary
           simulation={simulation}
           status={sim.status}
+          endReason={sim.endReason}
           feedback={sim.feedback}
           endNotice={sim.endNotice}
           completedTasks={sim.completedTasks}
@@ -412,6 +415,7 @@ export default function SimulationScreen() {
         tasks={simulation.tasks}
         completed={sim.completedTasks}
         highlight={sim.lastCompleted}
+        warnings={sim.deviationCount}
       />
 
       {/* O campo de mensagem sobe junto com o teclado */}
@@ -549,6 +553,15 @@ export default function SimulationScreen() {
           </>
         )}
       </KeyboardAvoidingView>
+
+      <GoalReminder
+        reminder={sim.goalReminder}
+        tasks={simulation.tasks}
+        pendingTasks={simulation.tasks
+          .map((_, task) => task)
+          .filter((task) => !sim.completedTasks.includes(task))}
+        onClose={sim.dismissReminder}
+      />
     </SafeAreaView>
   );
 }

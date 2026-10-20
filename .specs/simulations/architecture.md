@@ -124,6 +124,7 @@ Todas usam o token Bearer do app. Mensagens de erro em português, no campo `err
   "suggestion": "Eu quero um cappuccino, por favor.",
   "suggestionTranslation": "I want a cappuccino, please.",
   "maxMessages": 12,
+  "maxDeviations": 3,
   "remainingToday": 2
 }
 ```
@@ -138,7 +139,7 @@ Todas usam o token Bearer do app. Mensagens de erro em português, no campo `err
 
 ### Turno
 
-`POST /api/mobile/simulations/runs/[runId]/turns`, com a conversa inteira, no mesmo formato do chat: `{ "messages": [{ "role": "assistant" | "user", "content": "..." }] }`, começando pela abertura e terminando na mensagem nova do aluno. As mensagens anteriores do aluno vão na versão corrigida (`buildPracticePayload` no app).
+`POST /api/mobile/simulations/runs/[runId]/turns`, com a conversa inteira, no mesmo formato do chat: `{ "messages": [{ "role": "assistant" | "user", "content": "..." }] }`, começando pela abertura e terminando na mensagem nova do aluno. As mensagens anteriores do aluno vão na versão corrigida (`buildPracticePayload` no app), e a nova vai com `"spoken": true` quando o aluno respondeu falando, como no chat.
 
 ```json
 {
@@ -157,6 +158,15 @@ Todas usam o token Bearer do app. Mensagens de erro em português, no campo `err
   "completedTasks": [0],
   "newlyCompletedTasks": [0],
   "remainingMessages": 11,
+  "deviationCount": 1,
+  "goalReminder": {
+    "kind": "AGAINST_TASK",
+    "task": 2,
+    "reason": "You chose to pay in cash, but your goal is to pay by card.",
+    "count": 1,
+    "max": 3
+  },
+  "endReason": null,
   "status": "IN_PROGRESS",
   "feedback": ""
 }
@@ -165,7 +175,10 @@ Todas usam o token Bearer do app. Mensagens de erro em português, no campo `err
 - `correction` e `correctedSignature`: as mesmas regras do turno do chat. `correctedSignature` só vem com erros.
 - `completedTasks`: todas as tarefas cumpridas até agora, pela posição. `newlyCompletedTasks`: as que este turno cumpriu.
 - `remainingMessages`: mensagens do aluno que ainda cabem nesta simulação.
-- `status`: `IN_PROGRESS`, `COMPLETED` (todas as tarefas cumpridas) ou `NOT_COMPLETED` (acabaram as mensagens).
+- `deviationCount`: desvios até agora. `maxDeviations` (no começo) é o número que interrompe a simulação.
+- `goalReminder`: só quando esta mensagem foi um desvio e a simulação continua; senão `null`. `kind` é `AGAINST_TASK` (foi contra a tarefa `task`, pela posição), `OFF_TOPIC` (saiu do assunto da cena) ou `OTHER_LANGUAGE` (escreveu em outro idioma); nos dois últimos, `task` vem `null`. `reason` é uma frase ao aluno, no idioma da explicação, e pode vir `""`. `count` e `max` são o número deste desvio e o que interrompe.
+- `status`: `IN_PROGRESS`, `COMPLETED` (todas as tarefas cumpridas) ou `NOT_COMPLETED` (acabaram as mensagens ou o aluno chegou ao limite de desvios).
+- `endReason`: por que acabou, `COMPLETED`, `OUT_OF_MESSAGES` ou `DEVIATIONS`; `null` em andamento. Com `DEVIATIONS`, o `feedback` diz o que o aluno fez contra as tarefas e o que fazer na próxima vez.
 - `feedback`: com `status` diferente de `IN_PROGRESS`, um texto curto sobre a simulação, no idioma da explicação. Vem `""` em andamento e pode vir `""` também no fim, se o modelo não o escreveu.
 - No turno que fecha a simulação, `suggestion` vem `""`, e `reply` costuma ser a despedida da personagem.
 - Erros:

@@ -52,10 +52,33 @@ export interface SimulationStart {
   replySignature: string;
   // Mensagens do aluno que cabem nesta simulação
   maxMessages: number;
+  // Desvios que interrompem a simulação
+  maxDeviations: number;
   remainingToday: number;
 }
 
 export type SimulationStatus = 'IN_PROGRESS' | 'COMPLETED' | 'NOT_COMPLETED';
+
+// Por que a simulação acabou
+export type SimulationEndReason =
+  'COMPLETED' | 'OUT_OF_MESSAGES' | 'DEVIATIONS';
+
+// AGAINST_TASK: foi contra uma tarefa; OFF_TOPIC: saiu da cena;
+// OTHER_LANGUAGE: escreveu em outro idioma
+export type SimulationDeviationKind =
+  'AGAINST_TASK' | 'OFF_TOPIC' | 'OTHER_LANGUAGE';
+
+// Aviso de desvio, enquanto a simulação continua
+export interface SimulationGoalReminder {
+  kind: SimulationDeviationKind;
+  // A tarefa contrariada, pela posição; null nos outros tipos
+  task: number | null;
+  // Frase ao aluno, no idioma da explicação; pode vir vazia
+  reason: string;
+  // Este é o aviso número `count` de `max`
+  count: number;
+  max: number;
+}
 
 // Um turno: a correção da mensagem do aluno, a fala seguinte e as tarefas
 export interface SimulationTurn {
@@ -72,7 +95,13 @@ export interface SimulationTurn {
   completedTasks: number[];
   newlyCompletedTasks: number[];
   remainingMessages: number;
+  // Desvios até agora; o aviso só vem quando este turno foi um desvio e a
+  // simulação continua
+  deviationCount: number;
+  goalReminder: SimulationGoalReminder | null;
   status: SimulationStatus;
+  // Por que acabou; null em andamento
+  endReason: SimulationEndReason | null;
   // Comentário do fim; vazio em andamento (e às vezes no fim)
   feedback: string;
 }

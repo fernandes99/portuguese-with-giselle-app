@@ -40,13 +40,14 @@ O aluno. O Premium faz todas as simulações; o gratuito faz só as liberadas pa
 
 Tomadas com o dono do projeto:
 
-| Decisão                                                                                                  | Motivo                                            |
-| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| Os cenários são cadastrados no DatoCMS pela equipe                                                       | Cenário novo sem deploy e sem versão nova do app  |
-| O Premium faz todas; o gratuito faz só as liberadas, 1 por dia                                           | A amostra grátis mostra o que a assinatura libera |
-| Cartão de correção a cada frase, como no chat, e um resumo no fim                                        | Escolha do dono do projeto                        |
-| Até 3 simulações começadas por dia e até 12 mensagens do aluno em cada, à parte das 30 mensagens do chat | Custo previsível, sem tirar mensagens do chat     |
-| A voz da personagem e a resposta falada dividem os limites e o teto mensal de voz com o chat             | A voz é a maior parte do custo                    |
+| Decisão                                                                                                                                                                                                                                                | Motivo                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| Os cenários são cadastrados no DatoCMS pela equipe                                                                                                                                                                                                     | Cenário novo sem deploy e sem versão nova do app  |
+| O Premium faz todas; o gratuito faz só as liberadas, 1 por dia                                                                                                                                                                                         | A amostra grátis mostra o que a assinatura libera |
+| Cartão de correção a cada frase, como no chat, e um resumo no fim                                                                                                                                                                                      | Escolha do dono do projeto                        |
+| Até 3 simulações começadas por dia e até 12 mensagens do aluno em cada, à parte das 30 mensagens do chat                                                                                                                                               | Custo previsível, sem tirar mensagens do chat     |
+| A voz da personagem e a resposta falada dividem os limites e o teto mensal de voz com o chat                                                                                                                                                           | A voz é a maior parte do custo                    |
+| No 1º e no 2º desvio (ir contra uma tarefa, sair do assunto da cena ou escrever em outro idioma), um aviso por cima da conversa lembra a tarefa; no 3º, a simulação é interrompida e o resumo explica o que melhorar (fase [03](03-goal-reminders.md)) | Pedido do dono do projeto                         |
 
 Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs afetadas):
 
@@ -86,5 +87,6 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 | ----------------------------- | --------------------------------------------------------------------- | ------------ |
 | [01](01-simulations-list.md)  | Cartão "Simulações" na aba Praticar e a lista de cenários             | em andamento |
 | [02](02-simulation-screen.md) | Apresentação, conversa com as tarefas, aviso de saída e resumo do fim | em andamento |
+| [03](03-goal-reminders.md)    | Aviso de desvio e o resumo da interrupção                             | em andamento |
 
 O contrato das rotas e o desenho que as duas fases dividem estão em [architecture.md](architecture.md).

@@ -8,6 +8,9 @@ import { colors } from '@/constants/theme';
 // Quanto tempo a faixa fica aberta ao cumprir uma tarefa
 const HIGHLIGHT_MS = 3000;
 
+// Âmbar do ícone dos avisos (amber-600)
+const WARNING_COLOR = '#d97706';
+
 // Faixa das tarefas no topo da conversa: recolhida, mostra o progresso; um
 // toque abre a lista. Quando um turno cumpre tarefas (`highlight`, que muda a
 // cada turno), ela abre sozinha com elas destacadas e recolhe depois.
@@ -15,10 +18,13 @@ export function TaskStrip({
   tasks,
   completed,
   highlight,
+  warnings = 0,
 }: {
   tasks: string[];
   completed: number[];
   highlight: { tasks: number[]; turn: number } | null;
+  // Avisos de desvio até agora; com algum, a faixa mostra quantos
+  warnings?: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlighted, setHighlighted] = useState<number[]>([]);
@@ -60,7 +66,7 @@ export function TaskStrip({
     <View className="border-b border-gray-200 bg-white px-4 py-2.5">
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Tarefas, ${done} de ${tasks.length} cumpridas`}
+        accessibilityLabel={`Tarefas, ${done} de ${tasks.length} cumpridas${warnings > 0 ? `, ${warnings} ${warnings === 1 ? 'aviso' : 'avisos'}` : ''}`}
         accessibilityState={{ expanded: isOpen }}
         onPress={() => setIsOpen((current) => !current)}
         className="gap-2"
@@ -69,6 +75,18 @@ export function TaskStrip({
           <Text className="flex-1 font-poppins-semibold text-sm text-gray-900">
             Tarefas {done}/{tasks.length}
           </Text>
+          {warnings > 0 ? (
+            <View className="flex-row items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5">
+              <Ionicons
+                name="warning-outline"
+                size={12}
+                color={WARNING_COLOR}
+              />
+              <Text className="font-poppins-medium text-xs text-amber-800">
+                {warnings === 1 ? '1 aviso' : `${warnings} avisos`}
+              </Text>
+            </View>
+          ) : null}
           <Ionicons
             name={isOpen ? 'chevron-up' : 'chevron-down'}
             size={18}

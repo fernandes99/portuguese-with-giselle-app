@@ -5,7 +5,11 @@ import { Button } from '@/components/Button';
 import { CorrectionCard } from '@/components/practice/CorrectionCard';
 import { colors } from '@/constants/theme';
 import type { ChatMessage } from '@/hooks/usePracticeChat';
-import type { Simulation, SimulationStatus } from '@/services/simulations';
+import type {
+  Simulation,
+  SimulationEndReason,
+  SimulationStatus,
+} from '@/services/simulations';
 import { getReviewMessages } from '@/utils/simulations';
 
 // Resumo do fim da simulação, montado com o que o app já tem: as tarefas, o
@@ -13,6 +17,7 @@ import { getReviewMessages } from '@/utils/simulations';
 export function SimulationSummary({
   simulation,
   status,
+  endReason,
   feedback,
   endNotice,
   completedTasks,
@@ -22,6 +27,7 @@ export function SimulationSummary({
 }: {
   simulation: Simulation;
   status: SimulationStatus;
+  endReason: SimulationEndReason | null;
   feedback: string;
   // Por que a simulação parou, quando não foi pelo fim normal
   endNotice: string | null;
@@ -31,6 +37,17 @@ export function SimulationSummary({
   onOther: () => void;
 }) {
   const isCompleted = status === 'COMPLETED';
+  const isInterrupted = endReason === 'DEVIATIONS';
+  const title = isCompleted
+    ? 'Simulação concluída!'
+    : isInterrupted
+      ? 'Simulação interrompida'
+      : 'Quase lá!';
+  const subtitle = isInterrupted
+    ? 'A conversa parou porque você saiu das suas tarefas. Veja o que melhorar.'
+    : !isCompleted && !endNotice
+      ? 'Suas mensagens desta simulação acabaram.'
+      : null;
   const review = getReviewMessages(messages);
 
   return (
@@ -50,11 +67,11 @@ export function SimulationSummary({
             accessibilityRole="header"
             className="text-center font-poppins-bold text-2xl text-gray-900"
           >
-            {isCompleted ? 'Simulação concluída!' : 'Quase lá!'}
+            {title}
           </Text>
-          {!isCompleted && !endNotice ? (
+          {subtitle ? (
             <Text className="text-center font-poppins text-sm text-gray-600">
-              Suas mensagens desta simulação acabaram.
+              {subtitle}
             </Text>
           ) : null}
         </View>

@@ -6,6 +6,8 @@ import { ApiError, getErrorMessage } from '@/lib/api';
 import { transcribePracticeAnswer } from '@/services/practice';
 import {
   SIMULATION_ERROR_CODES,
+  type SimulationEndReason,
+  type SimulationGoalReminder,
   type SimulationStatus,
   sendSimulationTurn,
   startSimulation,
@@ -61,6 +63,12 @@ export function useSimulation(simulationId: string) {
   } | null>(null);
   const [remainingMessages, setRemainingMessages] = useState(0);
   const [status, setStatus] = useState<SimulationStatus>('IN_PROGRESS');
+  const [endReason, setEndReason] = useState<SimulationEndReason | null>(null);
+  // Desvios até agora; o limite vem em cada aviso
+  const [deviationCount, setDeviationCount] = useState(0);
+  // O aviso de desvio que a tela mostra até o aluno fechar
+  const [goalReminder, setGoalReminder] =
+    useState<SimulationGoalReminder | null>(null);
   const [feedback, setFeedback] = useState('');
   // A simulação parou por outro motivo (terminou no backend ou o teto do
   // mês): a mensagem aparece no resumo
@@ -109,6 +117,9 @@ export function useSimulation(simulationId: string) {
       setCompletedTasks([]);
       setLastCompleted(null);
       setRemainingMessages(result.maxMessages);
+      setDeviationCount(0);
+      setGoalReminder(null);
+      setEndReason(null);
       setStatus('IN_PROGRESS');
       setFeedback('');
       setEndNotice(null);
@@ -183,7 +194,10 @@ export function useSimulation(simulationId: string) {
         }
         setRemainingMessages(turn.remainingMessages);
         setStatus(turn.status);
+        setEndReason(turn.endReason);
         setFeedback(turn.feedback);
+        setDeviationCount(turn.deviationCount);
+        setGoalReminder(turn.goalReminder);
       } catch (err) {
         if (attempt.current !== current) {
           return;
@@ -284,7 +298,12 @@ export function useSimulation(simulationId: string) {
       return { ok: false, message: NOT_UNDERSTOOD };
     }
 
-    deliver(history, { id, role: 'user', content: text, status: 'sending' });
+    deliver(history, {
+      id,
+      role: 'user',
+      content: text,
+      status: 'sending',
+    });
     return { ok: true };
   }
 
@@ -320,6 +339,11 @@ export function useSimulation(simulationId: string) {
     setPhase((current) => (current === 'playing' ? 'finished' : current));
   }
 
+  // O aluno fechou o aviso de desvio
+  function dismissReminder() {
+    setGoalReminder(null);
+  }
+
   // "Tentar de novo" do resumo: volta à apresentação do mesmo cenário
   function restart() {
     attempt.current += 1;
@@ -328,6 +352,9 @@ export function useSimulation(simulationId: string) {
     setMessages([]);
     setCompletedTasks([]);
     setLastCompleted(null);
+    setDeviationCount(0);
+    setGoalReminder(null);
+    setEndReason(null);
     setStatus('IN_PROGRESS');
     setFeedback('');
     setEndNotice(null);
@@ -346,6 +373,10 @@ export function useSimulation(simulationId: string) {
     lastCompleted,
     remainingMessages,
     status,
+    endReason,
+    deviationCount,
+    goalReminder,
+    dismissReminder,
     feedback,
     endNotice,
     startError,
