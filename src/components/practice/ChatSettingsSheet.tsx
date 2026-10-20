@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Modal, Pressable, Switch, Text, View } from 'react-native';
 
+import { UsageToday } from '@/components/practice/UsageToday';
 import { colors } from '@/constants/theme';
 import { useModalBottomInset } from '@/hooks/useModalBottomInset';
 
@@ -107,6 +108,8 @@ export function ChatSettingsSheet({
               <Ionicons name="close" size={20} color={colors.gray} />
             </Pressable>
           </View>
+
+          <UsageToday />
 
           <View className="flex-row items-center gap-3 py-4">
             <Ionicons name="volume-medium" size={20} color={colors.gray} />

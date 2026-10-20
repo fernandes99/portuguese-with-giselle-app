@@ -49,6 +49,7 @@ export const API_ROUTES = {
   practiceChat: '/api/mobile/practice/chat',
   practiceOpening: '/api/mobile/practice/opening',
   practiceSpeech: '/api/mobile/practice/speech',
+  practiceUsage: '/api/mobile/practice/usage',
   practiceTranscription: '/api/mobile/practice/transcription',
   chatStyle: '/api/mobile/preferences/chat-style',
   chatLanguage: '/api/mobile/preferences/chat-language',

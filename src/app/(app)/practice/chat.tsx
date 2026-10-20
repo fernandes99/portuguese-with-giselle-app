@@ -69,6 +69,7 @@ export default function PracticeChatScreen() {
     retry,
     redo,
     restart,
+    addNotice,
   } = usePracticeChat();
   const voice = useGisaVoice();
   // Fora de foco (idioma, estilo), a voz para e a voz automática não toca
@@ -195,6 +196,15 @@ export default function PracticeChatScreen() {
       );
     }
   }, [lastAssistant?.id]);
+
+  // A voz parou pelo limite: o chat avisa uma vez, e a conversa segue por
+  // texto
+  // biome-ignore lint/correctness/useExhaustiveDependencies: avisa só quando a mensagem do limite aparece
+  useEffect(() => {
+    if (voice.speechLimitMessage) {
+      addNotice(voice.speechLimitMessage);
+    }
+  }, [voice.speechLimitMessage]);
 
   // Uma fala nova troca a dica
   // biome-ignore lint/correctness/useExhaustiveDependencies: fecha a dica quando ela muda

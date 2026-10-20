@@ -387,6 +387,15 @@ export function usePracticeChat() {
         }
       : null;
 
+  // Aviso do próprio app no fim da conversa (a voz parou pelo limite, por
+  // exemplo); não vai para o backend
+  function addNotice(content: string) {
+    setMessages((current) => [
+      ...current,
+      { id: `aviso-${nextId.current++}`, role: 'notice', content },
+    ]);
+  }
+
   function restart() {
     conversation.current += 1;
     setIsReplying(false);
@@ -410,5 +419,6 @@ export function usePracticeChat() {
     retry,
     redo,
     restart,
+    addNotice,
   };
 }

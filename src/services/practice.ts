@@ -83,6 +83,8 @@ export function startPracticeChat(token: string) {
 // Códigos de erro das rotas de áudio que mudam a tela
 export const PRACTICE_AUDIO_ERROR_CODES = {
   speechLimit: 'SPEECH_DAILY_LIMIT',
+  // Teto do custo da voz no mês: o chat continua por texto
+  speechMonthlyLimit: 'SPEECH_MONTHLY_LIMIT',
   transcriptionLimit: 'TRANSCRIPTION_DAILY_LIMIT',
 } as const;
 
@@ -119,4 +121,20 @@ export function transcribePracticeAnswer(token: string, uri: string) {
     formData,
     token,
   });
+}
+
+export interface PracticeAllowanceItem {
+  remaining: number;
+  limit: number;
+}
+
+// O que resta hoje de cada limite do chat
+export interface PracticeAllowance {
+  messages: PracticeAllowanceItem;
+  speech: PracticeAllowanceItem;
+  voiceAnswers: PracticeAllowanceItem;
+}
+
+export function getPracticeAllowance(token: string) {
+  return api<PracticeAllowance>(API_ROUTES.practiceUsage, { token });
 }

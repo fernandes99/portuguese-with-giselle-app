@@ -60,8 +60,12 @@ export function useGisaVoice() {
   const currentUriRef = useRef<string | null>(null);
   const [autoplayEnabled, setAutoplayState] = useState(true);
   const autoplayRef = useRef(true);
-  // O limite de falas do dia: a voz automática para até sair da tela
-  const [isSpeechBlocked, setIsSpeechBlocked] = useState(false);
+  // O limite de falas do dia ou do mês: a voz automática para até sair da
+  // tela
+  // A mensagem do backend sobre o limite, para a tela avisar no chat
+  const [speechLimitMessage, setSpeechLimitMessage] = useState<string | null>(
+    null
+  );
   const blockedRef = useRef(false);
 
   useEffect(() => {
@@ -170,10 +174,11 @@ export function useGisaVoice() {
       }
       if (
         err instanceof ApiError &&
-        err.code === PRACTICE_AUDIO_ERROR_CODES.speechLimit
+        (err.code === PRACTICE_AUDIO_ERROR_CODES.speechLimit ||
+          err.code === PRACTICE_AUDIO_ERROR_CODES.speechMonthlyLimit)
       ) {
         blockedRef.current = true;
-        setIsSpeechBlocked(true);
+        setSpeechLimitMessage(err.message);
       }
       // Na voz automática, a falha é silenciosa
       if (fromUser && current === request.current) {
@@ -250,6 +255,6 @@ export function useGisaVoice() {
     stop,
     autoplayEnabled,
     setAutoplayEnabled,
-    isSpeechBlocked,
+    speechLimitMessage,
   };
 }
