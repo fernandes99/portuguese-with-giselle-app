@@ -1,6 +1,6 @@
 # 02. Apresentação, conversa e resumo
 
-- **Status:** rascunho
+- **Status:** em andamento
 - **Depende de:** [01](01-simulations-list.md); fase 02 de `.specs/simulations/` do site no ar
 
 ## Contexto
@@ -81,12 +81,28 @@ A lista já abre `practice/simulations/[id]` (fase 01). Falta a simulação em s
 - Teste com o Node (fora do repositório, como os do chat) da montagem das "Frases para revisar" a partir das mensagens.
 - No aparelho, com o build preview e o backend no ar, os critérios de aceite um a um, com uma conta Premium e uma gratuita, e um teste sem internet no meio da conversa.
 
+## Divergências
+
+- **"Ver resultado":** quando a simulação acaba, o campo de envio dá lugar ao botão "Ver resultado", que abre o resumo na hora. O resumo também abre sozinho, como pede o RF-18: 1,5 segundo depois da última fala, sem voz; ou logo depois de ela tocar, com voz. Se a voz não começar a tocar em 5 segundos, o resumo abre assim mesmo; tocando, espera no máximo 30.
+- **Dica no teclado:** `ChatComposer` ganhou o botão da dica (`onHint`), porque o aluno gratuito só tem o teclado, e o RF-10 vale para ele também. O chat não passa `onHint` e não mudou.
+- **Microfone do gratuito:** o botão de microfone do `ChatComposer` aparece com uma coroa (`isVoiceLocked`) e leva à tela de planos, no lugar da etiqueta Premium (RF-12), que não cabe no botão redondo.
+- **Sem "Tentar de novo" da correção:** o cartão de correção da simulação não tem o botão de refazer a resposta. Refazer tiraria a mensagem da conversa, mas a tarefa cumprida e a mensagem contada já estariam no backend.
+- **Prop `avatar`:** além de `GisaMessage`, `GisaBubble` ganhou a prop `avatar`, para o indicador de digitação também mostrar o emoji.
+
+## Resultado
+
+- `yarn lint` e `yarn tsc --noEmit` passam.
+- Teste com o Node (fora do repositório) de `getReviewMessages` e dos rótulos de `src/utils/simulations.ts`.
+- O `expo start` que roda na máquina do dono do projeto regenerou os tipos das rotas (`.expo/types/router.d.ts`, fora do git) sem `/practice/simulations`. Os tipos foram gerados de novo com um `expo start` temporário. Se o typecheck reclamar da rota de novo, reinicie o `expo start`.
+- Falta o teste no aparelho (os critérios de aceite acima), com um build preview novo e as rotas do site no ar.
+
 ## Tarefas
 
-- [ ] `startSimulation`, `sendSimulationTurn` e `useSimulation`.
-- [ ] Prop `avatar` em `GisaMessage` e `SimulationAvatar`.
-- [ ] `SimulationIntro` e os estados de erro e limite.
-- [ ] A conversa, com `TaskStrip`, "Restam N mensagens", voz e microfone.
-- [ ] A confirmação de saída.
-- [ ] `SimulationSummary` e "Tentar de novo".
-- [ ] Documentação (`CLAUDE.md`), status desta spec e a tabela do README.
+- [x] `startSimulation`, `sendSimulationTurn` e `useSimulation`.
+- [x] Prop `avatar` em `GisaMessage` e `SimulationAvatar`.
+- [x] `SimulationIntro` e os estados de erro e limite.
+- [x] A conversa, com `TaskStrip`, "Restam N mensagens", voz e microfone.
+- [x] A confirmação de saída.
+- [x] `SimulationSummary` e "Tentar de novo".
+- [x] Documentação (`CLAUDE.md`), status desta spec e a tabela do README.
+- [ ] Teste no aparelho.
