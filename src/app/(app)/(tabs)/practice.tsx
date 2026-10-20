@@ -62,8 +62,8 @@ function PracticeOption({
   );
 }
 
-// Formas de praticar o idioma: o chat com a IA, os flashcards, o vocabulário
-// e as aulas particulares com a professora
+// Formas de praticar o idioma: o chat com a IA, as simulações, os
+// flashcards, o vocabulário e as aulas particulares com a professora
 export default function PracticeScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -91,6 +91,12 @@ export default function PracticeScreen() {
             onPress={() =>
               router.push(canUsePractice(user) ? '/practice/chat' : '/plans')
             }
+          />
+          <PracticeOption
+            icon="chatbubbles-outline"
+            title="Simulações"
+            description="Pratique situações do dia a dia, como pedir um café, e cumpra as tarefas."
+            onPress={() => router.push('/practice/simulations')}
           />
           <PracticeOption
             icon="albums"

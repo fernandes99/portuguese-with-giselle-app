@@ -51,6 +51,11 @@ export const API_ROUTES = {
   practiceSpeech: '/api/mobile/practice/speech',
   practiceUsage: '/api/mobile/practice/usage',
   practiceTranscription: '/api/mobile/practice/transcription',
+  simulations: '/api/mobile/simulations',
+  simulationRuns: (id: string) =>
+    `/api/mobile/simulations/${encodeURIComponent(id)}/runs`,
+  simulationTurns: (runId: string) =>
+    `/api/mobile/simulations/runs/${encodeURIComponent(runId)}/turns`,
   chatStyle: '/api/mobile/preferences/chat-style',
   chatLanguage: '/api/mobile/preferences/chat-language',
   flashcards: '/api/mobile/flashcards',

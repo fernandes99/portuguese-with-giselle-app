@@ -1,6 +1,6 @@
 # 01. Cartão na aba Praticar e lista de cenários
 
-- **Status:** rascunho
+- **Status:** em andamento
 - **Depende de:** fase 02 de `.specs/simulations/` do site no ar
 
 ## Contexto
@@ -41,10 +41,12 @@ O backend já lista os cenários com o que está trancado, o que o aluno já com
 ## Desenho técnico
 
 - `src/constants/config.ts`: `simulations`, `simulationRuns(id)` e `simulationTurns(runId)` em `API_ROUTES`.
-- `src/services/simulations.ts` (novo): tipos do contrato (`Simulation`, `SimulationList`, `SimulationStart`, `SimulationTurn`) e `getSimulations`, com o cache. `startSimulation` e `sendSimulationTurn` entram na fase 02.
+- `src/services/simulations.ts` (novo): tipos da lista (`Simulation`, `SimulationList`) e `getSimulations`, com o cache, e `getCachedSimulation`. Os tipos do começo e do turno, `startSimulation` e `sendSimulationTurn` entram na fase 02.
+- `src/utils/simulations.ts` (novo): os nomes dos níveis, "3 tarefas" e a linha do que resta hoje.
 - `src/components/simulations/SimulationCard.tsx` (novo), no visual do `PracticeOption` da aba Praticar: borda `border-gray-200`, fundo branco, sem sombra.
 - `src/app/(app)/practice/simulations/index.tsx` (nova) e `src/app/(app)/practice/simulations/[id].tsx` (nova, só a apresentação nesta fase).
 - `src/app/(app)/(tabs)/practice.tsx`: o cartão novo.
+- A lista usa `useApiQuery` (`src/hooks/useApiQuery.ts`), que carrega ao abrir e de novo a cada volta à tela, com puxar para atualizar, como a dos flashcards.
 - Reaproveita `LessonHeader`, `PremiumBadge`, `useAuth`, `api` e `getErrorMessage`.
 
 ## Verificação
@@ -52,9 +54,21 @@ O backend já lista os cenários com o que está trancado, o que o aluno já com
 - `yarn lint` e `yarn tsc --noEmit`.
 - No aparelho, com o build preview e o backend no ar: Premium e gratuito, lista vazia (sem cenário publicado no Dato de teste) e sem internet.
 
+## Divergências
+
+- **Apresentação já nesta fase:** `SimulationIntro` (`src/components/simulations/`), previsto na fase 02, entrou aqui para a tela `[id]` ter o que mostrar: o emoji, o título, o nível, a descrição e "Suas tarefas". Ainda sem o botão "Começar", que vem na fase 02.
+- **Cenário sem cache:** a tela `[id]` abre na hora com o cenário da última lista e, sem ele, mostra o carregamento até a lista chegar. Se o cenário saiu da lista (despublicado), mostra "Esta simulação não está mais disponível."
+
+## Resultado
+
+- `yarn lint` e `yarn tsc --noEmit` passam. Os tipos das rotas novas do Expo Router foram gerados rodando o `expo start` por alguns segundos.
+- A rota da lista já está em produção e devolve "Pedir café" com as três tarefas, `remainingToday` 3 e `limitPerDay` 3 para a conta do dono do projeto.
+- Falta o teste no aparelho, com um build preview novo (os critérios de aceite acima).
+
 ## Tarefas
 
-- [ ] Rotas em `API_ROUTES` e o serviço com o cache.
-- [ ] `SimulationCard` e a tela da lista.
-- [ ] Cartão na aba Praticar.
-- [ ] Documentação (`CLAUDE.md`), status desta spec e a tabela do README.
+- [x] Rotas em `API_ROUTES` e o serviço com o cache.
+- [x] `SimulationCard` e a tela da lista.
+- [x] Cartão na aba Praticar.
+- [x] Documentação (`CLAUDE.md`), status desta spec e a tabela do README.
+- [ ] Teste no aparelho.

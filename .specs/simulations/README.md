@@ -82,9 +82,9 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 
 ## Fases
 
-| Fase                          | Assunto                                                               | Status   |
-| ----------------------------- | --------------------------------------------------------------------- | -------- |
-| [01](01-simulations-list.md)  | Cartão "Simulações" na aba Praticar e a lista de cenários             | rascunho |
-| [02](02-simulation-screen.md) | Apresentação, conversa com as tarefas, aviso de saída e resumo do fim | rascunho |
+| Fase                          | Assunto                                                               | Status       |
+| ----------------------------- | --------------------------------------------------------------------- | ------------ |
+| [01](01-simulations-list.md)  | Cartão "Simulações" na aba Praticar e a lista de cenários             | em andamento |
+| [02](02-simulation-screen.md) | Apresentação, conversa com as tarefas, aviso de saída e resumo do fim | rascunho     |
 
 O contrato das rotas e o desenho que as duas fases dividem estão em [architecture.md](architecture.md).
