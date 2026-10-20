@@ -1,6 +1,6 @@
 {
   "name": "portuguese-with-giselle-app",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.4.1",
