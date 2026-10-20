@@ -78,12 +78,8 @@ export function useGisaVoice() {
     const cached = files.current;
     return () => {
       isMountedRef.current = false;
+      // Sem pause: o useAudioPlayer já liberou o player, o que para o som
       request.current += 1;
-      try {
-        player.pause();
-      } catch {
-        // player já liberado
-      }
       for (const { uri } of cached.values()) {
         try {
           new File(uri).delete();
@@ -93,7 +89,21 @@ export function useGisaVoice() {
       }
       cached.clear();
     };
-  }, [player]);
+  }, []);
+
+  // Pausa o player se a tela ainda está montada. Ao sair da tela, o
+  // useAudioPlayer libera o player antes das outras limpezas (a desta tela e
+  // a do foco, no chat), e o pause num player liberado lança erro no Android.
+  function pause() {
+    if (!isMountedRef.current) {
+      return;
+    }
+    try {
+      player.pause();
+    } catch {
+      // player já liberado
+    }
+  }
 
   // `current` é o pedido que mandou tocar: um `stop` no meio cancela
   function play(key: string, speech: CachedSpeech, current: number) {
@@ -126,7 +136,7 @@ export function useGisaVoice() {
   ) {
     request.current += 1;
     const current = request.current;
-    player.pause();
+    pause();
 
     const cached = files.current.get(signature);
     if (cached) {
@@ -220,8 +230,10 @@ export function useGisaVoice() {
 
   function stop() {
     request.current += 1;
-    setLoadingKey(null);
-    player.pause();
+    if (isMountedRef.current) {
+      setLoadingKey(null);
+    }
+    pause();
   }
 
   function setAutoplayEnabled(enabled: boolean) {
