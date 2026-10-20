@@ -269,7 +269,6 @@ export function DragDropActivity({
         })}
       </View>
 
-      {/* O "Verificar" fica no rodapé fixo da tela (ActivityFooter) */}
       <ActivityCheck disabled={!isComplete || isChecked} onCheck={check} />
 
       {feedback ? (

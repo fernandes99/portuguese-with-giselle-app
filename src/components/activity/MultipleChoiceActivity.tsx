@@ -181,7 +181,6 @@ export function MultipleChoiceActivity({
         onSelect={select}
       />
 
-      {/* O "Verificar" fica no rodapé fixo da tela (ActivityFooter) */}
       <ActivityCheck
         disabled={selected.length === 0 || isChecked}
         onCheck={check}

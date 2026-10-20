@@ -241,7 +241,6 @@ export function TrueFalseActivity({
         })}
       </View>
 
-      {/* O "Verificar" fica no rodapé fixo da tela (ActivityFooter) */}
       <ActivityCheck
         disabled={answer === undefined || isChecked}
         onCheck={check}

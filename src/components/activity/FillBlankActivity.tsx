@@ -328,8 +328,6 @@ export function FillBlankActivity({
         })}
       </View>
 
-      {/* O "Verificar" fica no rodapé fixo da tela (ActivityFooter), que
-      sobe junto com o teclado */}
       <ActivityCheck disabled={!isComplete || isChecked} onCheck={check} />
 
       {feedback ? (

@@ -330,7 +330,6 @@ export function usePracticeChat() {
     return { ok: true };
   }
 
-  // Reenvia a mensagem que falhou
   function retry() {
     if (
       last?.role !== 'user' ||
