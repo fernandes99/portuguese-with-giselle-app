@@ -5,7 +5,6 @@ import { ApiError, getErrorMessage } from '@/lib/api';
 import {
   PRACTICE_ERROR_CODES,
   type PracticeCorrection,
-  type PracticeMessage,
   sendPracticeMessage,
   startPracticeChat,
   transcribePracticeAnswer,
@@ -16,6 +15,7 @@ import {
   getOpeningMessage,
   getOpeningTranslation,
 } from '@/utils/practice';
+import { buildPracticePayload } from '@/utils/practicePayload';
 
 export type ChatMessage =
   | {
@@ -190,13 +190,8 @@ export function usePracticeChat() {
       setIsReplying(true);
       setMessages([...history, { ...pending, status: 'sending' }]);
 
-      // Os avisos do app ficam fora da conversa enviada
-      const payload: PracticeMessage[] = [];
-      for (const message of [...history, pending]) {
-        if (message.role !== 'notice') {
-          payload.push({ role: message.role, content: message.content });
-        }
-      }
+      // As mensagens anteriores vão corrigidas, e os avisos ficam de fora
+      const payload = buildPracticePayload(history, pending);
 
       try {
         const turn = await sendPracticeMessage(token, payload);
