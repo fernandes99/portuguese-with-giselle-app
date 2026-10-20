@@ -28,6 +28,7 @@ Iniciativas atuais:
 | [onboarding](onboarding/)                       | Perguntas de boas-vindas (nível, objetivo e 3 interesses) depois do login e edição pelo Perfil |
 | [lesson-transcriptions](lesson-transcriptions/) | Botão para baixar a transcrição da aula em PDF                                                 |
 | [vocabulary](vocabulary/)                       | Vocabulário na aba Praticar: busca, filtros, salvos, áudios e prática de pronúncia             |
+| [simulations](simulations/)                     | Simulações na aba Praticar: lista de cenários, conversa com as tarefas e resumo do fim         |
 
 ## Modelo de spec
 
