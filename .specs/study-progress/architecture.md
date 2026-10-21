@@ -68,16 +68,16 @@ O "hoje" é o último item de `activity`.
 
 ## Arquivos
 
-| Arquivo                                       | Papel                                             | Fase   |
-| --------------------------------------------- | ------------------------------------------------- | ------ |
-| `src/services/progress.ts`                    | Chamada à rota e tipos do contrato                | 01     |
-| `src/hooks/useProgress.ts`                    | Dados da aba (alterado)                           | 01     |
-| `src/utils/progress.ts`                       | Rótulos de dia, fuso e textos de contagem         | 01     |
-| `src/components/progress/StudyDays.tsx`       | Semana com os dias marcados                       | 01     |
-| `src/components/progress/StreakSummary.tsx`   | Sequência atual e melhor                          | 01     |
-| `src/components/progress/AchievementList.tsx` | Conquistas                                        | 01     |
-| `src/components/progress/ActivityChart.tsx`   | Gráfico de 7 dias                                 | 02     |
-| `src/app/(app)/(tabs)/progress.tsx`           | A aba, com as seções na ordem definida (alterado) | 01, 02 |
+| Arquivo                                       | Papel                                                   | Fase   |
+| --------------------------------------------- | ------------------------------------------------------- | ------ |
+| `src/services/progress.ts`                    | Chamada à rota e tipos do contrato                      | 01     |
+| `src/hooks/useProgress.ts`                    | Dados da aba (alterado)                                 | 01     |
+| `src/utils/progress.ts`                       | Rótulos de dia, fuso e textos de contagem               | 01     |
+| `src/components/progress/StreakCard.tsx`      | Topo sem caixa: chama, sequência e semana marcada       | 01     |
+| `src/components/progress/AchievementList.tsx` | Conquistas                                              | 01     |
+| `src/components/progress/ActivityChart.tsx`   | Gráfico de 7 dias                                       | 02     |
+| `src/app/(app)/(tabs)/progress.tsx`           | A aba, com as seções na ordem definida (alterado)       | 01, 02 |
+| `src/app/(app)/achievements.tsx`              | Página com todas as conquistas, aberta pelo "Ver todas" | 01     |
 
 `src/services/dashboard.ts` deixa de ser usado pelo app quando a fase 01 termina; o arquivo e `API_ROUTES.dashboard` saem junto.
 

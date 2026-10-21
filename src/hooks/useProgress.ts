@@ -30,3 +30,13 @@ export function useProgress() {
     refresh,
   };
 }
+
+// Página de conquistas: a mesma rota de progresso, só a parte das conquistas
+export function useAchievements() {
+  const { data, error, refreshing, refresh } = useApiQuery(
+    fetchProgress,
+    'Erro ao carregar as conquistas.'
+  );
+
+  return { achievements: data?.achievements, error, refreshing, refresh };
+}

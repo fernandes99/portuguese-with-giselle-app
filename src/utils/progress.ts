@@ -31,12 +31,6 @@ function plural(count: number, singular: string, pluralForm: string) {
   return `${count} ${count === 1 ? singular : pluralForm}`;
 }
 
-export function formatActiveDays(count: number) {
-  return count === 0
-    ? 'Nenhum dia ativo nesta semana'
-    : plural(count, 'dia ativo', 'dias ativos');
-}
-
 // "1 aula, 3 exercícios, 14 práticas", para o leitor de tela
 export function formatDayActivity(day: DayActivity) {
   return [

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import type { Achievement } from '@/services/progress';
@@ -18,7 +18,7 @@ function AchievementRow({ achievement }: { achievement: Achievement }) {
       className="flex-row items-center gap-3 py-3"
     >
       <View
-        className={`h-10 w-10 items-center justify-center rounded-full ${isUnlocked ? 'bg-orange-100' : 'bg-gray-100'}`}
+        className={`h-10 w-10 items-center justify-center rounded-full bg-white ${isUnlocked ? '' : 'opacity-60'}`}
       >
         <Ionicons
           name={isUnlocked ? 'trophy' : 'lock-closed'}
@@ -47,22 +47,38 @@ function AchievementRow({ achievement }: { achievement: Achievement }) {
   );
 }
 
-// Todas as conquistas: as desbloqueadas em destaque, as outras apagadas
+// Última linha da lista resumida: o texto e a seta
+function SeeAllRow({ onPress }: { onPress: () => void }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Ver todas as conquistas"
+      onPress={onPress}
+      className="flex-row items-center gap-3 py-3 active:opacity-70"
+    >
+      <Text className="flex-1 font-poppins-semibold text-sm text-green-700">
+        Ver todas as conquistas
+      </Text>
+      <Ionicons name="chevron-forward" size={20} color={colors.gray} />
+    </Pressable>
+  );
+}
+
+// Conquistas: as desbloqueadas em destaque, as outras apagadas. Com
+// `onSeeAll`, a lista é um resumo e termina no link para a página inteira.
 export function AchievementList({
   achievements,
+  onSeeAll,
 }: {
   achievements: Achievement[];
+  onSeeAll?: () => void;
 }) {
   return (
-    <View className="rounded-xl border border-gray-100 bg-white px-4">
-      {achievements.map((achievement, index) => (
-        <View
-          key={achievement.code}
-          className={index > 0 ? 'border-t border-gray-100' : ''}
-        >
-          <AchievementRow achievement={achievement} />
-        </View>
+    <View className="rounded-3xl bg-surface px-4 py-1">
+      {achievements.map((achievement) => (
+        <AchievementRow key={achievement.code} achievement={achievement} />
       ))}
+      {onSeeAll ? <SeeAllRow onPress={onSeeAll} /> : null}
     </View>
   );
 }

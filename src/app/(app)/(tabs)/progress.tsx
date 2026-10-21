@@ -15,15 +15,17 @@ import { Button } from '@/components/Button';
 import { ProgressBar } from '@/components/ProgressBar';
 import { AchievementList } from '@/components/progress/AchievementList';
 import { ActivityChart } from '@/components/progress/ActivityChart';
-import { StreakSummary } from '@/components/progress/StreakSummary';
-import { StudyDays } from '@/components/progress/StudyDays';
+import { StreakCard } from '@/components/progress/StreakCard';
 import { StatCard } from '@/components/StatCard';
 import { TabTopBar } from '@/components/TabTopBar';
 import { colors } from '@/constants/theme';
 import { useProgress } from '@/hooks/useProgress';
 import type { Course } from '@/services/courses';
 import { formatLessons, getCourseProgress } from '@/utils/course';
-import { formatStreak, formatStudyTime } from '@/utils/format';
+import { formatStudyTime } from '@/utils/format';
+
+// Conquistas que aparecem aqui; o resto fica na página de conquistas
+const ACHIEVEMENTS_PREVIEW = 3;
 
 function Section({
   title,
@@ -64,7 +66,7 @@ function CourseProgress({
       accessibilityRole="button"
       accessibilityLabel={`${course.title}, ${percentage}% concluído`}
       onPress={onPress}
-      className="gap-2 rounded-xl border border-gray-100 bg-white p-4 active:bg-gray-50"
+      className="gap-2 rounded-3xl bg-surface p-4 active:bg-surface-pressed"
     >
       <View className="flex-row items-center gap-2">
         <Text
@@ -79,7 +81,7 @@ function CourseProgress({
           <Ionicons name="chevron-forward" size={20} color={colors.gray} />
         )}
       </View>
-      <ProgressBar percentage={percentage} />
+      <ProgressBar percentage={percentage} onGray />
       <Text className="font-poppins text-xs text-gray-500">
         {course.completedLessons} de {formatLessons(course.totalLessons)} ·{' '}
         {percentage}%
@@ -88,8 +90,8 @@ function CourseProgress({
   );
 }
 
-// Números do aluno, o hábito de estudo, as conquistas e o andamento de
-// cada curso
+// A sequência e a semana de estudo em destaque, os números do aluno, a
+// atividade dos últimos dias, as conquistas e o andamento de cada curso
 export default function ProgressScreen() {
   const router = useRouter();
   const { progress, courses, error, refreshing, refresh } = useProgress();
@@ -101,7 +103,7 @@ export default function ProgressScreen() {
   const today = progress?.activity[progress.activity.length - 1]?.date ?? '';
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-background">
+    <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <ScrollView
         contentContainerClassName="flex-grow gap-6 px-5 pb-8 pt-3"
         refreshControl={
@@ -133,21 +135,27 @@ export default function ProgressScreen() {
 
         {progress ? (
           <>
+            <StreakCard
+              current={progress.streak.current}
+              best={progress.streak.best}
+              days={progress.week.days}
+              activity={progress.activity}
+              today={today}
+            />
+
             <View className="gap-3">
               <View className="flex-row gap-3">
                 <StatCard
                   value={`${progress.stats.completedModules}/${progress.stats.totalModules}`}
                   label="Módulos Completos"
                   icon="book"
-                  iconColor={colors.blue}
-                  iconBgClassName="bg-blue-100"
+                  tone="blue"
                 />
                 <StatCard
                   value={formatStudyTime(progress.stats.studyMinutes)}
                   label="Horas Estudadas"
                   icon="time"
-                  iconColor={colors.green}
-                  iconBgClassName="bg-green-100"
+                  tone="green"
                 />
               </View>
               <View className="flex-row gap-3">
@@ -155,36 +163,19 @@ export default function ProgressScreen() {
                   value={`${progress.stats.completedLessons}/${progress.stats.totalLessons}`}
                   label="Lições Completadas"
                   icon="ribbon"
-                  iconColor={colors.purple}
-                  iconBgClassName="bg-purple-100"
+                  tone="purple"
                 />
                 <StatCard
-                  value={formatStreak(progress.stats.currentStreak)}
-                  label="Sequência Atual"
-                  icon="trending-up"
-                  iconColor={colors.orange}
-                  iconBgClassName="bg-orange-100"
+                  value={`${progress.achievements.unlocked}/${progress.achievements.total}`}
+                  label="Conquistas"
+                  icon="trophy"
+                  tone="orange"
                 />
               </View>
             </View>
 
-            <Section title="Dias de estudo">
-              <StudyDays
-                days={progress.week.days}
-                activeDays={progress.week.activeDays}
-                today={today}
-              />
-            </Section>
-
             <Section title="Últimos 7 dias">
               <ActivityChart activity={progress.activity} />
-            </Section>
-
-            <Section title="Sequência">
-              <StreakSummary
-                current={progress.streak.current}
-                best={progress.streak.best}
-              />
             </Section>
 
             {progress.achievements.total > 0 ? (
@@ -192,7 +183,17 @@ export default function ProgressScreen() {
                 title="Conquistas"
                 detail={`${progress.achievements.unlocked} de ${progress.achievements.total}`}
               >
-                <AchievementList achievements={progress.achievements.items} />
+                <AchievementList
+                  achievements={progress.achievements.items.slice(
+                    0,
+                    ACHIEVEMENTS_PREVIEW
+                  )}
+                  onSeeAll={
+                    progress.achievements.total > ACHIEVEMENTS_PREVIEW
+                      ? () => router.push('/achievements')
+                      : undefined
+                  }
+                />
               </Section>
             ) : null}
           </>

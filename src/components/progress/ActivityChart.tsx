@@ -21,7 +21,7 @@ export function ActivityChart({ activity }: { activity: DayActivity[] }) {
   const today = activity[activity.length - 1]?.date;
 
   return (
-    <View className="gap-4 rounded-xl border border-gray-100 bg-white p-4">
+    <View className="gap-4 rounded-3xl bg-surface p-4">
       {isEmpty ? (
         <View
           className="items-center justify-center"
@@ -71,7 +71,7 @@ export function ActivityChart({ activity }: { activity: DayActivity[] }) {
                       </View>
                     </>
                   ) : (
-                    <View className="h-0.5 w-full max-w-[28px] rounded-full bg-gray-200" />
+                    <View className="h-0.5 w-full max-w-[28px] rounded-full bg-gray-300" />
                   )}
                 </View>
                 <Text
