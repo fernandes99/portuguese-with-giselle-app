@@ -157,6 +157,16 @@ yarn tsc --noEmit
 
 ## Divergências
 
+- **Visual sem bordas e dica na conversa** (mudança pequena, combinada no chat, a partir de prints de outro app). Vale também na conversa das simulações, que usa os mesmos componentes:
+  - o fundo da conversa ficou branco; o balão da Gisa, o cartão de correção, o selo "Boa resposta" e o campo de texto ficaram `bg-surface` (#f6f7f9, token do `tailwind.config.js`, mais claro que o `gray-100`), sem borda, e balões e cartões passaram a `rounded-3xl`, sem o canto menor. Substitui as bordas de RF-15 e RF-16 e a borda verde do balão enquanto a Gisa fala (o anel da foto e o destaque da palavra continuam);
+  - os botões de traduzir e de ouvir ficaram só com o ícone, com fundo verde quando ligados;
+  - a barra perdeu a linha de cima, e o botão do teclado cresceu para 56 px, `bg-surface`;
+  - a dica saiu da barra e do campo de texto: no fim da conversa, a pílula verde-clara "O que dizer?" abre ali mesmo o cartão da dica, verde-claro. Substitui o botão e o cartão acima da barra de RF-25;
+  - "Segure para falar" só aparece por 2,5 segundos depois de um toque rápido, que não chega a gravar (`showIdleHint` no `HoldToTalkButton`); a pronúncia do vocabulário continua mostrando sempre;
+  - os botões redondos do cabeçalho (voltar e configurações) ficaram `bg-surface`, sem borda, com ícones sólidos (`filled` no `LessonHeader` e no `HeaderButton`); nas outras telas do app, o cabeçalho continua como era;
+  - a folha de configurações ficou branca, com cada opção numa caixa `bg-surface` e o ícone sólido num círculo branco; "Seu uso hoje" ficou sem caixa, direto no fundo branco, e cada item ganhou ícone num círculo cinza e uma barra verde do que resta; quando acaba, o número e o ícone ficam vermelhos.
+  - no resumo da simulação, que fica sobre o fundo cinza da tela, o cartão de correção é branco (`onBackground` no `CorrectionCard`).
+
 - **Resposta falada marcada** (pedido do dono do projeto): a mensagem do aluno que veio do microfone guarda `spoken: true` (`ChatMessage`), e `buildPracticePayload` manda o campo só na mensagem nova. O backend não conta acento, ortografia nem pontuação da transcrição como erro. Vale também nas simulações (`useSimulation`).
 
 - **Histórico corrigido** (problema relatado pelo dono do projeto: a Gisa corrigia mensagens anteriores): o app passou a mandar as mensagens anteriores do aluno na versão corrigida (`buildPracticePayload`). Num teste com o modelo, com a mensagem nova correta, a mensagem de dois turnos antes era corrigida em 5 de 6 rodadas; só com uma regra no prompt, em 2 de 6; com o histórico corrigido, em 0 de 6 (e 0 de 6 também com um erro novo).

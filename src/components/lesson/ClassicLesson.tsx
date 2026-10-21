@@ -31,10 +31,13 @@ import { findLessonPosition } from '@/utils/lesson';
 export function HeaderButton({
   icon,
   label,
+  filled = false,
   onPress,
 }: {
   icon: ComponentProps<typeof Ionicons>['name'];
   label: string;
+  // Cinza claro e sem borda, como os balões das telas de conversa
+  filled?: boolean;
   onPress: () => void;
 }) {
   return (
@@ -43,7 +46,7 @@ export function HeaderButton({
       accessibilityLabel={label}
       onPress={onPress}
       hitSlop={8}
-      className="h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white active:bg-gray-100"
+      className={`h-10 w-10 items-center justify-center rounded-full ${filled ? 'bg-surface active:bg-surface-pressed' : 'border border-gray-200 bg-white active:bg-gray-100'}`}
     >
       <Ionicons name={icon} size={20} color={colors.gray} />
     </Pressable>
@@ -57,12 +60,15 @@ export function LessonHeader({
   subtitle,
   right,
   avatar,
+  filled = false,
 }: {
   title: string;
   subtitle?: string;
   right?: ReactNode;
   // Foto à esquerda do título; com ela, o título fica alinhado à esquerda
   avatar?: ReactNode;
+  // Botão de voltar cinza e sem borda (HeaderButton `filled`)
+  filled?: boolean;
 }) {
   const router = useRouter();
 
@@ -71,6 +77,7 @@ export function LessonHeader({
       <HeaderButton
         icon="arrow-back"
         label="Voltar"
+        filled={filled}
         onPress={() => router.back()}
       />
       <View

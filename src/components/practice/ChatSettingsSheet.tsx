@@ -21,6 +21,15 @@ interface ChatSettingsSheetProps {
   onClose: () => void;
 }
 
+// Ícone sólido num círculo branco, à esquerda de cada linha
+function RowIcon({ icon }: { icon: ComponentProps<typeof Ionicons>['name'] }) {
+  return (
+    <View className="h-10 w-10 items-center justify-center rounded-full bg-white">
+      <Ionicons name={icon} size={20} color={colors.gray} />
+    </View>
+  );
+}
+
 function SettingsRow({
   icon,
   title,
@@ -38,9 +47,9 @@ function SettingsRow({
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
-      className={`flex-row items-center gap-3 border-t border-gray-200 py-4 active:opacity-70 ${disabled ? 'opacity-40' : ''}`}
+      className={`flex-row items-center gap-3 rounded-3xl bg-surface px-4 py-3 active:bg-surface-pressed ${disabled ? 'opacity-40' : ''}`}
     >
-      <Ionicons name={icon} size={20} color={colors.gray} />
+      <RowIcon icon={icon} />
       <Text className="flex-1 font-poppins-medium text-base text-gray-900">
         {title}
       </Text>
@@ -88,7 +97,7 @@ export function ChatSettingsSheet({
         />
 
         <View
-          className="rounded-t-2xl bg-background px-5 pt-4"
+          className="gap-2 rounded-t-3xl bg-white px-5 pt-4"
           style={{ paddingBottom: bottomInset + 8 }}
         >
           <View className="flex-row items-center justify-between gap-3 pb-2">
@@ -103,7 +112,7 @@ export function ChatSettingsSheet({
               accessibilityLabel="Fechar"
               onPress={onClose}
               hitSlop={8}
-              className="h-9 w-9 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200"
+              className="h-10 w-10 items-center justify-center rounded-full bg-surface active:bg-surface-pressed"
             >
               <Ionicons name="close" size={20} color={colors.gray} />
             </Pressable>
@@ -111,8 +120,8 @@ export function ChatSettingsSheet({
 
           <UsageToday />
 
-          <View className="flex-row items-center gap-3 py-4">
-            <Ionicons name="volume-medium" size={20} color={colors.gray} />
+          <View className="flex-row items-center gap-3 rounded-3xl bg-surface px-4 py-3">
+            <RowIcon icon="volume-high" />
             <View className="flex-1 gap-0.5">
               <Text className="font-poppins-medium text-base text-gray-900">
                 Voz automática
@@ -131,12 +140,12 @@ export function ChatSettingsSheet({
           </View>
 
           <SettingsRow
-            icon="language-outline"
+            icon="language"
             title="Idioma das explicações"
             onPress={closeThen(onLanguage)}
           />
           <SettingsRow
-            icon="color-palette-outline"
+            icon="color-palette"
             title="Estilo da Gisa"
             onPress={closeThen(onStyle)}
           />

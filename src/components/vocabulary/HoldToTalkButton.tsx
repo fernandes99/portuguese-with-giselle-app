@@ -33,6 +33,8 @@ interface HoldToTalkButtonProps {
   size?: number;
   // Sem a barra de progresso: só o tempo, enquanto grava (barra do chat)
   compact?: boolean;
+  // Mostra o "Segure para falar" parado; no chat, só depois de um toque rápido
+  showIdleHint?: boolean;
   onPressIn: () => void;
   onRelease: (cancel: boolean) => void;
 }
@@ -60,6 +62,7 @@ export function HoldToTalkButton({
   maxDurationMs,
   size = DEFAULT_SIZE,
   compact = false,
+  showIdleHint = true,
   onPressIn,
   onRelease,
 }: HoldToTalkButtonProps) {
@@ -167,14 +170,16 @@ export function HoldToTalkButton({
     ? 'Solte para cancelar'
     : isHolding
       ? '‹ Deslize para cancelar'
-      : 'Segure para falar';
+      : showIdleHint
+        ? 'Segure para falar'
+        : '';
   // Sem a barra, o tempo vai junto do aviso
   const hint =
     compact && isRecording ? `${formatSeconds(elapsedMs)}  ${action}` : action;
 
   return (
-    <View className="items-center gap-3">
-      <View className="h-6 flex-row items-center gap-1.5">
+    <View className="items-center">
+      <View className="h-0 flex-row items-center gap-1.5">
         {isInCancelZone ? (
           <Ionicons name="trash-outline" size={16} color={colors.red} />
         ) : null}

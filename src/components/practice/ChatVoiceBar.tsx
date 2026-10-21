@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ComponentProps } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { HoldToTalkButton } from '@/components/vocabulary/HoldToTalkButton';
@@ -9,36 +9,8 @@ import type { HoldToTalkState } from '@/hooks/useHoldToTalk';
 // Diâmetro do microfone no chat
 const MIC_SIZE = 80;
 
-function SideButton({
-  icon,
-  label,
-  active = false,
-  disabled = false,
-  onPress,
-}: {
-  icon: ComponentProps<typeof Ionicons>['name'];
-  label: string;
-  active?: boolean;
-  disabled?: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      accessibilityState={{ disabled, expanded: active }}
-      disabled={disabled}
-      onPress={onPress}
-      className={`mb-9 h-12 w-12 items-center justify-center rounded-full border ${active ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-white active:bg-gray-100'} ${disabled ? 'opacity-40' : ''}`}
-    >
-      <Ionicons
-        name={icon}
-        size={22}
-        color={active ? '#d97706' : colors.gray}
-      />
-    </Pressable>
-  );
-}
+// Quanto tempo o "Segure para falar" fica à vista depois de um toque rápido
+const TAP_HINT_MS = 2500;
 
 interface ChatVoiceBarProps {
   // A Gisa está respondendo, há uma falha ou uma gravação a caminho
@@ -50,36 +22,45 @@ interface ChatVoiceBarProps {
     release: (cancel: boolean) => void;
   };
   maxDurationMs: number;
-  // A última fala da Gisa tem dica
-  hasHint: boolean;
-  isHintOpen: boolean;
   onKeyboard: () => void;
-  onHint: () => void;
 }
 
-// Barra de baixo do chat no modo voz: teclado, microfone de segurar para
-// falar e dica. Sem dica, o lugar do botão fica vazio, e o microfone continua
-// no centro.
+// Barra de baixo do chat no modo voz: teclado à esquerda e microfone de
+// segurar para falar no centro. O "Segure para falar" só aparece depois de um
+// toque rápido, que não chega a gravar.
 export function ChatVoiceBar({
   disabled,
   hold,
   maxDurationMs,
-  hasHint,
-  isHintOpen,
   onKeyboard,
-  onHint,
 }: ChatVoiceBarProps) {
-  const { phase } = hold.state;
+  const { state } = hold;
+  const { phase } = state;
   const isHolding = phase === 'starting' || phase === 'recording';
+  const [showTapHint, setShowTapHint] = useState(false);
+
+  useEffect(() => {
+    if (state.phase !== 'idle' || state.hint !== 'too_short') {
+      setShowTapHint(false);
+      return;
+    }
+    setShowTapHint(true);
+    const timeout = setTimeout(() => setShowTapHint(false), TAP_HINT_MS);
+    return () => clearTimeout(timeout);
+  }, [state]);
 
   return (
-    <View className="flex-row items-end justify-between border-t border-gray-200 bg-white px-8 pt-1">
-      <SideButton
-        icon="keypad-outline"
-        label="Digitar a resposta"
+    <View className="flex-row items-end justify-between bg-white px-8">
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Digitar a resposta"
+        accessibilityState={{ disabled: isHolding }}
         disabled={isHolding}
         onPress={onKeyboard}
-      />
+        className={`mb-6 h-16 w-16 items-center justify-center rounded-full bg-surface active:bg-surface-pressed ${isHolding ? 'opacity-40' : ''}`}
+      >
+        <Ionicons name="keypad" size={26} color={colors.gray} />
+      </Pressable>
 
       <HoldToTalkButton
         isHolding={isHolding}
@@ -89,21 +70,13 @@ export function ChatVoiceBar({
         maxDurationMs={maxDurationMs}
         size={MIC_SIZE}
         compact
+        showIdleHint={showTapHint}
         onPressIn={hold.pressIn}
         onRelease={hold.release}
       />
 
-      {hasHint ? (
-        <SideButton
-          icon="bulb-outline"
-          label="O que eu deveria dizer?"
-          active={isHintOpen}
-          disabled={disabled || isHolding}
-          onPress={onHint}
-        />
-      ) : (
-        <View className="w-12" />
-      )}
+      {/* Mantém o microfone no centro */}
+      <View className="w-14" />
     </View>
   );
 }

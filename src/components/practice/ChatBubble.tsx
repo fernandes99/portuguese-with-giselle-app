@@ -66,9 +66,8 @@ function SpeakingAvatar({ speaking }: { speaking: boolean }) {
   );
 }
 
-// Balão da Gisa, com a foto ao lado. Enquanto ela fala, a borda fica verde e
-// a foto ganha o anel pulsando. `avatar` troca a foto (a personagem das
-// simulações).
+// Balão da Gisa, com a foto ao lado. Enquanto ela fala, a foto ganha o anel
+// pulsando. `avatar` troca a foto (a personagem das simulações).
 export function GisaBubble({
   children,
   speaking = false,
@@ -83,7 +82,7 @@ export function GisaBubble({
       {avatar ?? <SpeakingAvatar speaking={speaking} />}
       <View
         accessibilityState={{ busy: speaking }}
-        className={`shrink rounded-2xl rounded-bl-md border bg-white px-4 py-3 ${speaking ? 'border-green-500' : 'border-gray-200'}`}
+        className="shrink rounded-3xl bg-surface px-4 py-3"
       >
         {children}
       </View>
@@ -133,7 +132,8 @@ function SpokenText({
   );
 }
 
-// Botão redondo da linha de ações de um balão (traduzir)
+// Botão redondo da linha de ações de um balão (traduzir): só o ícone, com o
+// fundo verde quando ligado
 export function BubbleAction({
   icon,
   label,
@@ -151,7 +151,7 @@ export function BubbleAction({
       accessibilityLabel={label}
       onPress={onPress}
       hitSlop={6}
-      className={`h-8 w-8 items-center justify-center rounded-full active:opacity-70 ${active ? 'bg-green-100' : 'bg-gray-100'}`}
+      className={`h-8 w-8 items-center justify-center rounded-full active:opacity-70 ${active ? 'bg-green-100' : ''}`}
     >
       <Ionicons
         name={icon}
@@ -190,7 +190,7 @@ export function GisaMessage({
       <SpokenText content={content} active={activeWord} />
 
       {translation && isTranslated ? (
-        <Text className="mt-2 border-t border-gray-200 pt-2 font-poppins text-sm leading-5 text-gray-600">
+        <Text className="mt-2 font-poppins text-sm leading-5 text-gray-600">
           {translation}
         </Text>
       ) : null}
@@ -234,7 +234,7 @@ export function StudentMessage({
     return (
       <View
         accessibilityLabel="Ouvindo sua resposta"
-        className="max-w-[88%] self-end rounded-2xl rounded-br-md bg-green-600 px-4 py-3 opacity-60"
+        className="max-w-[88%] self-end rounded-3xl bg-green-600 px-4 py-3 opacity-60"
       >
         <Text className="font-poppins text-[15px] italic leading-6 text-white">
           Ouvindo...
@@ -258,7 +258,7 @@ export function StudentMessage({
             ? `${message.content}. Correção: ${correction.corrected}`
             : message.content
         }
-        className={`max-w-[88%] self-end rounded-2xl rounded-br-md bg-green-600 px-4 py-3 ${message.status === 'sending' ? 'opacity-60' : ''}`}
+        className={`max-w-[88%] self-end rounded-3xl bg-green-600 px-4 py-3 ${message.status === 'sending' ? 'opacity-60' : ''}`}
       >
         <Text className="font-poppins text-[15px] leading-6 text-white">
           {parts.map((part, index) =>

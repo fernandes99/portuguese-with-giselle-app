@@ -13,8 +13,8 @@ import Animated, {
 import { colors } from '@/constants/theme';
 import type { VoiceState } from '@/hooks/useGisaVoice';
 
-// Botão redondo de ouvir uma fala: baixando, mostra o carregamento; tocando,
-// vira "parar" com o fundo pulsando
+// Botão redondo de ouvir uma fala, só com o ícone: baixando, mostra o
+// carregamento; tocando, vira "parar" com o fundo verde pulsando
 export function ListenButton({
   state,
   label,
@@ -50,7 +50,7 @@ export function ListenButton({
       accessibilityState={{ busy: state === 'loading' }}
       onPress={onPress}
       hitSlop={6}
-      className={`h-8 w-8 items-center justify-center rounded-full active:opacity-70 ${isPlaying ? '' : 'bg-gray-100'}`}
+      className="h-8 w-8 items-center justify-center rounded-full active:opacity-70"
     >
       {isPlaying ? (
         <Animated.View

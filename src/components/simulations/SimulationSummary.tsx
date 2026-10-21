@@ -119,6 +119,7 @@ export function SimulationSummary({
                   key={message.id}
                   original={message.content}
                   correction={message.correction}
+                  onBackground
                 />
               ) : null
             )

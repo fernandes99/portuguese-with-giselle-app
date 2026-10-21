@@ -17,6 +17,7 @@ export function CorrectionCard({
   correction,
   listen,
   onRedo,
+  onBackground = false,
 }: {
   // A mensagem do aluno, para comparar com a corrigida
   original: string;
@@ -25,10 +26,13 @@ export function CorrectionCard({
   listen?: ReactNode;
   // Só na última resposta do aluno, quando a Gisa não está respondendo
   onRedo?: () => void;
+  // Fora da conversa, sobre o fundo cinza da tela (resumo da simulação): o
+  // cartão fica branco para não sumir
+  onBackground?: boolean;
 }) {
   if (!correction.hasErrors) {
     return (
-      <View className="flex-row items-center gap-1.5 self-end rounded-full border border-gray-200 bg-white px-3 py-1.5">
+      <View className="flex-row items-center gap-1.5 self-end rounded-full bg-surface px-3 py-1.5">
         <Ionicons name="checkmark" size={16} color={colors.green} />
         <Text className="font-poppins-medium text-xs text-green-700">
           Boa resposta
@@ -40,7 +44,9 @@ export function CorrectionCard({
   const parts = diffWords(original, correction.corrected);
 
   return (
-    <View className="gap-3 rounded-2xl border border-gray-200 bg-white p-4">
+    <View
+      className={`gap-3 rounded-3xl p-4 ${onBackground ? 'bg-white' : 'bg-surface'}`}
+    >
       <View className="flex-row items-center gap-1.5">
         <Ionicons name="sparkles" size={16} color={SPARKLE_COLOR} />
         <Text className="font-poppins-semibold text-sm text-amber-600">
@@ -90,7 +96,7 @@ export function CorrectionCard({
           accessibilityRole="button"
           accessibilityHint="Tira esta resposta para você responder de novo"
           onPress={onRedo}
-          className="flex-row items-center justify-center gap-2 rounded-xl border border-gray-200 bg-background py-3 active:bg-gray-100"
+          className="flex-row items-center justify-center gap-2 rounded-2xl bg-white py-3 active:bg-surface-pressed"
         >
           <Ionicons name="refresh" size={18} color={colors.darkGreen} />
           <Text className="font-poppins-semibold text-sm text-green-700">

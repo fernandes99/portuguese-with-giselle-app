@@ -406,10 +406,11 @@ export default function SimulationScreen() {
   const avatar = <SimulationAvatar emoji={simulation.emoji} />;
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-white">
       <LessonHeader
         title={simulation.title}
         avatar={<SimulationAvatar emoji={simulation.emoji} size={32} />}
+        filled
       />
       <TaskStrip
         tasks={simulation.tasks}
@@ -495,12 +496,20 @@ export default function SimulationScreen() {
               <GisaBubble avatar={avatar}>
                 <TypingIndicator />
               </GisaBubble>
+            ) : sim.lastSuggestion && !sim.isBusy && !sim.isOver ? (
+              <HintCard
+                text={sim.lastSuggestion.text}
+                translation={sim.lastSuggestion.translation}
+                isOpen={isHintOpen}
+                onOpen={() => setIsHintOpen(true)}
+                onClose={() => setIsHintOpen(false)}
+              />
             ) : null
           }
         />
 
         {sim.isOver ? (
-          <View className="border-t border-gray-200 bg-white px-5 py-4">
+          <View className="bg-white px-5 py-4">
             <Button label="Ver resultado" onPress={sim.finish} />
           </View>
         ) : (
@@ -518,22 +527,12 @@ export default function SimulationScreen() {
                 {voiceNotice}
               </Text>
             ) : null}
-            {isHintOpen && sim.lastSuggestion ? (
-              <HintCard
-                text={sim.lastSuggestion.text}
-                translation={sim.lastSuggestion.translation}
-                onClose={() => setIsHintOpen(false)}
-              />
-            ) : null}
             {inputMode === 'voice' ? (
               <ChatVoiceBar
                 disabled={sim.isBusy}
                 hold={{ ...hold, pressIn: handlePressIn }}
                 maxDurationMs={MAX_VOICE_MS}
-                hasHint={!!sim.lastSuggestion}
-                isHintOpen={isHintOpen}
                 onKeyboard={openKeyboard}
-                onHint={() => setIsHintOpen((current) => !current)}
               />
             ) : (
               <ChatComposer
@@ -542,12 +541,6 @@ export default function SimulationScreen() {
                 onSend={handleSend}
                 onVoice={openVoice}
                 isVoiceLocked={!isPremium}
-                onHint={
-                  sim.lastSuggestion
-                    ? () => setIsHintOpen((current) => !current)
-                    : undefined
-                }
-                isHintOpen={isHintOpen}
               />
             )}
           </>

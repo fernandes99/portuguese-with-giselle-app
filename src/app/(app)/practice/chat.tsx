@@ -332,15 +332,17 @@ export default function PracticeChatScreen() {
   const canRedo = !isOpening && !isReplying && !isTranscribing;
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-white">
       <LessonHeader
         title={TITLE}
         subtitle={SUBTITLE}
         avatar={<GisaAvatar size={32} />}
+        filled
         right={
           <HeaderButton
-            icon="settings-outline"
+            icon="settings"
             label="Configurações do chat"
+            filled
             onPress={() => setIsSettingsOpen(true)}
           />
         }
@@ -362,7 +364,7 @@ export default function PracticeChatScreen() {
           extraData={voice}
           keyExtractor={(message) => message.id}
           keyboardShouldPersistTaps="handled"
-          contentContainerClassName="gap-4 px-4 py-4"
+          contentContainerClassName="gap-4 px-4 py-12"
           ListHeaderComponent={<ChatNotice text={AI_NOTICE} />}
           renderItem={({ item }) => {
             if (item.role === 'notice') {
@@ -419,11 +421,20 @@ export default function PracticeChatScreen() {
             );
           }}
           ListFooterComponent={
-            // A Gisa "digita" enquanto a abertura e as respostas não chegam
+            // A Gisa "digita" enquanto a abertura e as respostas não chegam;
+            // depois, a dica da última fala fica no fim da conversa
             isOpening || isReplying ? (
               <GisaBubble>
                 <TypingIndicator />
               </GisaBubble>
+            ) : lastSuggestion && !isBusy ? (
+              <HintCard
+                text={lastSuggestion.text}
+                translation={lastSuggestion.translation}
+                isOpen={isHintOpen}
+                onOpen={() => setIsHintOpen(true)}
+                onClose={() => setIsHintOpen(false)}
+              />
             ) : null
           }
         />
@@ -456,23 +467,13 @@ export default function PracticeChatScreen() {
                 {voiceNotice}
               </Text>
             ) : null}
-            {isHintOpen && lastSuggestion ? (
-              <HintCard
-                text={lastSuggestion.text}
-                translation={lastSuggestion.translation}
-                onClose={() => setIsHintOpen(false)}
-              />
-            ) : null}
             {inputMode === 'voice' ? (
               <View>
                 <ChatVoiceBar
                   disabled={isBusy}
                   hold={{ ...hold, pressIn: handlePressIn }}
                   maxDurationMs={MAX_VOICE_MS}
-                  hasHint={!!lastSuggestion}
-                  isHintOpen={isHintOpen}
                   onKeyboard={openKeyboard}
-                  onHint={() => setIsHintOpen((current) => !current)}
                 />
               </View>
             ) : (
