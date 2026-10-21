@@ -23,8 +23,10 @@ export function SimulationFilters({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      className="-mx-5"
-      contentContainerClassName="gap-2 px-5"
+      // O ScrollView cresce por padrão: numa lista curta, a faixa esticava até
+      // o fim da tela, com as pílulas junto
+      className="-mx-5 grow-0"
+      contentContainerClassName="items-start gap-2 px-5"
     >
       {options.map((option) => {
         const selected = option.id === selectedId;
