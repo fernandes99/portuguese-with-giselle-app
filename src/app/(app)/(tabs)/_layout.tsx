@@ -3,6 +3,7 @@ import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
 import type { ColorValue } from 'react-native';
 
+import { AppTabBar } from '@/components/AppTabBar';
 import { colors } from '@/constants/theme';
 import { useTeacherChatUnread } from '@/contexts/TeacherChatUnreadContext';
 import { formatUnread } from '@/utils/teacherChat';
@@ -28,37 +29,31 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      tabBar={(props) => <AppTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.green,
-        tabBarInactiveTintColor: colors.gray,
-        tabBarLabelStyle: { fontFamily: 'Poppins_500Medium', fontSize: 11 },
-        tabBarStyle: {
-          backgroundColor: colors.white,
-          borderTopColor: colors.border,
-        },
         sceneStyle: { backgroundColor: colors.background },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Aprender',
-          tabBarIcon: tabIcon('school', 'school-outline'),
+          title: 'Início',
+          tabBarIcon: tabIcon('home', 'home-outline'),
         }}
       />
       <Tabs.Screen
         name="practice"
         options={{
           title: 'Praticar',
-          tabBarIcon: tabIcon('chatbubbles', 'chatbubbles-outline'),
+          tabBarIcon: tabIcon('chatbubble', 'chatbubble-outline'),
         }}
       />
       <Tabs.Screen
         name="progress"
         options={{
           title: 'Progresso',
-          tabBarIcon: tabIcon('stats-chart', 'stats-chart-outline'),
+          tabBarIcon: tabIcon('bar-chart', 'bar-chart-outline'),
         }}
       />
       <Tabs.Screen
@@ -68,12 +63,6 @@ export default function TabsLayout() {
           tabBarIcon: tabIcon('person', 'person-outline'),
           // Mensagens da professora ainda não lidas; o chat abre pelo Perfil
           tabBarBadge: unread > 0 ? formatUnread(unread) : undefined,
-          tabBarBadgeStyle: {
-            backgroundColor: colors.green,
-            color: colors.white,
-            fontFamily: 'Poppins_600SemiBold',
-            fontSize: 10,
-          },
         }}
       />
     </Tabs>
