@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -11,9 +11,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AchievementSheet } from '@/components/achievements/AchievementSheet';
+import { AchievementStrip } from '@/components/achievements/AchievementStrip';
 import { Button } from '@/components/Button';
 import { ProgressBar } from '@/components/ProgressBar';
-import { AchievementList } from '@/components/progress/AchievementList';
 import { ActivityChart } from '@/components/progress/ActivityChart';
 import { StreakCard } from '@/components/progress/StreakCard';
 import { StatCard } from '@/components/StatCard';
@@ -21,30 +22,49 @@ import { TabTopBar } from '@/components/TabTopBar';
 import { colors } from '@/constants/theme';
 import { useProgress } from '@/hooks/useProgress';
 import type { Course } from '@/services/courses';
+import type { Achievement } from '@/services/progress';
 import { formatLessons, getCourseProgress } from '@/utils/course';
 import { formatStudyTime } from '@/utils/format';
-
-// Conquistas que aparecem aqui; o resto fica na página de conquistas
-const ACHIEVEMENTS_PREVIEW = 3;
 
 function Section({
   title,
   detail,
+  onSeeAll,
   children,
 }: {
   title: string;
-  // Texto curto à direita do título
+  // Texto curto ao lado do título
   detail?: string;
+  // Link "Ver todas" à direita, para a página inteira
+  onSeeAll?: () => void;
   children: ReactNode;
 }) {
   return (
     <View className="gap-3">
-      <View className="flex-row items-baseline justify-between">
-        <Text className="font-poppins-bold text-xl text-gray-900">{title}</Text>
-        {detail ? (
-          <Text className="font-poppins-medium text-sm text-gray-500">
-            {detail}
+      <View className="flex-row items-center justify-between gap-3">
+        <View className="flex-1 flex-row items-baseline gap-2">
+          <Text className="font-poppins-bold text-xl text-gray-900">
+            {title}
           </Text>
+          {detail ? (
+            <Text className="font-poppins-medium text-sm text-gray-500">
+              {detail}
+            </Text>
+          ) : null}
+        </View>
+        {onSeeAll ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Ver todas: ${title}`}
+            onPress={onSeeAll}
+            hitSlop={8}
+            className="flex-row items-center gap-0.5 active:opacity-70"
+          >
+            <Text className="font-poppins-semibold text-sm text-green-700">
+              Ver todas
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color={colors.green} />
+          </Pressable>
         ) : null}
       </View>
       {children}
@@ -95,6 +115,7 @@ function CourseProgress({
 export default function ProgressScreen() {
   const router = useRouter();
   const { progress, courses, error, refreshing, refresh } = useProgress();
+  const [achievement, setAchievement] = useState<Achievement | null>(null);
   // Cursos sem aulas ainda não têm o que medir
   const coursesWithLessons = courses?.filter(
     (course) => course.totalLessons > 0
@@ -182,17 +203,11 @@ export default function ProgressScreen() {
               <Section
                 title="Conquistas"
                 detail={`${progress.achievements.unlocked} de ${progress.achievements.total}`}
+                onSeeAll={() => router.push('/achievements')}
               >
-                <AchievementList
-                  achievements={progress.achievements.items.slice(
-                    0,
-                    ACHIEVEMENTS_PREVIEW
-                  )}
-                  onSeeAll={
-                    progress.achievements.total > ACHIEVEMENTS_PREVIEW
-                      ? () => router.push('/achievements')
-                      : undefined
-                  }
+                <AchievementStrip
+                  achievements={progress.achievements.items}
+                  onSelect={setAchievement}
                 />
               </Section>
             ) : null}
@@ -222,6 +237,11 @@ export default function ProgressScreen() {
           </View>
         ) : null}
       </ScrollView>
+
+      <AchievementSheet
+        achievement={achievement}
+        onClose={() => setAchievement(null)}
+      />
     </SafeAreaView>
   );
 }

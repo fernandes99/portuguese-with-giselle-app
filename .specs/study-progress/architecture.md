@@ -36,7 +36,9 @@ O que as duas fases compartilham.
         "code": "FIRST_LESSON",
         "title": "Primeira aula",
         "description": "Conclua sua primeira aula.",
-        "unlockedAt": "2026-10-01T14:20:00.000Z"
+        "unlockedAt": "2026-10-01T14:20:00.000Z",
+        "current": 1,
+        "target": 1
       }
     ]
   }
@@ -47,7 +49,7 @@ O que as duas fases compartilham.
 - `week.days`: 7 itens, de segunda a domingo da semana corrente.
 - `activity`: 7 itens, do mais antigo para hoje.
 - `date`: o dia no fuso enviado, como `AAAA-MM-DD`. O app não converte fuso: usa a data como veio.
-- `achievements.items`: todas as conquistas, as desbloqueadas primeiro; `unlockedAt` é `null` nas outras.
+- `achievements.items`: todas as conquistas, as desbloqueadas primeiro; `unlockedAt` é `null` nas outras. `current` e `target` são o andamento (o número do aluno, limitado à meta, e a meta); na desbloqueada, `current` é igual a `target`.
 - Erros como `{ "error": string }`: `401` (o `api` encerra o login) e `500`.
 
 ## Fuso
@@ -68,16 +70,17 @@ O "hoje" é o último item de `activity`.
 
 ## Arquivos
 
-| Arquivo                                       | Papel                                                   | Fase   |
-| --------------------------------------------- | ------------------------------------------------------- | ------ |
-| `src/services/progress.ts`                    | Chamada à rota e tipos do contrato                      | 01     |
-| `src/hooks/useProgress.ts`                    | Dados da aba (alterado)                                 | 01     |
-| `src/utils/progress.ts`                       | Rótulos de dia, fuso e textos de contagem               | 01     |
-| `src/components/progress/StreakCard.tsx`      | Topo sem caixa: chama, sequência e semana marcada       | 01     |
-| `src/components/progress/AchievementList.tsx` | Conquistas                                              | 01     |
-| `src/components/progress/ActivityChart.tsx`   | Gráfico de 7 dias                                       | 02     |
-| `src/app/(app)/(tabs)/progress.tsx`           | A aba, com as seções na ordem definida (alterado)       | 01, 02 |
-| `src/app/(app)/achievements.tsx`              | Página com todas as conquistas, aberta pelo "Ver todas" | 01     |
+| Arquivo                                     | Papel                                                   | Fase   |
+| ------------------------------------------- | ------------------------------------------------------- | ------ |
+| `src/services/progress.ts`                  | Chamada à rota e tipos do contrato                      | 01     |
+| `src/hooks/useProgress.ts`                  | Dados da aba (alterado)                                 | 01     |
+| `src/utils/progress.ts`                     | Rótulos de dia, fuso e textos de contagem               | 01     |
+| `src/components/progress/StreakCard.tsx`    | Caixa pêssego: chama, sequência e semana marcada        | 01     |
+| `src/constants/achievements.ts`             | Medalha de cada conquista, pelo código                  | 01     |
+| `src/components/achievements/`              | Medalha, faixa, grade e folha de detalhe                | 01     |
+| `src/components/progress/ActivityChart.tsx` | Gráfico de 7 dias                                       | 02     |
+| `src/app/(app)/(tabs)/progress.tsx`         | A aba, com as seções na ordem definida (alterado)       | 01, 02 |
+| `src/app/(app)/achievements.tsx`            | Página com todas as conquistas, aberta pelo "Ver todas" | 01     |
 
 `src/services/dashboard.ts` deixa de ser usado pelo app quando a fase 01 termina; o arquivo e `API_ROUTES.dashboard` saem junto.
 

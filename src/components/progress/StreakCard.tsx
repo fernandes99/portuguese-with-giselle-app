@@ -1,5 +1,6 @@
+import streakMascot from '@assets/streak-mascot.png';
 import { Ionicons } from '@expo/vector-icons';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import type { DayActivity, StudyDay } from '@/services/progress';
@@ -19,9 +20,9 @@ interface StreakCardProps {
 }
 
 // Círculo de um dia da semana: estudou (aula, exercício ou card) fica laranja
-// com o check; só praticou no chat, laranja-claro com o número; hoje sem
-// nada, cinza; os outros só com o número, mais apagado nos que ainda não
-// chegaram
+// com o check; hoje sem estudo, laranja com o número; só praticou no chat,
+// laranja um pouco mais forte; os outros, laranja claro, mais apagados nos
+// que ainda não chegaram
 function DayMark({
   date,
   studied,
@@ -41,15 +42,15 @@ function DayMark({
 
   let circle: string;
   let number: string;
-  if (practiced) {
-    circle = 'bg-orange-100';
-    number = 'text-orange-600';
-  } else if (isToday) {
-    circle = 'bg-surface';
-    number = 'text-gray-900';
+  if (isToday) {
+    circle = 'bg-orange-500';
+    number = 'text-white';
+  } else if (practiced) {
+    circle = 'bg-orange-200';
+    number = 'text-orange-800';
   } else {
-    circle = '';
-    number = isFuture ? 'text-gray-300' : 'text-gray-500';
+    circle = isFuture ? 'bg-orange-100 opacity-60' : 'bg-orange-100';
+    number = 'text-orange-700';
   }
 
   return (
@@ -84,8 +85,8 @@ function DayMark({
   );
 }
 
-// Topo do Progresso, direto no fundo branco e alinhado à esquerda: a chama,
-// a sequência de agora, a maior que o aluno já fez e a semana de estudo
+// Topo do Progresso, numa caixa pêssego: a chama, a sequência de agora, a
+// maior que o aluno já fez, o mascote da chama e a semana de estudo
 export function StreakCard({
   current,
   best,
@@ -100,13 +101,13 @@ export function StreakCard({
   );
 
   return (
-    <View className="gap-4">
+    <View className="gap-4 rounded-3xl bg-orange-50 p-4">
       <View
         accessible
         accessibilityLabel={`Sequência atual: ${formatStreak(current)}. Melhor sequência: ${formatStreak(best)}`}
         className="flex-row items-center gap-3"
       >
-        <View className="h-14 w-14 items-center justify-center rounded-full bg-orange-50">
+        <View className="h-14 w-14 items-center justify-center rounded-full bg-orange-100">
           <Ionicons name="flame" size={30} color={colors.orange} />
         </View>
         <View className="flex-1">
@@ -122,6 +123,11 @@ export function StreakCard({
             Melhor sequência: {formatStreak(best)}
           </Text>
         </View>
+        <Image
+          source={streakMascot}
+          className="h-16 w-16"
+          resizeMode="contain"
+        />
       </View>
 
       <View className="flex-row justify-between">

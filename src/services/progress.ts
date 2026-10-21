@@ -32,6 +32,10 @@ export interface Achievement {
   description: string;
   // ISO; null enquanto não desbloqueada
   unlockedAt: string | null;
+  // Andamento: o número do aluno, limitado à meta, e a meta. Na desbloqueada,
+  // `current` é igual a `target`.
+  current: number;
+  target: number;
 }
 
 export interface Progress {
