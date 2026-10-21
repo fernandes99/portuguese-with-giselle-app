@@ -65,6 +65,10 @@ Os rascunhos foram aprovados na conversa. Na lista, o dono do projeto escolheu o
 - **RF-19:** no chat e no resumo, `SimulationAvatar` mostra o `avatarUrl` redondo, com o mesmo círculo do RF-10 quando não há avatar.
 - **RF-20:** as falas da personagem pedem a voz com o `voiceId` que veio no começo. As frases corrigidas do aluno continuam sem `voiceId`, na voz da Gisa.
 
+### Menu de baixo
+
+- **RF-22:** a lista de simulações fica com o menu de baixo do app, com a aba Praticar em destaque. Para isso, a aba Praticar ganha uma pilha própria (`(tabs)/practice/_layout.tsx`): a tela da aba vai para `(tabs)/practice/index.tsx`, e a lista, para `(tabs)/practice/simulations.tsx`. O voltar da lista volta para Praticar, e tocar em Praticar com a lista aberta também. Os detalhes e a conversa continuam em tela cheia, fora das abas (`(app)/practice/simulations/[id].tsx`). Pedido do dono do projeto depois do teste no aparelho.
+
 ### Acessibilidade
 
 - **RF-21:** cada cartão é um botão com o título, a categoria e "feita" ou "exclusivo do plano Premium" no rótulo, como hoje. As pílulas do filtro têm `accessibilityState.selected`. A foto e o avatar não são lidos.
@@ -81,7 +85,7 @@ Os rascunhos foram aprovados na conversa. Na lista, o dono do projeto escolheu o
   - `SimulationRulesSheet`, novo;
   - `SimulationAvatar` com `avatarUrl` no lugar de `emoji`;
   - `SimulationSummary` passa o avatar.
-- **Tela da lista** (`src/app/(app)/practice/simulations/index.tsx`): o estado do filtro e a grade (`flex-row flex-wrap`, cada cartão com `w-1/2 p-1.5`, como a grade de conquistas).
+- **Tela da lista** (`src/app/(app)/(tabs)/practice/simulations.tsx`, movida para a pilha da aba Praticar, ver RF-22): o estado do filtro e a grade (`flex-row flex-wrap`, cada cartão com `w-1/2 p-1.5`, como a grade de conquistas).
 - **Tela da simulação** (`[id].tsx`): na fase `intro`, sem `LessonHeader`, com a tela de detalhes ocupando até o topo. A barra de status fica clara sobre a foto (`StatusBar style="light"` só nessa fase).
 - **Voz:** `getPracticeSpeech(token, text, signature, voiceId?)`. `useGisaVoice` aceita `voiceId` opcional em `toggle` e `autoplay`. O cache por assinatura continua certo, porque a assinatura já muda com a voz. `useSimulation` guarda o `voiceId` do começo.
 

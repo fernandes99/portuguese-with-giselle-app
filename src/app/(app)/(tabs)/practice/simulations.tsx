@@ -23,9 +23,10 @@ import {
   getVisibleSimulations,
 } from '@/utils/simulations';
 
-// Cenários das simulações, em grade, com o filtro por categoria. Recarrega ao
-// voltar de uma simulação, para "Feita" e o que resta hoje aparecerem
-// atualizados.
+// Cenários das simulações, em grade, com o filtro por categoria. Fica na
+// pilha da aba Praticar, com o menu de baixo; o cenário aberto sai das abas.
+// Recarrega ao voltar de uma simulação, para "Feita" e o que resta hoje
+// aparecerem atualizados.
 export default function SimulationsScreen() {
   const router = useRouter();
   const {
@@ -46,7 +47,8 @@ export default function SimulationsScreen() {
     : null;
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    // O menu de baixo já cuida da área de baixo da tela
+    <SafeAreaView edges={['top']} className="flex-1 bg-background">
       <LessonHeader title="Simulações" />
       <ScrollView
         contentContainerClassName="flex-grow gap-4 px-5 pb-8 pt-4"
