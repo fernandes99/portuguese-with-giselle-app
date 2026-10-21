@@ -136,6 +136,7 @@ export function useGisaVoice() {
     key: string,
     text: string,
     signature: string,
+    voiceId: string | null,
     fromUser: boolean
   ) {
     request.current += 1;
@@ -154,7 +155,7 @@ export function useGisaVoice() {
 
     setLoadingKey(key);
     try {
-      const speech = await getPracticeSpeech(token, text, signature);
+      const speech = await getPracticeSpeech(token, text, signature, voiceId);
       if (!isMountedRef.current) {
         return;
       }
@@ -216,21 +217,32 @@ export function useGisaVoice() {
     return index;
   }
 
-  // Toque do aluno no botão de ouvir: toca, ou para o que está tocando
-  function toggle(key: string, text: string, signature: string) {
+  // Toque do aluno no botão de ouvir: toca, ou para o que está tocando.
+  // `voiceId` só para a fala de uma personagem das simulações.
+  function toggle(
+    key: string,
+    text: string,
+    signature: string,
+    voiceId: string | null = null
+  ) {
     if (stateOf(key) !== 'idle') {
       stop();
       return;
     }
-    start(key, text, signature, true);
+    start(key, text, signature, voiceId, true);
   }
 
-  // Fala nova da Gisa, com a voz automática ligada
-  function autoplay(key: string, text: string, signature: string) {
+  // Fala nova da Gisa (ou da personagem), com a voz automática ligada
+  function autoplay(
+    key: string,
+    text: string,
+    signature: string,
+    voiceId: string | null = null
+  ) {
     if (!autoplayRef.current || blockedRef.current) {
       return;
     }
-    start(key, text, signature, false);
+    start(key, text, signature, voiceId, false);
   }
 
   function stop() {

@@ -2,15 +2,29 @@ import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
 import type { PracticeCorrection, PracticeMessage } from '@/services/practice';
 
-export type SimulationLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+// Ainda não aparece no app
+export type SimulationDifficulty = 'EASY' | 'MEDIUM' | 'HARD';
+
+export interface SimulationCategory {
+  id: string;
+  title: string;
+  // Hex da cor da categoria no Dato; null sem cor
+  color: string | null;
+}
 
 // Um cenário da lista: a cena, as tarefas e a situação para este aluno
 export interface Simulation {
   id: string;
   title: string;
   description: string;
-  emoji: string;
-  level: SimulationLevel;
+  // Quem a IA é na cena
+  aiRole: string;
+  // Foto do cartão e do topo dos detalhes
+  thumbnailUrl: string;
+  // Rosto da personagem, quadrado; null sem avatar
+  avatarUrl: string | null;
+  category: SimulationCategory;
+  difficulty: SimulationDifficulty;
   tasks: string[];
   // Exclusivo do Premium e a conta não assina: o toque leva à tela de planos
   isLocked: boolean;
@@ -23,6 +37,9 @@ export interface SimulationList {
   // Simulações que o aluno ainda pode começar hoje, e o limite do plano
   remainingToday: number;
   limitPerDay: number;
+  // As regras, mostradas antes de começar
+  maxMessages: number;
+  maxDeviations: number;
 }
 
 // A última lista carregada, para a tela de um cenário abrir na hora
@@ -40,6 +57,16 @@ export function getCachedSimulation(id: string) {
   );
 }
 
+// Os números das regras da última lista carregada, ou null sem lista
+export function getCachedSimulationRules() {
+  return cachedList
+    ? {
+        maxMessages: cachedList.maxMessages,
+        maxDeviations: cachedList.maxDeviations,
+      }
+    : null;
+}
+
 // Primeira fala da personagem, ao começar uma simulação
 export interface SimulationStart {
   runId: string;
@@ -55,6 +82,8 @@ export interface SimulationStart {
   // Desvios que interrompem a simulação
   maxDeviations: number;
   remainingToday: number;
+  // Voz da personagem, mandada ao pedir a voz das falas dela; null é a da Gisa
+  voiceId: string | null;
 }
 
 export type SimulationStatus = 'IN_PROGRESS' | 'COMPLETED' | 'NOT_COMPLETED';

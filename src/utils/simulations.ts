@@ -1,14 +1,40 @@
 import type { ChatMessage } from '@/hooks/usePracticeChat';
-import type { SimulationLevel } from '@/services/simulations';
+import type { Simulation, SimulationCategory } from '@/services/simulations';
 
-export const SIMULATION_LEVEL_TITLES: Record<SimulationLevel, string> = {
-  BEGINNER: 'Iniciante',
-  INTERMEDIATE: 'Intermediário',
-  ADVANCED: 'Avançado',
-};
+// As categorias do filtro da lista: uma vez cada, na ordem em que aparecem
+export function getSimulationCategories(
+  simulations: Simulation[]
+): SimulationCategory[] {
+  const categories = new Map<string, SimulationCategory>();
+  for (const simulation of simulations) {
+    if (!categories.has(simulation.category.id)) {
+      categories.set(simulation.category.id, simulation.category);
+    }
+  }
+  return [...categories.values()];
+}
 
-export function formatTasks(count: number) {
-  return count === 1 ? '1 tarefa' : `${count} tarefas`;
+// Os cenários da categoria escolhida. Sem filtro, ou com uma categoria que
+// sumiu da lista ao recarregar, todos.
+export function getVisibleSimulations(
+  simulations: Simulation[],
+  categoryId: string | null
+) {
+  const filtered = simulations.filter(
+    (simulation) => simulation.category.id === categoryId
+  );
+  return filtered.length > 0 ? filtered : simulations;
+}
+
+// Etiqueta no alto do cartão. O trancado mostra só o Premium, mesmo que o
+// aluno já o tenha feito quando assinava.
+export function getCardBadge(
+  simulation: Simulation
+): 'premium' | 'done' | null {
+  if (simulation.isLocked) {
+    return 'premium';
+  }
+  return simulation.isCompleted ? 'done' : null;
 }
 
 // Linha da lista com as simulações que restam hoje

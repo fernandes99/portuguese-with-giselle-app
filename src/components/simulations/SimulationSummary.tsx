@@ -3,6 +3,7 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { CorrectionCard } from '@/components/practice/CorrectionCard';
+import { SimulationAvatar } from '@/components/simulations/SimulationAvatar';
 import { colors } from '@/constants/theme';
 import type { ChatMessage } from '@/hooks/usePracticeChat';
 import type {
@@ -60,9 +61,7 @@ export function SimulationSummary({
         ) : null}
 
         <View className="items-center gap-2">
-          <Text style={{ includeFontPadding: false }} className="text-5xl">
-            {simulation.emoji}
-          </Text>
+          <SimulationAvatar avatarUrl={simulation.avatarUrl} size={72} />
           <Text
             accessibilityRole="header"
             className="text-center font-poppins-bold text-2xl text-gray-900"

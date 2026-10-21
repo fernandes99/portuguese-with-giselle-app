@@ -55,14 +55,14 @@ interface SimulationState {
 
 Reaproveitados de `src/components/practice/`:
 
-- `GisaMessage` e `StudentMessage` (`ChatBubble.tsx`), com uma prop nova de avatar: a personagem usa `SimulationAvatar` (o emoji num círculo verde-claro, no tamanho da foto da Gisa). Sem a prop, continua a foto da Gisa.
+- `GisaMessage` e `StudentMessage` (`ChatBubble.tsx`), com uma prop nova de avatar: a personagem usa `SimulationAvatar` (o avatar do cenário, ou um ícone de pessoa num círculo verde-claro, no tamanho da foto da Gisa). Sem a prop, continua a foto da Gisa.
 - `CorrectionCard`, `HintCard`, `ChatVoiceBar` e `ListenButton`.
 - `useGisaVoice` e `useHoldToTalk`, com a mesma opção de voz automática (`getChatAutoplay`, `src/lib/storage.ts`) e a mesma parada ao sair da tela (`useFocusEffect`).
 
 Novos, em `src/components/simulations/`:
 
 - `SimulationCard`: o cartão da lista.
-- `SimulationAvatar`: o emoji da personagem.
+- `SimulationAvatar`: o avatar da personagem.
 - `SimulationIntro`: a apresentação, com as tarefas e "Começar".
 - `TaskStrip`: a faixa das tarefas no topo da conversa.
 - `SimulationSummary`: o resumo do fim.
@@ -88,8 +88,11 @@ Todas usam o token Bearer do app. Mensagens de erro em português, no campo `err
       "id": "id do registro no Dato",
       "title": "Pedir café",
       "description": "Você está pedindo um café e um lanche em uma cafeteria local.",
-      "emoji": "☕",
-      "level": "BEGINNER",
+      "aiRole": "Atendente simpática de uma cafeteria de bairro em São Paulo",
+      "thumbnailUrl": "https://www.datocms-assets.com/...?w=900&fit=max&auto=format",
+      "avatarUrl": "https://www.datocms-assets.com/...?w=256&h=256&fit=crop&auto=format",
+      "category": { "id": "...", "title": "Alimentação", "color": "#ea580c" },
+      "difficulty": "EASY",
       "tasks": [
         "Peça um cappuccino.",
         "Pergunte se eles têm doces sem glúten.",
@@ -100,15 +103,20 @@ Todas usam o token Bearer do app. Mensagens de erro em português, no campo `err
     }
   ],
   "remainingToday": 2,
-  "limitPerDay": 3
+  "limitPerDay": 3,
+  "maxMessages": 12,
+  "maxDeviations": 3
 }
 ```
 
 - `simulations`: na ordem do campo `position` do Dato.
-- `level`: `BEGINNER`, `INTERMEDIATE` ou `ADVANCED`.
+- `thumbnailUrl`: a foto do cenário, já redimensionada pelo Dato. `avatarUrl`: o rosto da personagem, quadrado, ou `null` sem avatar.
+- `category`: a categoria do cenário; `color` é o hex da cor, ou `null`.
+- `difficulty`: `EASY`, `MEDIUM` ou `HARD`. O app ainda não a mostra.
 - `isLocked`: `true` só para o aluno gratuito em cenário sem `is_free`. As tarefas de um cenário trancado vêm assim mesmo, para mostrar o que a assinatura libera.
 - `isCompleted`: o aluno já completou o cenário alguma vez.
 - `remainingToday` e `limitPerDay`: simulações que ainda pode começar hoje e o limite do dia do plano dele (3 no Premium, 1 no gratuito).
+- `maxMessages` e `maxDeviations`: os mesmos números do começo, para o app mostrar as regras antes de começar.
 - Erros: 401 sem token; 500 (`Não foi possível carregar as simulações.`).
 
 ### Começar
@@ -125,9 +133,12 @@ Todas usam o token Bearer do app. Mensagens de erro em português, no campo `err
   "suggestionTranslation": "I want a cappuccino, please.",
   "maxMessages": 12,
   "maxDeviations": 3,
-  "remainingToday": 2
+  "remainingToday": 2,
+  "voiceId": "abcdefghij0123456789"
 }
 ```
+
+- `voiceId`: a voz da ElevenLabs da personagem, ou `null` para a voz da Gisa. As falas da personagem (`replySignature`) são assinadas com ela, e o app a manda junto ao pedir a voz: `POST /api/mobile/practice/speech` com `{ text, signature, voiceId }`. A frase corrigida (`correctedSignature`) é assinada sem voz e pedida sem `voiceId`.
 
 - `suggestion` e `suggestionTranslation` vêm `""` quando o modelo não as escreveu; `replyTranslation` também.
 - Erros:

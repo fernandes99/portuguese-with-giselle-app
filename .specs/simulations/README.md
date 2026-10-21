@@ -31,7 +31,7 @@ O aluno. O Premium faz todas as simulações; o gratuito faz só as liberadas pa
 ## Como funciona
 
 1. Na aba Praticar, "Simulações" abre a lista de cenários, com o que resta hoje ("Restam 2 de 3 hoje").
-2. O toque num cenário abre a apresentação: o emoji, o título, a descrição e as tarefas, com o botão "Começar".
+2. O toque num cenário abre a tela de detalhes: a foto, o rosto da personagem, o título, a descrição, os objetivos, o aviso do feedback no fim e as regras, com o botão "Começar simulação" (fase [04](04-list-and-details.md)).
 3. "Começar" abre a conversa. A personagem fala primeiro. As tarefas ficam no topo, com o progresso (1/3).
 4. O aluno responde por texto ou segurando o microfone, como no chat. Cada frase recebe o cartão de correção; cada tarefa cumprida fica marcada.
 5. Quando todas as tarefas estão cumpridas, ou quando acabam as 12 mensagens, a conversa dá lugar ao resumo.
@@ -57,7 +57,7 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 | O aluno gratuito vê todos os cenários. Os trancados levam a etiqueta Premium, e o toque leva à tela de planos                                                          | Mostra o que a assinatura libera, como no vocabulário        |
 | O gratuito faz a amostra só por texto: sem a voz da personagem e sem o microfone, que mostram a etiqueta Premium                                                       | As rotas de voz são só para assinantes; a voz é o que custa  |
 | A apresentação mostra as tarefas antes de começar, e a simulação só conta quando o aluno toca em "Começar"                                                             | O aluno decide sabendo o que vai fazer                       |
-| A personagem tem o emoji do cenário no lugar da foto da Gisa                                                                                                           | Deixa claro que não é a Gisa, é uma personagem da cena       |
+| A personagem tem o avatar do cenário no lugar da foto da Gisa e fala com a voz do cenário (fase [04](04-list-and-details.md))                                          | Deixa claro que não é a Gisa, é uma personagem da cena       |
 | As tarefas ficam numa faixa no topo da conversa, recolhida no progresso ("Tarefas 1/3") e aberta com um toque. Ao cumprir uma, a faixa mostra qual por alguns segundos | O aluno vê o que falta sem perder espaço da conversa         |
 | "Restam N mensagens" aparece quando faltam 3 ou menos                                                                                                                  | O aluno sabe que a simulação vai acabar, sem ruído no começo |
 | Sair no meio pede confirmação: "Sair da simulação? Ela conta como uma das de hoje."                                                                                    | A simulação já contou ao começar, e a conversa não é salva   |
@@ -70,10 +70,9 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 ## Fora do escopo
 
 - Simulações no site.
-- Uma voz própria por cenário.
 - Retomar uma simulação depois de sair.
 - Nota, pontuação, Progresso e conquistas das simulações.
-- Filtrar ou buscar cenários (a lista é curta).
+- Buscar cenários por texto (a lista é curta; o filtro por categoria entrou na fase [04](04-list-and-details.md)).
 - Trocar o estilo ou o idioma da explicação pela simulação: valem os do chat.
 
 ## Pré-requisitos
@@ -83,10 +82,11 @@ Tomadas no planejamento (corrigíveis; ao mudar uma, atualize aqui e nas specs a
 
 ## Fases
 
-| Fase                          | Assunto                                                               | Status       |
-| ----------------------------- | --------------------------------------------------------------------- | ------------ |
-| [01](01-simulations-list.md)  | Cartão "Simulações" na aba Praticar e a lista de cenários             | em andamento |
-| [02](02-simulation-screen.md) | Apresentação, conversa com as tarefas, aviso de saída e resumo do fim | em andamento |
-| [03](03-goal-reminders.md)    | Aviso de desvio e o resumo da interrupção                             | em andamento |
+| Fase                          | Assunto                                                                              | Status       |
+| ----------------------------- | ------------------------------------------------------------------------------------ | ------------ |
+| [01](01-simulations-list.md)  | Cartão "Simulações" na aba Praticar e a lista de cenários                            | em andamento |
+| [02](02-simulation-screen.md) | Apresentação, conversa com as tarefas, aviso de saída e resumo do fim                | em andamento |
+| [03](03-goal-reminders.md)    | Aviso de desvio e o resumo da interrupção                                            | em andamento |
+| [04](04-list-and-details.md)  | Lista com fotos e filtro, tela de detalhes com as regras, avatar e voz da personagem | em andamento |
 
 O contrato das rotas e o desenho que as duas fases dividem estão em [architecture.md](architecture.md).

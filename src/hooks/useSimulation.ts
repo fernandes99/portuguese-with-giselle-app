@@ -53,6 +53,8 @@ export function useSimulation(simulationId: string) {
 
   const [phase, setPhase] = useState<SimulationPhase>('intro');
   const [runId, setRunId] = useState<string | null>(null);
+  // Voz da personagem, que veio no começo; null é a da Gisa
+  const [voiceId, setVoiceId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isReplying, setIsReplying] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<number[]>([]);
@@ -103,6 +105,7 @@ export function useSimulation(simulationId: string) {
         return { locked: false };
       }
       setRunId(result.runId);
+      setVoiceId(result.voiceId);
       setMessages([
         {
           id: 'opening',
@@ -350,6 +353,7 @@ export function useSimulation(simulationId: string) {
     attempt.current += 1;
     setIsReplying(false);
     setRunId(null);
+    setVoiceId(null);
     setMessages([]);
     setCompletedTasks([]);
     setLastCompleted(null);
@@ -365,6 +369,7 @@ export function useSimulation(simulationId: string) {
 
   return {
     phase,
+    voiceId,
     messages,
     isReplying,
     isTranscribing,

@@ -102,14 +102,17 @@ export interface PracticeSpeech {
 
 // Voz de uma fala da Gisa ou de uma frase corrigida. O texto vai como veio
 // do backend, sem mudar nada: é o que a assinatura cobre.
+// `voiceId`: a voz de uma personagem das simulações, a mesma com que a fala
+// foi assinada; sem ele, a voz da Gisa
 export function getPracticeSpeech(
   token: string,
   text: string,
-  signature: string
+  signature: string,
+  voiceId?: string | null
 ) {
   return api<PracticeSpeech>(API_ROUTES.practiceSpeech, {
     method: 'POST',
-    body: { text, signature },
+    body: voiceId ? { text, signature, voiceId } : { text, signature },
     token,
   });
 }

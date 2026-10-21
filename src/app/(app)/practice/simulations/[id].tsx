@@ -5,6 +5,7 @@ import {
   useRouter,
 } from 'expo-router';
 import { usePreventRemove } from 'expo-router/react-navigation';
+import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -44,7 +45,11 @@ import type { ChatMessage } from '@/hooks/usePracticeChat';
 import { useSimulation } from '@/hooks/useSimulation';
 import { KeyboardAvoidingView } from '@/lib/keyboard';
 import { PRACTICE_AUDIO_ERROR_CODES } from '@/services/practice';
-import { getCachedSimulation, getSimulations } from '@/services/simulations';
+import {
+  getCachedSimulation,
+  getCachedSimulationRules,
+  getSimulations,
+} from '@/services/simulations';
 import { canUsePractice } from '@/utils/practice';
 import {
   getRemainingMessagesLabel,
@@ -84,6 +89,10 @@ export default function SimulationScreen() {
       return {
         simulation: list.simulations.find((item) => item.id === id) ?? null,
         remainingToday: list.remainingToday,
+        rules: {
+          maxMessages: list.maxMessages,
+          maxDeviations: list.maxDeviations,
+        },
       };
     },
     [id]
@@ -211,7 +220,8 @@ export default function SimulationScreen() {
       voice.autoplay(
         lastAssistant.id,
         lastAssistant.content,
-        lastAssistant.signature
+        lastAssistant.signature,
+        sim.voiceId
       );
     }
   }, [lastAssistant?.id, sim.goalReminder]);
@@ -370,15 +380,18 @@ export default function SimulationScreen() {
       : data?.remainingToday === 0
         ? DAILY_LIMIT_MESSAGE
         : null;
+    // Sem cabeçalho: a foto vai até o topo, com a barra de status clara
     return (
-      <SafeAreaView className="flex-1 bg-background">
-        <LessonHeader title={simulation.title} />
+      <SafeAreaView edges={['bottom']} className="flex-1 bg-background">
+        <StatusBar style="light" />
         <SimulationIntro
           simulation={simulation}
+          rules={data?.rules ?? getCachedSimulationRules()}
           isStarting={sim.phase === 'starting'}
           limitMessage={limitMessage}
           error={sim.startError?.message ?? null}
           onStart={handleStart}
+          onBack={goToList}
         />
       </SafeAreaView>
     );
@@ -403,13 +416,13 @@ export default function SimulationScreen() {
     );
   }
 
-  const avatar = <SimulationAvatar emoji={simulation.emoji} />;
+  const avatar = <SimulationAvatar avatarUrl={simulation.avatarUrl} />;
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <LessonHeader
         title={simulation.title}
-        avatar={<SimulationAvatar emoji={simulation.emoji} size={32} />}
+        avatar={<SimulationAvatar avatarUrl={simulation.avatarUrl} size={32} />}
         filled
       />
       <TaskStrip
@@ -455,7 +468,12 @@ export default function SimulationScreen() {
                         state={voice.stateOf(item.id)}
                         label="Ouvir a personagem"
                         onPress={() =>
-                          voice.toggle(item.id, item.content, signature)
+                          voice.toggle(
+                            item.id,
+                            item.content,
+                            signature,
+                            sim.voiceId
+                          )
                         }
                       />
                     ) : undefined
