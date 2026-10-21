@@ -56,9 +56,12 @@ export function AppTabBar({ state, descriptors, navigation }: TabBarProps) {
             onLongPress={onLongPress}
             className="flex-1 items-center gap-1 pt-2"
           >
-            <View
-              className={`h-10 w-14 items-center justify-center rounded-2xl ${focused ? 'bg-green-50' : ''}`}
-            >
+            <View className="h-10 w-14 items-center justify-center">
+              {/* Fundo próprio, montado só na aba ativa: trocar a cor do
+              fundo na mesma View fazia o Android perder o arredondado */}
+              {focused ? (
+                <View className="absolute inset-0 rounded-2xl bg-green-50" />
+              ) : null}
               {options.tabBarIcon?.({ focused, color, size: ICON_SIZE })}
               {badge !== undefined ? (
                 <View className="absolute right-1 top-0.5 h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-white bg-green-600 px-1">
