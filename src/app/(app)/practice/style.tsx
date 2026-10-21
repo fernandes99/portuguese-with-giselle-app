@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LessonHeader } from '@/components/lesson/ClassicLesson';
 import { ChatStyleSelector } from '@/components/practice/ChatStyleSelector';
 
-// Troca do estilo da Gisa, aberta pelo cabeçalho do chat e pelo Perfil. O
-// chat recomeça a conversa quando o estilo da sessão muda.
+// Troca do estilo da Gisa, aberta pelas configurações do chat. O chat
+// recomeça a conversa quando o estilo da sessão muda.
 export default function ChatStyleScreen() {
   const router = useRouter();
 

@@ -91,6 +91,7 @@ No aparelho, com uma conta assinante que nunca escolheu estilo, percorrer os cri
 
 ## Divergências
 
+- **RF-11 desfeito** (pedido depois da entrega): a linha "Estilo da Gisa" saiu do Perfil. O estilo agora só se troca pelas configurações do chat.
 - A tela de escolha não usa o balão com a foto da professora (`TeacherPrompt`) das boas-vindas: a pergunta vira um título, com o texto "A Gisa é uma IA que conversa com você em português...", para não misturar a professora com a IA.
 - `chatStyle` ausente na sessão (backend antigo) faz o chat abrir direto, com a abertura do backend, como na fase 03.
 

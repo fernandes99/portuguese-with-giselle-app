@@ -12,7 +12,7 @@ O que as fases compartilham.
 (tabs)/profile    Perfil            ganha o link "Meus cursos"
 courses           lista de cursos   movida para fora das abas
 practice/chat     chat com a Gisa   novo
-practice/style    estilo da Gisa    fase 04, aberto pelo chat e pelo Perfil
+practice/style    estilo da Gisa    fase 04, aberto pelo chat
 ```
 
 `courses` e `practice/chat` são telas da pilha de `src/app/(app)/_layout.tsx`, abertas por cima das abas.
