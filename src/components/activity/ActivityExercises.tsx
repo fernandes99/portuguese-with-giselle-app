@@ -2,6 +2,7 @@ import { DragDropActivity } from '@/components/activity/DragDropActivity';
 import { FillBlankActivity } from '@/components/activity/FillBlankActivity';
 import { MultipleChoiceActivity } from '@/components/activity/MultipleChoiceActivity';
 import { TrueFalseActivity } from '@/components/activity/TrueFalseActivity';
+import { VocabularyActivity } from '@/components/activity/vocabulary/VocabularyActivity';
 import type { Activity } from '@/services/lesson';
 
 interface ActivityExercisesProps {
@@ -52,6 +53,16 @@ export function ActivityExercises({
   if (activity.type === 'fill_blank') {
     return (
       <FillBlankActivity
+        activity={activity}
+        onProgress={onProgress}
+        onFinishedChange={onFinishedChange}
+      />
+    );
+  }
+
+  if (activity.type === 'vocabulary') {
+    return (
+      <VocabularyActivity
         activity={activity}
         onProgress={onProgress}
         onFinishedChange={onFinishedChange}

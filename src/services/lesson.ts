@@ -77,7 +77,85 @@ export interface SentenceActivity extends ActivityBase {
   exercises: { id: string; sentence: string }[];
 }
 
-export type Activity = ChoiceActivity | SentenceActivity;
+// Atividade de vocabulário: as perguntas chegam prontas do site (contrato em
+// .specs/vocabulary-activities/architecture.md do site)
+export type VocabularyExerciseType =
+  | 'meaning_choice'
+  | 'term_choice'
+  | 'listen_choice'
+  | 'listen_write'
+  | 'translate_write'
+  | 'match_pairs'
+  | 'listen_example'
+  | 'speak';
+
+// O que a tela mostra depois da resposta, certa ou errada
+export interface VocabularyAnswer {
+  vocabularyId: string;
+  term: string;
+  meaning: string;
+  // Em destaque, quando existe; o completo vem abaixo
+  meaningShort: string | null;
+  termAudioUrl: string | null;
+  example: string;
+  exampleTranslation: string;
+}
+
+export interface VocabularyPrompt {
+  // A palavra, o significado ou nada (só áudio)
+  text: string | null;
+  // Tocado ao abrir a pergunta (nos tipos de ouvir) e pelo botão de ouvir
+  audioUrl: string | null;
+}
+
+// Cada pergunta diz o próprio tipo: a atividade pode misturar vários, e a
+// tela usa o tipo para o texto do topo e para tocar o áudio ao abrir
+export type VocabularyQuestion =
+  | {
+      kind: 'choice';
+      exerciseType:
+        'meaning_choice' | 'term_choice' | 'listen_choice' | 'listen_example';
+      id: string;
+      prompt: VocabularyPrompt;
+      options: { id: string; text: string }[];
+      correctOptionId: string;
+      answer: VocabularyAnswer;
+    }
+  | {
+      kind: 'write';
+      exerciseType: 'listen_write' | 'translate_write';
+      id: string;
+      prompt: VocabularyPrompt;
+      // Já normalizadas
+      acceptedAnswers: string[];
+      answer: VocabularyAnswer;
+    }
+  | {
+      kind: 'pairs';
+      exerciseType: 'match_pairs';
+      id: string;
+      pairs: { vocabularyId: string; term: string; meaning: string }[];
+    }
+  | {
+      kind: 'speak';
+      exerciseType: 'speak';
+      id: string;
+      // Para a rota de pronúncia do vocabulário
+      vocabularyId: string;
+      term: string;
+      pronunciation: string | null;
+      termAudioUrl: string | null;
+      answer: VocabularyAnswer;
+    };
+
+export interface VocabularyActivity extends ActivityBase {
+  type: 'vocabulary';
+  // Os tipos marcados no Dato; cada palavra aparece em um deles
+  exerciseTypes: VocabularyExerciseType[];
+  questions: VocabularyQuestion[];
+}
+
+export type Activity = ChoiceActivity | SentenceActivity | VocabularyActivity;
 
 export interface Lesson {
   id: string;

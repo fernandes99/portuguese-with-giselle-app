@@ -29,6 +29,7 @@ Iniciativas atuais:
 | [lesson-transcriptions](lesson-transcriptions/) | Botão para baixar a transcrição da aula em PDF                                                 |
 | [vocabulary](vocabulary/)                       | Vocabulário na aba Praticar: busca, filtros, salvos, áudios e prática de pronúncia             |
 | [simulations](simulations/)                     | Simulações na aba Praticar: lista de cenários, conversa com as tarefas e resumo do fim         |
+| [vocabulary-activities](vocabulary-activities/) | Atividades de vocabulário nas aulas: oito tipos de pergunta, fila e placar                     |
 
 ## Modelo de spec
 

@@ -27,6 +27,7 @@ const ACTIVITY_TYPE_LABELS: Record<Activity['type'], string> = {
   true_or_false: 'VERDADEIRO OU FALSO',
   fill_blank: 'PREENCHER LACUNAS',
   drag_drop: 'ARRASTAR E SOLTAR',
+  vocabulary: 'VOCABULÁRIO',
 };
 
 // intro: apresentação; número: atividade em andamento; summary: fechamento

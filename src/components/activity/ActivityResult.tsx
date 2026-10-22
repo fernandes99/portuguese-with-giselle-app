@@ -12,6 +12,8 @@ interface ActivityResultProps {
   total: number;
   // O que está sendo contado quando não são perguntas, ex.: "lacunas"
   unit?: string;
+  // Troca o texto de baixo; a atividade de vocabulário conclui sempre
+  message?: string;
   onRetry: () => void;
 }
 
@@ -85,6 +87,7 @@ export function ActivityResult({
   correct,
   total,
   unit,
+  message,
   onRetry,
 }: ActivityResultProps) {
   const isAllCorrect = correct === total;
@@ -101,9 +104,10 @@ export function ActivityResult({
         {unit ? ` ${unit}` : ''}
       </Text>
       <Text className="text-center font-poppins text-sm text-gray-600">
-        {isAllCorrect
-          ? 'Parabéns! Atividade concluída.'
-          : 'Acerte tudo para concluir a atividade.'}
+        {message ??
+          (isAllCorrect
+            ? 'Parabéns! Atividade concluída.'
+            : 'Acerte tudo para concluir a atividade.')}
       </Text>
       <Button variant="link" label="Tentar de novo" onPress={onRetry} />
     </View>

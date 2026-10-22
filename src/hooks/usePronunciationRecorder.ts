@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { type RecorderHint, useHoldToTalk } from '@/hooks/useHoldToTalk';
-import { getErrorMessage } from '@/lib/api';
+import { ApiError, getErrorMessage } from '@/lib/api';
 import {
   evaluatePronunciation,
   type PronunciationEvaluation,
@@ -23,10 +23,28 @@ export type RecorderState =
   | { phase: 'checking' }
   | { phase: 'result'; evaluation: PronunciationEvaluation };
 
+// Por que a conferência não está disponível: o limite do dia acabou (429) ou
+// o aluno não é assinante (403)
+export type PronunciationUnavailableReason = 'daily_limit' | 'subscribers_only';
+
+const UNAVAILABLE_STATUSES: Record<number, PronunciationUnavailableReason> = {
+  429: 'daily_limit',
+  403: 'subscribers_only',
+};
+
+interface PronunciationRecorderOptions {
+  // Com ele, o limite e o plano não viram alerta: quem chama decide o que
+  // mostrar (a atividade de vocabulário pula as perguntas de falar)
+  onUnavailable?: (reason: PronunciationUnavailableReason) => void;
+}
+
 // Segurar para falar na pronúncia do vocabulário: a gravação
 // (useHoldToTalk) vai para a avaliação, e o resultado fica até a próxima
 // gravação
-export function usePronunciationRecorder(itemId: string) {
+export function usePronunciationRecorder(
+  itemId: string,
+  { onUnavailable }: PronunciationRecorderOptions = {}
+) {
   const { token } = useAuth();
   const [evaluation, setEvaluation] = useState<PronunciationEvaluation | null>(
     null
@@ -55,6 +73,14 @@ export function usePronunciationRecorder(itemId: string) {
         if (!isMountedRef.current) {
           return;
         }
+        const unavailable =
+          error instanceof ApiError
+            ? UNAVAILABLE_STATUSES[error.status]
+            : undefined;
+        if (unavailable && onUnavailable) {
+          onUnavailable(unavailable);
+          return;
+        }
         Alert.alert(
           'Não foi possível conferir',
           getErrorMessage(
@@ -64,7 +90,7 @@ export function usePronunciationRecorder(itemId: string) {
         );
       }
     },
-    [token, itemId]
+    [token, itemId, onUnavailable]
   );
 
   const holdToTalk = useHoldToTalk({

@@ -13,6 +13,11 @@ export function isPlayableActivity(activity: Activity) {
   if (activity.type === 'true_or_false') {
     return getStatements(activity.exercises).length > 0;
   }
+  // Sem perguntas: nenhum item tem o campo que o tipo pede (o áudio, por
+  // exemplo)
+  if (activity.type === 'vocabulary') {
+    return activity.questions.length > 0;
+  }
   if (activity.type !== 'fill_blank' && activity.type !== 'drag_drop') {
     return false;
   }
