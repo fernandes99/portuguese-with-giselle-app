@@ -30,6 +30,7 @@ Iniciativas atuais:
 | [vocabulary](vocabulary/)                       | Vocabulário na aba Praticar: busca, filtros, salvos, áudios e prática de pronúncia             |
 | [simulations](simulations/)                     | Simulações na aba Praticar: lista de cenários, conversa com as tarefas e resumo do fim         |
 | [vocabulary-activities](vocabulary-activities/) | Atividades de vocabulário nas aulas: oito tipos de pergunta, fila e placar                     |
+| [device-pronunciation](device-pronunciation/)   | Pronúncia pelo reconhecimento do Android e do iPhone, quando o site liga o motor do aparelho   |
 
 ## Modelo de spec
 
