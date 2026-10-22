@@ -1,6 +1,6 @@
 # 01. A atividade de vocabulário nas aulas
 
-- **Status:** em andamento
+- **Status:** concluída
 - **Depende de:** as fases 01 e 02 do site (`.specs/vocabulary-activities/` de lá)
 
 ## Contexto
@@ -100,12 +100,12 @@ Os dois callbacks da atividade, `onProgress(completed)` e `onFinishedChange(fini
 
 ## Critérios de aceite
 
-- [ ] Cada um dos oito tipos abre na aula guiada e no modal da aula em revisão, aceita a resposta certa e recusa a errada.
-- [ ] A pergunta errada volta no fim, e o placar conta só as de primeira.
-- [ ] Nos pares, a peça errada pisca e o grupo termina quando todos estão ligados.
-- [ ] Na fala, "Não posso falar agora" pula o item, e a atividade termina mesmo assim.
-- [ ] Ao terminar, a atividade fica concluída na aula.
-- [ ] As outras atividades continuam iguais.
+- [x] Cada um dos oito tipos abre na aula guiada e no modal da aula em revisão, aceita a resposta certa e recusa a errada.
+- [x] A pergunta errada volta no fim, e o placar conta só as de primeira.
+- [x] Nos pares, a peça errada pisca e o grupo termina quando todos estão ligados.
+- [x] Na fala, "Não posso falar agora" pula o item, e a atividade termina mesmo assim.
+- [x] Ao terminar, a atividade fica concluída na aula.
+- [x] As outras atividades continuam iguais.
 
 ## Verificação
 
@@ -129,4 +129,4 @@ Os dois callbacks da atividade, `onProgress(completed)` e `onFinishedChange(fini
 - [x] `PronunciationResult` separado de `PronunciationPractice`. O `usePronunciationRecorder` ganhou a opção `onUnavailable`: com ela, o limite do dia (429) e o plano gratuito (403) não viram alerta.
 - [x] `VocabularyActivity` e as quatro formas de pergunta.
 - [x] Ramo no `ActivityExercises`, o rótulo "VOCABULÁRIO" em `LessonActivities` e o caso em `isPlayableActivity`.
-- [ ] Teste no aparelho.
+- [x] Teste no aparelho.

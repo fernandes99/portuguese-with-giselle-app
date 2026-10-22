@@ -39,6 +39,6 @@ O mesmo do site. Do app, não há lista de atividades fora da aula: a atividade 
 
 ## Fases
 
-| Fase                         | Assunto                                     | Status       |
-| ---------------------------- | ------------------------------------------- | ------------ |
-| [01](01-activity-screens.md) | A atividade de vocabulário nas aulas do app | em andamento |
+| Fase                         | Assunto                                     | Status    |
+| ---------------------------- | ------------------------------------------- | --------- |
+| [01](01-activity-screens.md) | A atividade de vocabulário nas aulas do app | concluída |
