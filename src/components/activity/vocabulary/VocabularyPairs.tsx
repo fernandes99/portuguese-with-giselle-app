@@ -120,9 +120,9 @@ export function VocabularyPairs({
               accessibilityState={{ selected: isSelected, disabled: isMatched }}
               onPress={() => pick(side, piece.vocabularyId)}
               disabled={isMatched}
-              className={`min-h-14 justify-center rounded-2xl border-2 p-3 ${ALTERNATIVE_STYLES[state].box}`}
+              className={`min-h-16 items-center justify-center rounded-2xl border-2 p-3 ${ALTERNATIVE_STYLES[state].box} ${isMatched ? 'opacity-60' : ''}`}
             >
-              <Text className="font-poppins text-sm text-gray-900">
+              <Text className="text-center font-poppins-medium text-sm text-gray-900">
                 {piece.text}
               </Text>
             </Pressable>

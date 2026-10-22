@@ -8,10 +8,8 @@ import {
   View,
 } from 'react-native';
 
-import {
-  AudioButton,
-  useActivityAudio,
-} from '@/components/activity/ActivityAudio';
+import { useActivityAudio } from '@/components/activity/ActivityAudio';
+import { VocabularyPrompt } from '@/components/activity/vocabulary/VocabularyPrompt';
 import { Button } from '@/components/Button';
 import { HoldToTalkButton } from '@/components/vocabulary/HoldToTalkButton';
 import { colors } from '@/constants/theme';
@@ -74,20 +72,12 @@ export function VocabularySpeak({
   const isHolding = state.phase === 'starting' || state.phase === 'recording';
 
   return (
-    <View className="gap-5">
-      <View className="items-start gap-2 rounded-2xl bg-gray-50 p-5">
-        <Text className="font-poppins-bold text-2xl text-gray-900">
-          {question.term}
-        </Text>
-        {question.pronunciation ? (
-          <Text className="font-poppins text-base text-gray-600">
-            {question.pronunciation}
-          </Text>
-        ) : null}
-        {question.termAudioUrl ? (
-          <AudioButton url={question.termAudioUrl} label="Ouvir a palavra" />
-        ) : null}
-      </View>
+    <View className="gap-6">
+      <VocabularyPrompt
+        prompt={{ text: question.term, audioUrl: question.termAudioUrl }}
+        autoPlay={false}
+        hint={question.pronunciation}
+      />
 
       {state.phase === 'denied' ? (
         <View className="gap-3">

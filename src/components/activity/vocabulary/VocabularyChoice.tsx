@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
@@ -8,10 +9,12 @@ import {
   getAlternativeState,
 } from '@/components/activity/ChoiceAlternatives';
 import { VocabularyPrompt } from '@/components/activity/vocabulary/VocabularyPrompt';
+import { colors } from '@/constants/theme';
 import type {
   VocabularyExerciseType,
   VocabularyQuestion,
 } from '@/services/lesson';
+import { getLetter } from '@/utils/choice';
 
 interface VocabularyChoiceProps {
   question: Extract<VocabularyQuestion, { kind: 'choice' }>;
@@ -26,7 +29,8 @@ const LISTEN_TYPES: VocabularyExerciseType[] = [
   'listen_example',
 ];
 
-// Escolher entre as opções: o significado, a palavra ou a tradução
+// Escolher entre as opções: o significado, a palavra ou a tradução, com as
+// letras e os ícones das alternativas das outras atividades
 export function VocabularyChoice({
   question,
   exerciseType,
@@ -55,38 +59,51 @@ export function VocabularyChoice({
   }
 
   return (
-    <View className="gap-5">
+    <View className="gap-6">
       <VocabularyPrompt
         prompt={question.prompt}
         autoPlay={LISTEN_TYPES.includes(exerciseType)}
-        audioLabel={
-          exerciseType === 'listen_example'
-            ? 'Ouvir a frase'
-            : 'Ouvir a palavra'
-        }
       />
 
       <View className="gap-3">
-        {question.options.map((option) => {
+        {question.options.map((option, position) => {
           const isSelected = option.id === selectedId;
           const state = getAlternativeState(
             option.id === question.correctOptionId,
             isSelected,
             isChecked
           );
+          const style = ALTERNATIVE_STYLES[state];
           return (
             <Pressable
               key={option.id}
-              accessibilityRole="button"
-              accessibilityLabel={option.text}
-              accessibilityState={{ selected: isSelected, disabled: isChecked }}
+              accessibilityRole="radio"
+              accessibilityLabel={`${getLetter(position)}: ${option.text}`}
+              accessibilityState={{ checked: isSelected, disabled: isChecked }}
               onPress={() => select(option.id)}
               disabled={isChecked}
-              className={`rounded-2xl border-2 p-4 ${ALTERNATIVE_STYLES[state].box}`}
+              className={`flex-row items-center gap-3 rounded-2xl border-2 p-4 ${style.box}`}
             >
-              <Text className="font-poppins text-base text-gray-900">
+              <View
+                className={`h-9 w-9 items-center justify-center rounded-xl ${style.chip}`}
+              >
+                <Text className={`font-poppins-bold text-sm ${style.letter}`}>
+                  {getLetter(position)}
+                </Text>
+              </View>
+              <Text className="flex-1 font-poppins-medium text-base text-gray-900">
                 {option.text}
               </Text>
+              {state === 'correct' ? (
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={colors.green}
+                />
+              ) : null}
+              {state === 'wrong' ? (
+                <Ionicons name="close-circle" size={24} color={colors.red} />
+              ) : null}
             </Pressable>
           );
         })}

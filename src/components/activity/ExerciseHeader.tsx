@@ -15,6 +15,9 @@ interface ExerciseHeaderProps {
   title: string;
   // HTML com o enunciado da atividade
   content: string | null;
+  // No lugar de "posição/total" (a atividade de vocabulário mostra as
+  // resolvidas, porque a errada volta para o fim)
+  counter?: string;
 }
 
 // Topo dos exercícios de uma tela só: barra de progresso, contador e o botão
@@ -25,6 +28,7 @@ export function ExerciseHeader({
   isChecked,
   title,
   content,
+  counter,
 }: ExerciseHeaderProps) {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const hasInfo = Boolean(title.trim() || content?.trim());
@@ -36,7 +40,7 @@ export function ExerciseHeader({
         <ProgressBar percentage={Math.round((answeredCount / total) * 100)} />
       </View>
       <Text className="font-poppins-medium text-xs text-gray-500">
-        {index + 1}/{total}
+        {counter ?? `${index + 1}/${total}`}
       </Text>
       {hasInfo ? (
         <Pressable

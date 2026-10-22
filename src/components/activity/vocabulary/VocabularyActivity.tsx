@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, type TextInput, View } from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
 import { ActivityResult } from '@/components/activity/ActivityResult';
@@ -55,6 +55,10 @@ const EXERCISE_TITLES: Record<VocabularyExerciseType, string> = {
   speak: 'Fale a palavra',
 };
 
+// Tempo do painel descer no Android, cujo Modal não avisa quando some (o
+// mesmo da atividade de completar)
+const ANDROID_SHEET_CLOSE_DELAY = 300;
+
 // O painel aberto depois de uma resposta: o que mostrar e o que fazer com a
 // fila no "Continuar"
 interface Feedback {
@@ -82,6 +86,12 @@ export function VocabularyActivity({
   const [unavailable, setUnavailable] =
     useState<PronunciationUnavailableReason | null>(null);
   const hasStarted = useRef(false);
+  // O campo da pergunta de escrever, quando ela é a atual
+  const inputRef = useRef<TextInput>(null);
+  // A próxima pergunta apareceu com o painel ainda descendo: o campo dela só
+  // abre o teclado quando ele some (com o painel na tela, o autoFocus marca
+  // o campo como focado sem abrir o teclado)
+  const hasPendingFocus = useRef(false);
   const isFinished = activity.questions.length > 0 && isQueueFinished(queue);
 
   const markStarted = useCallback(() => {
@@ -107,11 +117,24 @@ export function VocabularyActivity({
     setIsFeedbackOpen(true);
   }, []);
 
+  function focusPendingInput() {
+    if (!hasPendingFocus.current) {
+      return;
+    }
+    hasPendingFocus.current = false;
+    inputRef.current?.focus();
+  }
+
   function goNext() {
     stop();
     setIsFeedbackOpen(false);
     if (feedback) {
+      hasPendingFocus.current = true;
       apply(feedback.update);
+      // No iOS o foco vem do onDismiss do painel
+      if (Platform.OS === 'android') {
+        setTimeout(focusPendingInput, ANDROID_SHEET_CLOSE_DELAY);
+      }
     }
   }
 
@@ -123,15 +146,19 @@ export function VocabularyActivity({
     [apply]
   );
 
+  // O resultado já diz o que entendemos; o painel não leva rótulo
   const handleEvaluated = useCallback(
-    (evaluation: PronunciationEvaluation) => {
+    (evaluation: PronunciationEvaluation, termAudioUrl: string | null) => {
       const isCorrect = evaluation.result === 'correct';
       openFeedback({
         isCorrect,
         isLast: isLastQuestion && isCorrect,
-        answerLabel: 'O que ouvimos:',
+        answerLabel: '',
         answer: (
-          <PronunciationResult evaluation={evaluation} termAudioUrl={null} />
+          <PronunciationResult
+            evaluation={evaluation}
+            termAudioUrl={termAudioUrl}
+          />
         ),
         update: (queue) => answerQuestion(queue, isCorrect),
       });
@@ -141,6 +168,7 @@ export function VocabularyActivity({
 
   function handleRetry() {
     stop();
+    hasPendingFocus.current = false;
     setFeedback(null);
     restart();
     onFinishedChange(false);
@@ -197,6 +225,8 @@ export function VocabularyActivity({
           key={key}
           question={question}
           exerciseType={question.exerciseType}
+          autoFocus={!hasPendingFocus.current}
+          inputRef={inputRef}
           onInteract={markStarted}
           onChecked={onChecked}
         />
@@ -227,7 +257,9 @@ export function VocabularyActivity({
         key={key}
         question={current}
         onInteract={markStarted}
-        onEvaluated={handleEvaluated}
+        onEvaluated={(evaluation) =>
+          handleEvaluated(evaluation, current.termAudioUrl)
+        }
         onSkip={() => apply(skipQuestion)}
         onUnavailable={handleUnavailable}
       />
@@ -237,16 +269,19 @@ export function VocabularyActivity({
   return (
     <View className="grow gap-6">
       <ExerciseHeader
-        index={Math.min(queue.resolved, queue.total - 1)}
+        index={queue.resolved}
         total={queue.total}
         isChecked={false}
         title={activity.title}
         content={activity.content}
+        counter={`${queue.resolved}/${queue.total}`}
       />
 
-      <Text className="font-poppins-semibold text-lg text-gray-900">
-        {current ? EXERCISE_TITLES[current.exerciseType] : null}
-      </Text>
+      {current ? (
+        <Text className="text-center font-poppins-bold text-xl text-gray-900">
+          {EXERCISE_TITLES[current.exerciseType]}
+        </Text>
+      ) : null}
 
       {unavailable ? (
         <View className="flex-row items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
@@ -269,6 +304,7 @@ export function VocabularyActivity({
           answerLabel={feedback.answerLabel}
           answer={feedback.answer}
           onContinue={goNext}
+          onDismiss={focusPendingInput}
         />
       ) : null}
     </View>

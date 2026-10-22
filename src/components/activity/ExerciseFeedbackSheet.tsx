@@ -11,9 +11,9 @@ interface ExerciseFeedbackSheetProps {
   visible: boolean;
   isCorrect: boolean;
   isLast: boolean;
-  // Rótulo e conteúdo da resposta certa, mostrados só no erro. O exercício
-  // guarda os dados à parte do atual, para o painel não mudar enquanto desce
-  // e o próximo exercício já aparece.
+  // Rótulo (vazio: sem rótulo) e conteúdo da resposta certa, mostrados só no
+  // erro. O exercício guarda os dados à parte do atual, para o painel não
+  // mudar enquanto desce e o próximo exercício já aparece.
   answerLabel: string;
   answer: ReactNode;
   onContinue: () => void;
@@ -81,9 +81,11 @@ export function ExerciseFeedbackSheet({
 
           {isCorrect ? null : (
             <View className="gap-2">
-              <Text className="font-poppins-semibold text-sm text-red-700">
-                {answerLabel}
-              </Text>
+              {answerLabel ? (
+                <Text className="font-poppins-semibold text-sm text-red-700">
+                  {answerLabel}
+                </Text>
+              ) : null}
               {answer}
             </View>
           )}

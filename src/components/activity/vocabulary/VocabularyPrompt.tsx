@@ -5,20 +5,23 @@ import {
   AudioButton,
   useActivityAudio,
 } from '@/components/activity/ActivityAudio';
+import { ListenButton } from '@/components/activity/ChoicePrompt';
 import type { VocabularyPrompt as VocabularyPromptData } from '@/services/lesson';
 
 interface VocabularyPromptProps {
   prompt: VocabularyPromptData;
   // Nos tipos de ouvir, o áudio é a pergunta e toca ao abrir
   autoPlay: boolean;
-  audioLabel: string;
+  // A pronúncia, embaixo da palavra (só no "Fale a palavra")
+  hint?: string | null;
 }
 
-// O que o aluno vê ou ouve: a palavra ou o significado, e o botão de ouvir
+// O que o aluno vê ou ouve. Só com áudio, o botão grande de ouvir no centro;
+// com texto, a palavra em destaque e o botão redondo de ouvir ao lado.
 export function VocabularyPrompt({
   prompt,
   autoPlay,
-  audioLabel,
+  hint,
 }: VocabularyPromptProps) {
   const { play } = useActivityAudio();
 
@@ -29,15 +32,26 @@ export function VocabularyPrompt({
     }
   }, []);
 
+  if (!prompt.text) {
+    return prompt.audioUrl ? (
+      <View className="items-center py-2">
+        <ListenButton url={prompt.audioUrl} />
+      </View>
+    ) : null;
+  }
+
   return (
-    <View className="items-start gap-3 rounded-2xl bg-gray-50 p-5">
-      {prompt.text ? (
-        <Text className="font-poppins-bold text-2xl text-gray-900">
+    <View className="min-h-36 items-center justify-center gap-2 rounded-3xl border border-gray-100 bg-gray-50 px-5 py-6">
+      <View className="flex-row items-center justify-center gap-3">
+        <Text className="shrink text-center font-poppins-bold text-3xl text-gray-900">
           {prompt.text}
         </Text>
-      ) : null}
-      {prompt.audioUrl ? (
-        <AudioButton url={prompt.audioUrl} label={audioLabel} />
+        {prompt.audioUrl ? <AudioButton url={prompt.audioUrl} /> : null}
+      </View>
+      {hint ? (
+        <Text className="text-center font-poppins text-base text-gray-500">
+          {hint}
+        </Text>
       ) : null}
     </View>
   );

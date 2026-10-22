@@ -12,8 +12,9 @@ import {
   PROMPT_INSTRUCTIONS,
 } from '@/utils/choice';
 
-// Botão grande, no centro, para ouvir o áudio da pergunta
-function ListenButton({ url }: { url: string }) {
+// Botão grande, no centro, para ouvir o áudio da pergunta. Usado também pela
+// atividade de vocabulário.
+export function ListenButton({ url }: { url: string }) {
   const { playingUrl, toggle } = useActivityAudio();
   const isPlaying = playingUrl === url;
 

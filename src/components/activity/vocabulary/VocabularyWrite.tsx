@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { type Ref, useState } from 'react';
+import { Keyboard, Text, TextInput, View } from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
 import { ActivityCheck } from '@/components/activity/ActivityFooter';
@@ -14,6 +14,10 @@ import { isAcceptedAnswer, normalizeAnswer } from '@/utils/vocabularyActivity';
 interface VocabularyWriteProps {
   question: Extract<VocabularyQuestion, { kind: 'write' }>;
   exerciseType: VocabularyExerciseType;
+  // Abre o teclado ao aparecer. Falso quando o painel da resposta anterior
+  // ainda está descendo: aí a atividade foca pelo inputRef quando ele some.
+  autoFocus: boolean;
+  inputRef: Ref<TextInput>;
   onInteract: () => void;
   onChecked: (isCorrect: boolean) => void;
 }
@@ -22,18 +26,23 @@ interface VocabularyWriteProps {
 export function VocabularyWrite({
   question,
   exerciseType,
+  autoFocus,
+  inputRef,
   onInteract,
   onChecked,
 }: VocabularyWriteProps) {
   const { stop } = useActivityAudio();
   const [typed, setTyped] = useState('');
   const [result, setResult] = useState<boolean | null>(null);
+  const [isFocused, setIsFocused] = useState(false);
   const isEmpty = normalizeAnswer(typed) === '';
 
   function check() {
     if (isEmpty || result !== null) {
       return;
     }
+    // O teclado sai para o painel aparecer inteiro
+    Keyboard.dismiss();
     stop();
     const isCorrect = isAcceptedAnswer(question, typed);
     setResult(isCorrect);
@@ -42,36 +51,48 @@ export function VocabularyWrite({
 
   const border =
     result === null
-      ? 'border-gray-200 bg-white'
+      ? isFocused
+        ? 'border-blue-500 bg-white'
+        : 'border-gray-200 bg-white'
       : result
         ? 'border-green-600 bg-green-50'
         : 'border-red-500 bg-red-50';
 
   return (
-    <View className="gap-5">
+    <View className="gap-6">
       <VocabularyPrompt
         prompt={question.prompt}
         autoPlay={exerciseType === 'listen_write'}
-        audioLabel="Ouvir a palavra"
       />
 
-      <TextInput
-        value={typed}
-        onChangeText={(text) => {
-          onInteract();
-          setTyped(text);
-        }}
-        onSubmitEditing={check}
-        editable={result === null}
-        placeholder="Escreva em português"
-        placeholderTextColor={colors.gray}
-        autoCorrect={false}
-        autoCapitalize="none"
-        autoComplete="off"
-        returnKeyType="done"
-        accessibilityLabel="Sua resposta"
-        className={`rounded-2xl border-2 px-4 py-4 font-poppins text-lg text-gray-900 ${border}`}
-      />
+      <View className="gap-2">
+        <TextInput
+          ref={inputRef}
+          autoFocus={autoFocus}
+          value={typed}
+          onChangeText={(text) => {
+            onInteract();
+            setTyped(text);
+          }}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onSubmitEditing={check}
+          submitBehavior="submit"
+          editable={result === null}
+          placeholder="Escreva em português"
+          placeholderTextColor={colors.gray}
+          autoCorrect={false}
+          autoCapitalize="none"
+          autoComplete="off"
+          spellCheck={false}
+          returnKeyType="done"
+          accessibilityLabel="Sua resposta"
+          className={`rounded-2xl border-2 px-4 py-4 text-center font-poppins-medium text-xl text-gray-900 ${border}`}
+        />
+        <Text className="text-center font-poppins text-xs text-gray-400">
+          Acentos não contam.
+        </Text>
+      </View>
 
       <ActivityCheck disabled={isEmpty || result !== null} onCheck={check} />
     </View>
