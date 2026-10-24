@@ -1,5 +1,6 @@
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
+import type { PronunciationEngine } from '@/services/vocabulary';
 
 export interface LessonLink {
   slug: string;
@@ -153,6 +154,8 @@ export interface VocabularyActivity extends ActivityBase {
   // Os tipos marcados no Dato; cada palavra aparece em um deles
   exerciseTypes: VocabularyExerciseType[];
   questions: VocabularyQuestion[];
+  // Quem transcreve a pronúncia no "Fale a palavra"
+  pronunciationEngine: PronunciationEngine;
 }
 
 export type Activity = ChoiceActivity | SentenceActivity | VocabularyActivity;

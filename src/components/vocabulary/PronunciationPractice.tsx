@@ -18,12 +18,15 @@ import {
   type RecorderHint,
   usePronunciationRecorder,
 } from '@/hooks/usePronunciationRecorder';
+import type { PronunciationEngine } from '@/services/vocabulary';
 
 interface PronunciationPracticeProps {
   itemId: string;
   termAudioUrl: string | null;
   // Só assinantes verificam; o gratuito vai para a tela de planos
   canCheck: boolean;
+  // Quem transcreve: a gravação ou o reconhecimento do aparelho
+  engine: PronunciationEngine;
   onOpenPlans: () => void;
 }
 
@@ -39,11 +42,12 @@ export function PronunciationPractice({
   itemId,
   termAudioUrl,
   canCheck,
+  engine,
   onOpenPlans,
 }: PronunciationPracticeProps) {
   const { playingUrl, stop: stopAudio } = useActivityAudio();
   const { state, metering, requestPermission, pressIn, release } =
-    usePronunciationRecorder(itemId);
+    usePronunciationRecorder(itemId, { engine });
   const [isOpen, setIsOpen] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
 

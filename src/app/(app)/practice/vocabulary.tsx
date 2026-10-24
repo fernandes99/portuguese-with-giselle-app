@@ -188,6 +188,7 @@ export default function VocabularyScreen() {
         getCategory={getCategory}
         savedIds={savedIds}
         canCheckPronunciation={canCheckPronunciation(user)}
+        pronunciationEngine={data?.pronunciationEngine ?? 'elevenlabs'}
         onClose={() => setOpenId(null)}
         onToggleSaved={toggleSaved}
         onOpenPlans={() => {

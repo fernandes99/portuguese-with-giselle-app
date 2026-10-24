@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { type RecorderHint, useHoldToTalk } from '@/hooks/useHoldToTalk';
+import { useSpeechRecognitionHold } from '@/hooks/useSpeechRecognitionHold';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { isSpeechRecognitionAvailable } from '@/lib/speechRecognition';
 import {
   evaluatePronunciation,
+  evaluatePronunciationText,
+  type PronunciationEngine,
   type PronunciationEvaluation,
 } from '@/services/vocabulary';
 
@@ -33,17 +37,21 @@ const UNAVAILABLE_STATUSES: Record<number, PronunciationUnavailableReason> = {
 };
 
 interface PronunciationRecorderOptions {
+  // Quem transcreve, decidido pelo site. Com 'device' e o reconhecimento no
+  // aparelho, a fala vai como texto; senão, como gravação.
+  engine?: PronunciationEngine;
   // Com ele, o limite e o plano não viram alerta: quem chama decide o que
   // mostrar (a atividade de vocabulário pula as perguntas de falar)
   onUnavailable?: (reason: PronunciationUnavailableReason) => void;
 }
 
 // Segurar para falar na pronúncia do vocabulário: a gravação
-// (useHoldToTalk) vai para a avaliação, e o resultado fica até a próxima
-// gravação
+// (useHoldToTalk) ou o texto do reconhecimento do aparelho
+// (useSpeechRecognitionHold) vai para a avaliação, e o resultado fica até a
+// próxima fala. Os dois rodam sempre, pela regra dos hooks, e só um é usado.
 export function usePronunciationRecorder(
   itemId: string,
-  { onUnavailable }: PronunciationRecorderOptions = {}
+  { engine = 'elevenlabs', onUnavailable }: PronunciationRecorderOptions = {}
 ) {
   const { token } = useAuth();
   const [evaluation, setEvaluation] = useState<PronunciationEvaluation | null>(
@@ -58,14 +66,21 @@ export function usePronunciationRecorder(
     };
   }, []);
 
-  const send = useCallback(
-    async (uri: string) => {
+  const usesRecognition = useMemo(
+    () => engine === 'device' && isSpeechRecognitionAvailable(),
+    [engine]
+  );
+
+  const evaluate = useCallback(
+    async (
+      request: (authToken: string) => Promise<PronunciationEvaluation>
+    ) => {
       if (!token) {
         return;
       }
 
       try {
-        const result = await evaluatePronunciation(token, itemId, uri);
+        const result = await request(token);
         if (isMountedRef.current) {
           setEvaluation(result);
         }
@@ -90,13 +105,22 @@ export function usePronunciationRecorder(
         );
       }
     },
-    [token, itemId, onUnavailable]
+    [token, onUnavailable]
   );
 
-  const holdToTalk = useHoldToTalk({
+  const recording = useHoldToTalk({
     maxDurationMs: MAX_RECORDING_MS,
-    onRecorded: send,
+    onRecorded: (uri) =>
+      evaluate((authToken) => evaluatePronunciation(authToken, itemId, uri)),
   });
+  const recognition = useSpeechRecognitionHold({
+    maxDurationMs: MAX_RECORDING_MS,
+    onRecognized: (transcripts) =>
+      evaluate((authToken) =>
+        evaluatePronunciationText(authToken, itemId, transcripts)
+      ),
+  });
+  const holdToTalk = usesRecognition ? recognition : recording;
   const { pressIn: startHold, requestPermission: askPermission } = holdToTalk;
 
   // O resultado some ao gravar de novo e ao pedir o microfone outra vez

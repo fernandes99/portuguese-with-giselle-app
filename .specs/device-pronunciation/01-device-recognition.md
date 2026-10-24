@@ -1,6 +1,6 @@
 # 01. Reconhecimento do aparelho
 
-- **Status:** rascunho
+- **Status:** em andamento
 - **Depende de:** fase 01 de `.specs/device-pronunciation/` no site (`portuguese-with-giselle`)
 
 ## Contexto
@@ -45,6 +45,7 @@ O app confere a pronúncia em dois lugares: no detalhe de um item do vocabulári
 Criar:
 
 - `src/hooks/useSpeechRecognitionHold.ts`: o reconhecimento de segurar para falar, com o mesmo retorno de `useHoldToTalk` que `usePronunciationRecorder` usa (estado, `metering`, `pressIn`, `release`, `requestPermission`), entregando as alternativas em vez da URI do áudio.
+- `src/lib/speechRecognition.ts`: o módulo nativo carregado com `requireOptionalNativeModule`, e `isSpeechRecognitionAvailable()`. Não estava no desenho: o import normal do pacote quebra o app no Expo Go e num build sem o módulo, porque o pacote usa `requireNativeModule`. Assim, sem o módulo, o app usa a gravação. Do pacote só vêm os tipos.
 
 Alterar:
 
@@ -62,8 +63,9 @@ Alterar:
 
 ## Tarefas
 
-- [ ] Biblioteca, plugin e permissões; build novo.
-- [ ] Tipos e `evaluatePronunciationText`.
-- [ ] `useSpeechRecognitionHold`.
-- [ ] `usePronunciationRecorder` escolhendo o motor, e os dois lugares passando o motor.
+- [x] Biblioteca (`expo-speech-recognition` 58), plugin e permissões no `app.config.ts`.
+- [ ] Build novo de desenvolvimento.
+- [x] Tipos e `evaluatePronunciationText`.
+- [x] `useSpeechRecognitionHold`.
+- [x] `usePronunciationRecorder` escolhendo o motor (opção `engine`, `'elevenlabs'` quando falta), e os dois lugares passando o motor: o detalhe recebe da lista do vocabulário, e o "Fale a palavra", da atividade.
 - [ ] Teste no aparelho.

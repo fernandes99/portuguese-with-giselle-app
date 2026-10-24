@@ -16,7 +16,11 @@ import { CategoryLabel } from '@/components/vocabulary/CategoryLabel';
 import { PronunciationPractice } from '@/components/vocabulary/PronunciationPractice';
 import { colors } from '@/constants/theme';
 import { useModalBottomInset } from '@/hooks/useModalBottomInset';
-import type { VocabularyCategory, VocabularyItem } from '@/services/vocabulary';
+import type {
+  PronunciationEngine,
+  VocabularyCategory,
+  VocabularyItem,
+} from '@/services/vocabulary';
 
 interface VocabularyDetailProps {
   // null fecha o detalhe
@@ -25,6 +29,8 @@ interface VocabularyDetailProps {
   savedIds: Set<string>;
   // Só assinantes verificam a pronúncia
   canCheckPronunciation: boolean;
+  // Quem transcreve a pronúncia, vindo da lista do site
+  pronunciationEngine: PronunciationEngine;
   onClose: () => void;
   onToggleSaved: (id: string) => void;
   // Fecha o detalhe e abre a tela de planos
@@ -38,6 +44,7 @@ interface DetailContentProps {
   category: VocabularyCategory | undefined;
   isSaved: boolean;
   canCheckPronunciation: boolean;
+  pronunciationEngine: PronunciationEngine;
   onClose: () => void;
   onToggleSaved: () => void;
   onOpenPlans: () => void;
@@ -57,6 +64,7 @@ function DetailContent({
   category,
   isSaved,
   canCheckPronunciation,
+  pronunciationEngine,
   onClose,
   onToggleSaved,
   onOpenPlans,
@@ -158,6 +166,7 @@ function DetailContent({
           itemId={item.id}
           termAudioUrl={item.termAudioUrl}
           canCheck={canCheckPronunciation}
+          engine={pronunciationEngine}
           onOpenPlans={onOpenPlans}
         />
       </View>
@@ -171,6 +180,7 @@ export function VocabularyDetail({
   getCategory,
   savedIds,
   canCheckPronunciation,
+  pronunciationEngine,
   onClose,
   onToggleSaved,
   onOpenPlans,
@@ -203,6 +213,7 @@ export function VocabularyDetail({
               category={getCategory(current)}
               isSaved={savedIds.has(current.id)}
               canCheckPronunciation={canCheckPronunciation}
+              pronunciationEngine={pronunciationEngine}
               onClose={onClose}
               onToggleSaved={() => onToggleSaved(current.id)}
               onOpenPlans={onOpenPlans}

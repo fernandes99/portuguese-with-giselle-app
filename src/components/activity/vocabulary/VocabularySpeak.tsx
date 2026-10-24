@@ -19,10 +19,15 @@ import {
   usePronunciationRecorder,
 } from '@/hooks/usePronunciationRecorder';
 import type { VocabularyQuestion } from '@/services/lesson';
-import type { PronunciationEvaluation } from '@/services/vocabulary';
+import type {
+  PronunciationEngine,
+  PronunciationEvaluation,
+} from '@/services/vocabulary';
 
 interface VocabularySpeakProps {
   question: Extract<VocabularyQuestion, { kind: 'speak' }>;
+  // Quem transcreve: a gravação ou o reconhecimento do aparelho
+  engine: PronunciationEngine;
   onInteract: () => void;
   // A conferência voltou: a atividade abre o painel com o resultado
   onEvaluated: (evaluation: PronunciationEvaluation) => void;
@@ -40,6 +45,7 @@ const HINTS = {
 // tela de vocabulário
 export function VocabularySpeak({
   question,
+  engine,
   onInteract,
   onEvaluated,
   onSkip,
@@ -47,7 +53,10 @@ export function VocabularySpeak({
 }: VocabularySpeakProps) {
   const { stop: stopAudio } = useActivityAudio();
   const { state, metering, requestPermission, pressIn, release } =
-    usePronunciationRecorder(question.vocabularyId, { onUnavailable });
+    usePronunciationRecorder(question.vocabularyId, {
+      engine,
+      onUnavailable,
+    });
   const reportedRef = useRef<PronunciationEvaluation | null>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: pede o microfone só quando a pergunta aparece

@@ -62,6 +62,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     [
+      'expo-speech-recognition',
+      {
+        microphonePermission:
+          'Permita o acesso ao microfone para praticar a pronúncia.',
+        speechRecognitionPermission:
+          'Permita o reconhecimento de fala para conferir a sua pronúncia.',
+      },
+    ],
+    [
       'expo-notifications',
       {
         // Cor de destaque do push na barra do Android

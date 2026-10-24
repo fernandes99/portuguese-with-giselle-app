@@ -25,9 +25,14 @@ export interface VocabularyItem {
   isSaved: boolean;
 }
 
+// Quem transcreve a pronúncia, decidido pelo site: a ElevenLabs, pela
+// gravação, ou o reconhecimento do aparelho (.specs/device-pronunciation/)
+export type PronunciationEngine = 'elevenlabs' | 'device';
+
 export interface VocabularyList {
   categories: VocabularyCategory[];
   items: VocabularyItem[];
+  pronunciationEngine: PronunciationEngine;
 }
 
 export function getVocabulary(token: string) {
@@ -64,6 +69,19 @@ export interface PronunciationEvaluation {
 // Manda a gravação (m4a do expo-audio) para avaliar a pronúncia do termo.
 // O fetch do Expo não aceita o formato { uri, name, type } do React Native no
 // FormData; o File do expo-file-system funciona como um Blob.
+// As alternativas do reconhecimento do aparelho, no lugar da gravação
+export function evaluatePronunciationText(
+  token: string,
+  id: string,
+  transcripts: string[]
+) {
+  return api<PronunciationEvaluation>(API_ROUTES.vocabularyPronunciation(id), {
+    method: 'POST',
+    body: { transcripts },
+    token,
+  });
+}
+
 export function evaluatePronunciation(token: string, id: string, uri: string) {
   const formData = new FormData();
   formData.append('audio', new File(uri), 'attempt.m4a');

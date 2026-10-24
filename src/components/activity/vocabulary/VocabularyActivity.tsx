@@ -256,6 +256,7 @@ export function VocabularyActivity({
       <VocabularySpeak
         key={key}
         question={current}
+        engine={activity.pronunciationEngine}
         onInteract={markStarted}
         onEvaluated={(evaluation) =>
           handleEvaluated(evaluation, current.termAudioUrl)
