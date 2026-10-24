@@ -25,6 +25,8 @@ O backend já calcula o ranking. Esta fase cria a tela que o mostra e o caminho 
 - **RF-08:** Sem foto, as iniciais do nome; sem nome, "Aluno" e a inicial "A".
 - **RF-09:** Puxar para baixo recarrega; um erro mostra a mensagem com "Tentar de novo", como nas outras telas; 401 sai da conta (`useApiQuery`).
 - **RF-10:** A aba Progresso tem um cartão "Ranking", logo depois da sequência, que abre `/ranking`.
+- **RF-11:** O score aparece em azul com uma estrela (`ScoreValue`), com separador de milhar. O pódio tem a medalha de cada posição (ouro, prata e bronze) acima da foto, e o 1º tem a foto maior, o anel verde e a coroa. Abaixo do seletor, o período ("De 01 a 31 out 2026" ou "Desde o início").
+- **RF-12:** O botão de informação do cabeçalho abre uma folha com quanto vale cada ação e cada conquista (`scoreRules`, que vem da rota) e as regras do ranking.
 
 ## Critérios de aceite
 

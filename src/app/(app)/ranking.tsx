@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -9,30 +9,49 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
-import { LessonHeader } from '@/components/lesson/ClassicLesson';
+import { HeaderButton, LessonHeader } from '@/components/lesson/ClassicLesson';
 import { MyRankingBar } from '@/components/ranking/MyRankingBar';
 import { PeriodSelector } from '@/components/ranking/PeriodSelector';
 import { Podium } from '@/components/ranking/Podium';
 import { RankingRow } from '@/components/ranking/RankingRow';
+import { ScoreInfoSheet } from '@/components/ranking/ScoreInfoSheet';
 import { colors } from '@/constants/theme';
 import { useRanking } from '@/hooks/useRanking';
-import type { RankingPeriod } from '@/services/ranking';
+import type { RankingPeriod, RankingScoreRules } from '@/services/ranking';
 
 // Ranking dos alunos pelo score, aberto pela aba Progresso: o seletor do
 // período, o pódio, a lista até o 50º e a linha do aluno presa no pé da tela.
 // O backend decide quem entra e a ordem.
 export default function RankingScreen() {
   const [period, setPeriod] = useState<RankingPeriod>('month');
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
   const { ranking, error, refreshing, refresh } = useRanking(period);
   const podium = ranking?.entries.slice(0, 3) ?? [];
   const list = ranking?.entries.slice(3) ?? [];
+  // As regras não mudam com o período: enquanto o outro carrega, a folha
+  // continua com as últimas que chegaram
+  const lastRules = useRef<RankingScoreRules | null>(null);
+  if (ranking) {
+    lastRules.current = ranking.scoreRules;
+  }
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
-      <LessonHeader title="Ranking" filled />
+      <LessonHeader
+        title="Ranking"
+        filled
+        right={
+          <HeaderButton
+            icon="information-circle-outline"
+            label="Como funciona o ranking"
+            filled
+            onPress={() => setIsInfoOpen(true)}
+          />
+        }
+      />
 
       <ScrollView
-        contentContainerClassName="flex-grow gap-6 px-5 pb-6 pt-2"
+        contentContainerClassName="flex-grow gap-8 px-5 pb-6 pt-2"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -42,7 +61,13 @@ export default function RankingScreen() {
           />
         }
       >
-        <PeriodSelector period={period} onChange={setPeriod} />
+        <PeriodSelector
+          period={period}
+          onChange={setPeriod}
+          periodStart={ranking?.periodStart ?? null}
+          periodEnd={ranking?.periodEnd ?? null}
+          isLoaded={ranking !== null}
+        />
 
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
@@ -65,7 +90,7 @@ export default function RankingScreen() {
               <Podium entries={podium} />
 
               {list.length > 0 ? (
-                <View className="rounded-3xl border border-gray-200 p-2">
+                <View className="gap-1">
                   {list.map((entry) => (
                     <RankingRow key={entry.position} entry={entry} />
                   ))}
@@ -81,6 +106,12 @@ export default function RankingScreen() {
       </ScrollView>
 
       {ranking ? <MyRankingBar me={ranking.me} period={period} /> : null}
+
+      <ScoreInfoSheet
+        rules={lastRules.current}
+        visible={isInfoOpen}
+        onClose={() => setIsInfoOpen(false)}
+      />
     </SafeAreaView>
   );
 }

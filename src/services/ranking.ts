@@ -15,6 +15,19 @@ export interface RankingEntry {
   isMe: boolean;
 }
 
+// Quanto vale cada ação, para a tela explicar como se ganha score
+export interface RankingScoreRules {
+  // Uma vez por item concluído
+  lesson: number;
+  activity: number;
+  // Por card aprendido, não por conjunto
+  flashcard: number;
+  module: number;
+  course: number;
+  // Cada conquista vale o que está no cadastro dela
+  achievements: { title: string; score: number }[];
+}
+
 export interface Ranking {
   period: RankingPeriod;
   // ISO: início e fim do mês; null no total
@@ -24,6 +37,7 @@ export interface Ranking {
   entries: RankingEntry[];
   // O próprio aluno; null quando ele não tem score no período
   me: RankingEntry | null;
+  scoreRules: RankingScoreRules;
 }
 
 export function getRanking(token: string, period: RankingPeriod) {
