@@ -40,6 +40,6 @@ A decisão, o contrato das rotas e a arquitetura estão em `.specs/device-pronun
 
 ## Fases
 
-| Fase                           | Assunto                                                | Status       |
-| ------------------------------ | ------------------------------------------------------ | ------------ |
-| [01](01-device-recognition.md) | O reconhecimento do aparelho no detalhe e na atividade | em andamento |
+| Fase                           | Assunto                                                | Status    |
+| ------------------------------ | ------------------------------------------------------ | --------- |
+| [01](01-device-recognition.md) | O reconhecimento do aparelho no detalhe e na atividade | concluída |

@@ -1,6 +1,6 @@
 # 01. Reconhecimento do aparelho
 
-- **Status:** em andamento
+- **Status:** concluída
 - **Depende de:** fase 01 de `.specs/device-pronunciation/` no site (`portuguese-with-giselle`)
 
 ## Contexto
@@ -33,12 +33,12 @@ O app confere a pronúncia em dois lugares: no detalhe de um item do vocabulári
 
 ## Critérios de aceite
 
-- [ ] Com o site em `'device'`, falar "Mermão" no detalhe do vocabulário dá o resultado certo, no Android e no iPhone, e a tentativa fica `DEVICE` no banco.
-- [ ] O mesmo no "Fale a palavra" da aula guiada e do modal de atividades.
-- [ ] Ficar calado dá "Não conseguimos ouvir".
-- [ ] Soltar rápido mostra a dica, sem gastar tentativa.
-- [ ] Negar a permissão mostra o estado de permissão negada.
-- [ ] Com o site em `'elevenlabs'`, tudo funciona como antes.
+- [x] Com o site em `'device'`, falar "Mermão" no detalhe do vocabulário dá o resultado certo, no Android e no iPhone, e a tentativa fica `DEVICE` no banco.
+- [x] O mesmo no "Fale a palavra" da aula guiada e do modal de atividades.
+- [x] Ficar calado dá "Não conseguimos ouvir".
+- [x] Soltar rápido mostra a dica, sem gastar tentativa.
+- [x] Negar a permissão mostra o estado de permissão negada.
+- [x] Com o site em `'elevenlabs'`, tudo funciona como antes.
 
 ## Desenho técnico
 
@@ -64,8 +64,8 @@ Alterar:
 ## Tarefas
 
 - [x] Biblioteca (`expo-speech-recognition` 58), plugin e permissões no `app.config.ts`.
-- [ ] Build novo de desenvolvimento.
+- [x] Build novo de desenvolvimento.
 - [x] Tipos e `evaluatePronunciationText`.
 - [x] `useSpeechRecognitionHold`.
 - [x] `usePronunciationRecorder` escolhendo o motor (opção `engine`, `'elevenlabs'` quando falta), e os dois lugares passando o motor: o detalhe recebe da lista do vocabulário, e o "Fale a palavra", da atividade.
-- [ ] Teste no aparelho.
+- [x] Teste no aparelho.
