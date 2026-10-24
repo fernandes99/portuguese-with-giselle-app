@@ -2,7 +2,13 @@ import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
 
 export type HistoryEntity =
-  'COURSE' | 'MODULE' | 'LESSON' | 'ACTIVITY' | 'FLASHCARD';
+  | 'COURSE'
+  | 'MODULE'
+  | 'LESSON'
+  | 'ACTIVITY'
+  | 'FLASHCARD'
+  | 'SIMULATION'
+  | 'HOMEWORK';
 
 export type HistoryAction = 'STARTED' | 'IN_PROGRESS' | 'COMPLETED';
 

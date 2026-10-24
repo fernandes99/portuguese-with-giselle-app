@@ -30,6 +30,8 @@ const ENTITIES: Record<HistoryEntity, { label: string; icon: IconName }> = {
   LESSON: { label: 'Aula', icon: 'play' },
   ACTIVITY: { label: 'Atividade', icon: 'pencil' },
   FLASHCARD: { label: 'Flashcard', icon: 'albums' },
+  SIMULATION: { label: 'Simulação', icon: 'chatbubbles' },
+  HOMEWORK: { label: 'Lição de casa', icon: 'document-text' },
 };
 
 // A cor do ícone e o texto vêm da situação do item
