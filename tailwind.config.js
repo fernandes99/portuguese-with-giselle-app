@@ -6,10 +6,11 @@ module.exports = {
     extend: {
       colors: {
         background: '#f9fafb',
-        // Cinza claro das caixas sem borda (balões, cartões, botões redondos)
+        // Cinza azulado claro das caixas sem borda (balões, cartões, botões
+        // redondos), quase o slate-50 do Tailwind
         surface: {
-          DEFAULT: '#f6f7f9',
-          pressed: '#eceef1',
+          DEFAULT: '#f6f9fc',
+          pressed: '#eaeff6',
         },
         // Tons de verde do site (paleta do Tailwind 4)
         green: {

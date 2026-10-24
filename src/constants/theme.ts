@@ -2,7 +2,7 @@
 // Os mesmos valores estão em tailwind.config.js.
 export const colors = {
   background: '#f9fafb',
-  surface: '#f6f7f9',
+  surface: '#f6f9fc',
   green: '#00a63e',
   white: '#ffffff',
   placeholder: '#9ca3af',
