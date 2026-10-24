@@ -19,8 +19,9 @@ import { colors } from '@/constants/theme';
 import { useRanking } from '@/hooks/useRanking';
 import type { RankingPeriod, RankingScoreRules } from '@/services/ranking';
 
-// Ranking dos alunos pelo score, aberto pela aba Progresso: o seletor do
-// período, o pódio, a lista até o 50º e a linha do aluno presa no pé da tela.
+// Ranking dos alunos pelo score, na pilha da aba Progresso (com o menu de
+// baixo): o seletor do período, o pódio, a lista até o 50º e a linha do aluno
+// presa no pé da tela, logo acima do menu.
 // O backend decide quem entra e a ordem.
 export default function RankingScreen() {
   const [period, setPeriod] = useState<RankingPeriod>('month');

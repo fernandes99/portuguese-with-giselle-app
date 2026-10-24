@@ -19,11 +19,11 @@ Tomadas com o dono do projeto:
 
 Tomadas no planejamento (corrigíveis):
 
-| Decisão                                                                                                        | Motivo                                                              |
-| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| A tela abre por cima das abas (`/ranking`), por um cartão "Ranking" na aba Progresso, logo depois da sequência | O Progresso já reúne sequência e conquistas, que vêm do mesmo score |
-| Textos em português ("Este mês", "Total", "Aluno")                                                             | Regra do app; o site usa inglês na área do aluno                    |
-| Ao trocar o período, a lista do outro período só aparece quando chega; até lá, o indicador de carregamento     | Não mostrar a lista de um período com o seletor no outro            |
+| Decisão                                                                                                                                   | Motivo                                                                                                 |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| A tela fica na pilha da aba Progresso (`/progress/ranking`), com o menu de baixo, e abre por um cartão "Ranking" logo depois da sequência | O Progresso já reúne sequência e conquistas; o menu fica, como na lista de simulações (pedido do dono) |
+| Textos em português ("Este mês", "Total", "Aluno")                                                                                        | Regra do app; o site usa inglês na área do aluno                                                       |
+| Ao trocar o período, a lista do outro período só aparece quando chega; até lá, o indicador de carregamento                                | Não mostrar a lista de um período com o seletor no outro                                               |
 
 ## Fora do escopo
 

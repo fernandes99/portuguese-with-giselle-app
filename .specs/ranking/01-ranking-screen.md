@@ -19,12 +19,12 @@ O backend já calcula o ranking. Esta fase cria a tela que o mostra e o caminho 
 - **RF-02:** A tela abre no mês. O seletor "Este mês / Total" troca o período; até a lista do período escolhido chegar, a tela mostra o indicador de carregamento.
 - **RF-03:** O pódio mostra os 3 primeiros na ordem 2º, 1º, 3º, com o 1º mais alto, cada um com a foto, o nome e o score; com menos de 3, os que houver.
 - **RF-04:** Abaixo, a lista do 4º ao 50º: posição, foto, nome, 🔥 e os dias seguidos, e o score.
-- **RF-05:** A linha do aluno fica fixa no pé da tela, fora da rolagem, acima da área segura de baixo. Dentro do pódio e da lista, a linha dele fica destacada.
+- **RF-05:** A linha do aluno fica fixa no pé da tela, fora da rolagem, logo acima do menu de baixo, que continua visível. Dentro do pódio e da lista, a linha dele fica destacada.
 - **RF-06:** Sem posição (`me: null`), a linha fixa diz "Ganhe pontos neste mês para entrar no ranking" no mês e "Ganhe pontos para entrar no ranking" no total.
 - **RF-07:** Sem nenhum aluno no período, a tela mostra um aviso no lugar do pódio e da lista, e a linha fixa do RF-06.
 - **RF-08:** Sem foto, as iniciais do nome; sem nome, "Aluno" e a inicial "A".
 - **RF-09:** Puxar para baixo recarrega; um erro mostra a mensagem com "Tentar de novo", como nas outras telas; 401 sai da conta (`useApiQuery`).
-- **RF-10:** A aba Progresso tem um cartão "Ranking", logo depois da sequência, que abre `/ranking`.
+- **RF-10:** A aba Progresso tem um cartão "Ranking", logo depois da sequência, que abre `/progress/ranking`.
 - **RF-11:** O score aparece em azul com uma estrela (`ScoreValue`), com separador de milhar. O pódio tem a medalha de cada posição (ouro, prata e bronze) acima da foto, e o 1º tem a foto maior, o anel verde e a coroa. Abaixo do seletor, o período ("De 01 a 31 out 2026" ou "Desde o início").
 - **RF-12:** O botão de informação do cabeçalho abre uma folha com quanto vale cada ação e cada conquista (`scoreRules`, que vem da rota) e as regras do ranking.
 
@@ -45,7 +45,7 @@ Ainda não conferidos no aparelho: o dono confere no uso e pede revisão se algo
 
 - `src/services/ranking.ts`: `RankingPeriod`, `RankingEntry`, `Ranking` e `getRanking`.
 - `src/hooks/useRanking.ts`: `useRanking(period)`, sobre `useApiQuery` com um fetcher por período (`useCallback`); devolve `ranking` só quando ele é do período pedido.
-- `src/app/(app)/ranking.tsx`: a tela, com `LessonHeader` ("Ranking"), a rolagem e a linha fixa.
+- `src/app/(app)/(tabs)/progress/ranking.tsx`: a tela, com `LessonHeader` ("Ranking"), a rolagem e a linha fixa, na pilha da aba Progresso (`(tabs)/progress/_layout.tsx`), com o menu de baixo; o Progresso passou para `(tabs)/progress/index.tsx`.
 - `src/components/ranking/`: `RankingAvatar`, `RankingRow`, `Podium`, `PeriodSelector` e `MyRankingBar`.
 
 **Alterar**

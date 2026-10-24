@@ -190,7 +190,7 @@ export default function ProgressScreen() {
               today={today}
             />
 
-            <RankingCard onPress={() => router.push('/ranking')} />
+            <RankingCard onPress={() => router.push('/progress/ranking')} />
 
             <View className="gap-3">
               <View className="flex-row gap-3">
