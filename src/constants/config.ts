@@ -33,6 +33,7 @@ export const API_ROUTES = {
   me: '/api/mobile/auth/me',
   progress: '/api/mobile/progress',
   history: '/api/mobile/history',
+  ranking: '/api/mobile/ranking',
   courses: '/api/mobile/courses',
   course: (courseSlug: string) =>
     `/api/mobile/courses/${encodeURIComponent(courseSlug)}`,

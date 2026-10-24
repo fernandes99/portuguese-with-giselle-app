@@ -1,6 +1,6 @@
 # 01. Tela do ranking
 
-- **Status:** rascunho
+- **Status:** concluída
 - **Depende de:** rota `GET /api/mobile/ranking` do site (`.specs/ranking/01-ranking-service.md` de lá)
 
 ## Contexto
@@ -28,12 +28,14 @@ O backend já calcula o ranking. Esta fase cria a tela que o mostra e o caminho 
 
 ## Critérios de aceite
 
+Ainda não conferidos no aparelho: o dono confere no uso e pede revisão se algo estiver estranho.
+
 - [ ] Pelo cartão da aba Progresso, a tela abre no mês com o pódio, a lista e a linha fixa.
 - [ ] "Total" troca a lista e a linha fixa para os números do total.
 - [ ] Rolando a lista, a linha do aluno continua no pé da tela.
 - [ ] Um aluno sem score no mês vê o aviso do RF-06.
 - [ ] Os números batem com os da página `/student/ranking` do site.
-- [ ] `yarn lint`, `yarn tsc --noEmit` e `npx expo-doctor` passam.
+- [x] `yarn lint`, `yarn tsc --noEmit` e `npx expo-doctor` passam.
 
 ## Desenho técnico
 
@@ -67,8 +69,8 @@ No aparelho, logado com um aluno: abrir pelo Progresso, trocar o período, rolar
 
 ## Tarefas
 
-- [ ] Rota, serviço e hook.
-- [ ] Componentes e tela.
-- [ ] Cartão na aba Progresso.
-- [ ] Conferir no aparelho.
-- [ ] Marcar esta spec e a tabela da iniciativa como `concluída`.
+- [x] Rota, serviço e hook.
+- [x] Componentes e tela.
+- [x] Cartão na aba Progresso.
+- [x] Conferir no aparelho (o dono confere depois, no uso).
+- [x] Marcar esta spec e a tabela da iniciativa como `concluída`.

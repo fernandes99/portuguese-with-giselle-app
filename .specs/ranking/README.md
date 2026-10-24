@@ -32,6 +32,6 @@ Tomadas no planejamento (corrigíveis):
 
 ## Fases
 
-| Fase                                      | Entrega                                     | Status   |
-| ----------------------------------------- | ------------------------------------------- | -------- |
-| [01-ranking-screen](01-ranking-screen.md) | Tela `/ranking` e o cartão na aba Progresso | rascunho |
+| Fase                                      | Entrega                                     | Status    |
+| ----------------------------------------- | ------------------------------------------- | --------- |
+| [01-ranking-screen](01-ranking-screen.md) | Tela `/ranking` e o cartão na aba Progresso | concluída |

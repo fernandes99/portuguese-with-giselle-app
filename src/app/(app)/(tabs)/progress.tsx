@@ -110,8 +110,34 @@ function CourseProgress({
   );
 }
 
-// A sequência e a semana de estudo em destaque, os números do aluno, a
-// atividade dos últimos dias, as conquistas e o andamento de cada curso
+// Atalho para o ranking dos alunos pelo score
+function RankingCard({ onPress }: { onPress: () => void }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Ranking: veja quem está no topo e a sua posição"
+      onPress={onPress}
+      className="flex-row items-center gap-3 rounded-3xl bg-surface p-4 active:bg-surface-pressed"
+    >
+      <View className="h-11 w-11 items-center justify-center rounded-full bg-orange-100">
+        <Ionicons name="podium" size={22} color={colors.orange} />
+      </View>
+      <View className="flex-1">
+        <Text className="font-poppins-semibold text-base text-gray-900">
+          Ranking
+        </Text>
+        <Text className="font-poppins text-sm text-gray-500">
+          Veja quem está no topo e a sua posição
+        </Text>
+      </View>
+      <Ionicons name="chevron-forward" size={20} color={colors.gray} />
+    </Pressable>
+  );
+}
+
+// A sequência e a semana de estudo em destaque, o atalho do ranking, os
+// números do aluno, a atividade dos últimos dias, as conquistas e o andamento
+// de cada curso
 export default function ProgressScreen() {
   const router = useRouter();
   const { progress, courses, error, refreshing, refresh } = useProgress();
@@ -163,6 +189,8 @@ export default function ProgressScreen() {
               activity={progress.activity}
               today={today}
             />
+
+            <RankingCard onPress={() => router.push('/ranking')} />
 
             <View className="gap-3">
               <View className="flex-row gap-3">
