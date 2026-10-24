@@ -31,6 +31,7 @@ Iniciativas atuais:
 | [simulations](simulations/)                     | Simulações na aba Praticar: lista de cenários, conversa com as tarefas e resumo do fim         |
 | [vocabulary-activities](vocabulary-activities/) | Atividades de vocabulário nas aulas: oito tipos de pergunta, fila e placar                     |
 | [device-pronunciation](device-pronunciation/)   | Pronúncia pelo reconhecimento do Android e do iPhone, quando o site liga o motor do aparelho   |
+| [ranking](ranking/)                             | Ranking dos alunos pelo score, do mês e total, aberto pela aba Progresso                       |
 
 ## Modelo de spec
 
