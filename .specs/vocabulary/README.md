@@ -80,6 +80,8 @@ Cópia do README da iniciativa no site. Mudou um, mude o outro.
 
 `PUT /api/mobile/vocabulary/[id]/save` salva o item e `DELETE` na mesma rota tira dos salvos. Respondem `{ saved: true }` ou `{ saved: false }`. Repetir a mesma chamada não é erro. 401 sem token, 403 com `VOCABULARY_SUBSCRIBERS_ONLY_ERROR` ("Esta expressão é exclusiva para assinantes.") para item trancado e 404 para item que não existe ou não está publicado.
 
+A iniciativa `.specs/device-pronunciation/` acrescenta a este contrato o campo `pronunciationEngine` (`"elevenlabs"` ou `"device"`) na resposta de `GET /api/mobile/vocabulary` e, com o motor do aparelho ligado, o corpo JSON `{ "transcripts": string[] }` na rota de pronúncia, no lugar do áudio. O contrato completo está no README de lá.
+
 `POST /api/mobile/vocabulary/[id]/pronunciation` (token Bearer do app), com `multipart/form-data` e o áudio no campo `audio` (até 1 MB; m4a, mp4, webm, ogg, mp3 ou wav). Avalia a pronúncia do termo do item.
 
 ```json
