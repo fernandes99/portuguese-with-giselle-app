@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Platform, Text, type TextInput, View } from 'react-native';
+import { Platform, Text, type TextInputInstance, View } from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
 import { ActivityResult } from '@/components/activity/ActivityResult';
@@ -87,7 +87,7 @@ export function VocabularyActivity({
     useState<PronunciationUnavailableReason | null>(null);
   const hasStarted = useRef(false);
   // O campo da pergunta de escrever, quando ela é a atual
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   // A próxima pergunta apareceu com o painel ainda descendo: o campo dela só
   // abre o teclado quando ele some (com o painel na tela, o autoFocus marca
   // o campo como focado sem abrir o teclado)

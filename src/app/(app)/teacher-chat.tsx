@@ -228,7 +228,7 @@ export default function TeacherChatScreen() {
                   onPress={loadOlder}
                   disabled={isLoadingOlder}
                 />
-              ) : null
+              ) : undefined
             }
             ListEmptyComponent={
               <View className="flex-1 items-center justify-center gap-4 px-6">

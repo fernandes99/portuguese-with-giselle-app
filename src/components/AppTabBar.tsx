@@ -14,7 +14,12 @@ const ICON_SIZE = 24;
 // Menu de baixo: a aba ativa tem o ícone cheio num fundo verde-claro de
 // cantos arredondados e o nome em verde; as outras, o ícone só com contorno e o nome em cinza. Ícone, nome e contador vêm das opções de cada
 // aba, no layout.
-export function AppTabBar({ state, descriptors, navigation }: TabBarProps) {
+export function AppTabBar({
+  state,
+  descriptors,
+  emitter,
+  navigateToTab,
+}: TabBarProps) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -30,18 +35,18 @@ export function AppTabBar({ state, descriptors, navigation }: TabBarProps) {
         const badge = options.tabBarBadge;
 
         function onPress() {
-          const event = navigation.emit({
+          const event = emitter.emit({
             type: 'tabPress',
             target: route.key,
             canPreventDefault: true,
           });
           if (!focused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
+            navigateToTab(route.key);
           }
         }
 
         function onLongPress() {
-          navigation.emit({ type: 'tabLongPress', target: route.key });
+          emitter.emit({ type: 'tabLongPress', target: route.key });
         }
 
         return (

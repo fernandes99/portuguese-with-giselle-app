@@ -7,6 +7,7 @@ import {
   type NativeSyntheticEvent,
   Pressable,
   ScrollView,
+  type ScrollViewInstance,
   Text,
   useWindowDimensions,
   View,
@@ -66,7 +67,7 @@ interface WelcomeScreenProps {
 // Introdução da primeira abertura do app: slides com os benefícios do curso.
 export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
   const { width } = useWindowDimensions();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const [index, setIndex] = useState(0);
 
   const isFirst = index === 0;

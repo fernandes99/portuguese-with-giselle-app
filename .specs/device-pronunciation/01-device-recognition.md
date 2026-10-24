@@ -48,7 +48,7 @@ Criar:
 
 Alterar:
 
-- `package.json` e `app.config.ts`: `expo-speech-recognition` na linha 57, com o plugin e os textos das permissões em português (microfone e reconhecimento de fala).
+- `package.json` e `app.config.ts`: `expo-speech-recognition` na linha 58, com o plugin e os textos das permissões em português (microfone e reconhecimento de fala).
 - `src/services/vocabulary.ts`: `pronunciationEngine` em `VocabularyList` e `evaluatePronunciationText`.
 - `src/services/lesson.ts`: `pronunciationEngine` em `VocabularyActivity`.
 - `src/hooks/usePronunciationRecorder.ts`: recebe o motor e escolhe entre a gravação e o reconhecimento (os dois hooks são chamados sempre e só um é usado, pela regra dos hooks); o envio e o tratamento da resposta continuam num lugar só.

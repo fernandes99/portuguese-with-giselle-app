@@ -95,14 +95,14 @@ export default function BookingsScreen() {
               <Text className="font-poppins text-sm text-red-700">{error}</Text>
               <Button variant="link" label="Tentar de novo" onPress={refresh} />
             </View>
-          ) : null
+          ) : undefined
         }
         ListEmptyComponent={
           data ? (
             <View className="mt-3">
               <EmptyState title="Você ainda não agendou nenhuma aula." />
             </View>
-          ) : error ? null : (
+          ) : error ? undefined : (
             <View className="flex-1 items-center justify-center">
               <ActivityIndicator size="large" color={colors.green} />
             </View>

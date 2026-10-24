@@ -198,7 +198,7 @@ export default function HistoryScreen() {
                   />
                 ) : null}
               </View>
-            ) : null
+            ) : undefined
           }
         />
       ) : error ? null : (

@@ -6,7 +6,7 @@ Configuração, variáveis de ambiente e o passo a passo do Google estão em `RE
 
 ## Stack
 
-- Expo SDK 57, Expo Router (rotas em `src/app/`), React Native 0.86, TypeScript `strict`.
+- Expo SDK 58, Expo Router (rotas em `src/app/`), React Native 0.88, TypeScript `strict`.
 - NativeWind 4 com Tailwind 3. O NativeWind 5 ainda é release candidate; não suba.
 - Yarn 1. Para pacotes do Expo ou com código nativo use `npx expo install <pacote>`, que escolhe a versão compatível com o SDK.
 - Lint com Biome, formatação com Prettier (`prettier-plugin-tailwindcss`), como no site.

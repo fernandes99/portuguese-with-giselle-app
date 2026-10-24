@@ -134,7 +134,7 @@ export default function NotificationsScreen() {
               <View className="py-6">
                 <ActivityIndicator color={colors.green} />
               </View>
-            ) : null
+            ) : undefined
           }
         />
       ) : error ? null : (

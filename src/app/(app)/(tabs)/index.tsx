@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
+  type ScrollViewInstance,
   Text,
   View,
 } from 'react-native';
@@ -54,7 +55,7 @@ export default function LearnScreen() {
   // Aula concluída com as opções de revisar e recomeçar abertas
   const [expandedLessonId, setExpandedLessonId] = useState<string | null>(null);
 
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const positions = useRef(new Map<string, number>());
   // O que já foi rolado: o curso (aula atual) e a aula concluída da volta
   const scrolledSlug = useRef<string | null>(null);

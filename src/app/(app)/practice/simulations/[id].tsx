@@ -522,7 +522,7 @@ export default function SimulationScreen() {
                 onOpen={() => setIsHintOpen(true)}
                 onClose={() => setIsHintOpen(false)}
               />
-            ) : null
+            ) : undefined
           }
         />
 

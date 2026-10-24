@@ -1,5 +1,11 @@
 import { type Ref, useState } from 'react';
-import { Keyboard, Text, TextInput, View } from 'react-native';
+import {
+  Keyboard,
+  Text,
+  TextInput,
+  type TextInputInstance,
+  View,
+} from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
 import { ActivityCheck } from '@/components/activity/ActivityFooter';
@@ -17,7 +23,7 @@ interface VocabularyWriteProps {
   // Abre o teclado ao aparecer. Falso quando o painel da resposta anterior
   // ainda está descendo: aí a atividade foca pelo inputRef quando ele some.
   autoFocus: boolean;
-  inputRef: Ref<TextInput>;
+  inputRef: Ref<TextInputInstance>;
   onInteract: () => void;
   onChecked: (isCorrect: boolean) => void;
 }

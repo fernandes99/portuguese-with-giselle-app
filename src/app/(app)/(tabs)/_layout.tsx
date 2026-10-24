@@ -20,7 +20,13 @@ function tabIcon(active: IconName, inactive: IconName) {
     size: number;
     focused: boolean;
   }) => (
-    <Ionicons name={focused ? active : inactive} size={size} color={color} />
+    <Ionicons
+      name={focused ? active : inactive}
+      size={size}
+      // O ColorValue também aceita número e null, que o ícone não aceita; o
+      // AppTabBar sempre manda a cor como texto
+      color={typeof color === 'string' ? color : undefined}
+    />
   );
 }
 

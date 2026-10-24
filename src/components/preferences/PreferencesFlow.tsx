@@ -5,6 +5,7 @@ import {
   Alert,
   BackHandler,
   ScrollView,
+  type ScrollViewInstance,
   Text,
   View,
 } from 'react-native';
@@ -80,7 +81,7 @@ export function PreferencesFlow({
   const [saveError, setSaveError] = useState('');
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const prefilled = useRef(false);
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
 
   const step = steps[stepIndex];
 

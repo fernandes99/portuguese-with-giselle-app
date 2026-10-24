@@ -1,5 +1,12 @@
 import { useMemo, useRef, useState } from 'react';
-import { Keyboard, Platform, Text, TextInput, View } from 'react-native';
+import {
+  Keyboard,
+  Platform,
+  Text,
+  TextInput,
+  type TextInputInstance,
+  View,
+} from 'react-native';
 
 import { ActivityCheck } from '@/components/activity/ActivityFooter';
 import { ActivityResult } from '@/components/activity/ActivityResult';
@@ -86,7 +93,7 @@ export function FillBlankActivity({
   const [focusedSlot, setFocusedSlot] = useState<number | null>(null);
   const hasStarted = useRef(false);
   // Campos da frase atual, na ordem, para o Enter pular para o próximo
-  const inputs = useRef<(TextInput | null)[]>([]);
+  const inputs = useRef<(TextInputInstance | null)[]>([]);
   // A próxima frase abre com o painel ainda descendo, e o teclado não abre
   // atrás do Modal. O foco fica pendente até o painel sumir.
   const hasPendingFocus = useRef(false);

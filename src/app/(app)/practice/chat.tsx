@@ -435,7 +435,7 @@ export default function PracticeChatScreen() {
                 onOpen={() => setIsHintOpen(true)}
                 onClose={() => setIsHintOpen(false)}
               />
-            ) : null
+            ) : undefined
           }
         />
 
