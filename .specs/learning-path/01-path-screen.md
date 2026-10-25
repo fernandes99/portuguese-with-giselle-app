@@ -1,6 +1,6 @@
 # 01. Trilha na aba Início
 
-- **Status:** rascunho
+- **Status:** concluída
 - **Depende de:** fase 02 da trilha no site (`.specs/learning-path/02-path-service.md` de lá), com `pathLevel`, `recommended` e `isFree` na rota de cursos
 
 ## Contexto
@@ -31,9 +31,13 @@ A aba Início já mostra o caminho de um curso e escolhe qual abrir por `getDefa
 - [ ] Um aluno A1 sem cursos começados abre a aba Início na trilha A1; um B2, na trilha A2; depois de começar a trilha A0, abre na A0.
 - [ ] Um aluno do plano gratuito vê o selo nas lições do 2º módulo em diante, abre e conclui as do 1º e chega ao cadeado com o texto novo ao tocar a primeira do 2º.
 - [ ] Um aluno Premium não vê selo nenhum.
-- [ ] `npx tsc --noEmit` e o lint do app passam.
+- [x] `npx tsc --noEmit` e o lint do app passam.
+
+Conferência: o typecheck e o lint passam. O teste no aparelho fica para o piloto da trilha (fase 05 do site), com as lições do 1º módulo publicadas. Não exige build novo.
 
 ## Desenho técnico
+
+Decisões da implementação: o selo é o `PremiumBadge` que o app já tem (`src/components/premium/PremiumBadge.tsx`, com a coroa do Perfil), acima do título da aula no nó do caminho; o `LearnModule` recebe `isFreePlan` da tela, que lê a `role` pelo `useAuth`. O campo `pathLevel` é o nível mínimo para fazer o curso (no Dato, "Nível mínimo"); o app só o recebe, e quem escolhe o curso recomendado é o backend.
 
 - `src/services/courses.ts` e `src/services/lesson.ts`: os campos novos.
 - `src/utils/learn.ts`: `getDefaultCourse`.
@@ -47,9 +51,9 @@ A aba Início já mostra o caminho de um curso e escolhe qual abrir por `getDefa
 
 ## Tarefas
 
-- [ ] Campos novos nos tipos.
-- [ ] Curso aberto primeiro pelo `recommended`.
-- [ ] Selo "Premium" no caminho para o plano gratuito.
-- [ ] Texto do cadeado da aula.
-- [ ] Conferir no aparelho.
-- [ ] Marcar a fase como concluída aqui e no `README.md`.
+- [x] Campos novos nos tipos.
+- [x] Curso aberto primeiro pelo `recommended`.
+- [x] Selo "Premium" no caminho para o plano gratuito.
+- [x] Texto do cadeado da aula.
+- [ ] Conferir no aparelho (no piloto da trilha).
+- [x] Marcar a fase como concluída aqui e no `README.md`.

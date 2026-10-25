@@ -17,13 +17,15 @@ export interface PathModule {
   lessons: PathLesson[];
 }
 
-// Curso que a aba Aprender abre: o que está em andamento ou, se não houver,
-// o primeiro da lista.
+// Curso que a aba Aprender abre: o que está em andamento; sem ele, o
+// recomendado pelo backend (o do nível do aluno); sem nenhum dos dois, o
+// primeiro da lista.
 export function getDefaultCourse(courses: Course[]) {
   return (
     courses.find(
       (course) => course.isStarted && !getCourseProgress(course).isCompleted
     ) ??
+    courses.find((course) => course.recommended) ??
     courses[0] ??
     null
   );

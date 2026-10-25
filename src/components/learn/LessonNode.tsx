@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { PremiumBadge } from '@/components/premium/PremiumBadge';
 import { colors } from '@/constants/theme';
 import type { LessonStatus, PathLesson } from '@/utils/learn';
 
@@ -22,6 +23,9 @@ interface LessonNodeProps {
   transition?: LessonTransition;
   // Aula concluída com as opções de revisar e recomeçar abertas
   isExpanded?: boolean;
+  // Aula do Premium para quem é do plano gratuito: leva o selo, e o toque
+  // chega ao cadeado da aula
+  isPremiumOnly?: boolean;
   onPress: () => void;
   onReview?: () => void;
   onRestart?: () => void;
@@ -75,6 +79,7 @@ export function LessonNode({
   isLast,
   transition,
   isExpanded = false,
+  isPremiumOnly = false,
   onPress,
   onReview,
   onRestart,
@@ -127,7 +132,7 @@ export function LessonNode({
     <View onLayout={onLayout}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Aula ${lesson.number}: ${lesson.title}, ${STATUS_LABEL[lesson.status]}`}
+        accessibilityLabel={`Aula ${lesson.number}: ${lesson.title}, ${STATUS_LABEL[lesson.status]}${isPremiumOnly ? ', do plano Premium' : ''}`}
         accessibilityState={{
           disabled: isLocked,
           expanded: lesson.status === 'completed' ? isExpanded : undefined,
@@ -154,6 +159,11 @@ export function LessonNode({
         </Animated.View>
 
         <View className="flex-1">
+          {isPremiumOnly ? (
+            <View className="mb-1">
+              <PremiumBadge />
+            </View>
+          ) : null}
           <Text
             numberOfLines={2}
             className={`font-poppins-semibold text-base ${styles.title}`}

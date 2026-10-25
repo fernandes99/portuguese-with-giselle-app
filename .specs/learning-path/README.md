@@ -6,7 +6,7 @@ A trilha de lições curtas, sem vídeo, de A0 a A2, na aba Início, para o pré
 
 - Cada nível da trilha é um curso comum do Dato (`trilha-a0`, `trilha-a1`, `trilha-a2`), e a aba Início já mostra cada curso como um caminho em degraus, com o seletor de curso (`src/app/(app)/(tabs)/index.tsx`, `src/utils/learn.ts`). As lições sem vídeo já funcionam no fluxo guiado da aula.
 - O backend já filtra as lições pelo objetivo do aluno: o app recebe só as que ele vê.
-- `GET /api/mobile/courses` passa a trazer, em cada curso, `pathLevel` (`A0` a `C2`, ou `null` no curso da professora) e `recommended` (o curso do nível do aluno; no máximo um), e, em cada aula do esboço, `isFree`.
+- `GET /api/mobile/courses` passa a trazer, em cada curso, `pathLevel` (o nível mínimo para fazer o curso, de `A0` a `C2`, ou `null`) e `recommended` (o curso do nível do aluno; no máximo um), e, em cada aula do esboço, `isFree`.
 - O plano gratuito passa a abrir as aulas com `isFree`; nas outras, a rota da aula continua respondendo 403, e o app mostra o cadeado do Premium (`PremiumLock`).
 
 ## Decisões
@@ -33,6 +33,6 @@ Tomadas no planejamento (corrigíveis):
 
 ## Fases
 
-| Fase                                | Entrega                                              | Status   |
-| ----------------------------------- | ---------------------------------------------------- | -------- |
-| [01-path-screen](01-path-screen.md) | Curso recomendado, selo do Premium e cadeado da aula | rascunho |
+| Fase                                | Entrega                                              | Status    |
+| ----------------------------------- | ---------------------------------------------------- | --------- |
+| [01-path-screen](01-path-screen.md) | Curso recomendado, selo do Premium e cadeado da aula | concluída |

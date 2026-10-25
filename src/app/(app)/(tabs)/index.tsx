@@ -18,6 +18,7 @@ import { LearnModule } from '@/components/learn/LearnModule';
 import { TabTopBar } from '@/components/TabTopBar';
 import { TeacherChatButton } from '@/components/teacherChat/TeacherChatButton';
 import { colors } from '@/constants/theme';
+import { useAuth } from '@/contexts/AuthContext';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { getCourses } from '@/services/courses';
 import {
@@ -42,6 +43,8 @@ export default function LearnScreen() {
     completed?: string;
   }>();
   const reducedMotion = useReducedMotion();
+  const { user } = useAuth();
+  const isFreePlan = user?.role === 'FREE_STUDENT';
   const {
     data: courses,
     error,
@@ -231,6 +234,7 @@ export default function LearnScreen() {
             // Com menos movimento, o caminho já aparece no estado final
             transition={reducedMotion ? null : transition}
             expandedLessonId={expandedLessonId}
+            isFreePlan={isFreePlan}
             onPressLesson={pressLesson}
             onReviewLesson={(lesson) => openLesson(lesson)}
             onRestartLesson={(lesson) => openLesson(lesson, true)}

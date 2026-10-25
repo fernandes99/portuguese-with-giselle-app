@@ -35,7 +35,7 @@ function LessonRoute({ courseSlug, lessonSlug, restart }: LessonRouteProps) {
       <SafeAreaView className="flex-1 bg-background">
         <LessonHeader title="" />
         {locked ? (
-          <PremiumLock description="Todas as aulas e atividades do curso fazem parte do plano Premium." />
+          <PremiumLock description="Esta lição faz parte do plano Premium. O 1º módulo de cada nível é grátis." />
         ) : (
           <View className="flex-1 items-center justify-center gap-4 px-6">
             {error ? (

@@ -13,6 +13,8 @@ export interface OutlineLesson {
   title: string;
   duration: number;
   isCompleted: boolean;
+  // O plano gratuito abre a aula; as outras são do Premium
+  isFree: boolean;
 }
 
 export interface OutlineModule {

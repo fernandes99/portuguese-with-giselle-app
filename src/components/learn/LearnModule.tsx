@@ -11,6 +11,8 @@ interface LearnModuleProps {
   transition: PathTransition | null;
   // Aula concluída com as opções de revisar e recomeçar abertas
   expandedLessonId: string | null;
+  // Plano gratuito: as aulas que não são grátis levam o selo do Premium
+  isFreePlan: boolean;
   // Toque na aula: abre a atual, ou mostra as opções de uma concluída
   onPressLesson: (lesson: PathLesson) => void;
   onReviewLesson: (lesson: PathLesson) => void;
@@ -31,6 +33,7 @@ export function LearnModule({
   index,
   transition,
   expandedLessonId,
+  isFreePlan,
   onPressLesson,
   onReviewLesson,
   onRestartLesson,
@@ -76,6 +79,7 @@ export function LearnModule({
           isLast={position === module.lessons.length - 1}
           transition={getTransition(lesson, transition)}
           isExpanded={lesson.id === expandedLessonId}
+          isPremiumOnly={isFreePlan && !lesson.isFree}
           onPress={() => onPressLesson(lesson)}
           onReview={() => onReviewLesson(lesson)}
           onRestart={() => onRestartLesson(lesson)}
