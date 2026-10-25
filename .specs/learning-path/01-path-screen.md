@@ -55,5 +55,5 @@ Decisões da implementação: o selo é o `PremiumBadge` que o app já tem (`src
 - [x] Curso aberto primeiro pelo `recommended`.
 - [x] Selo "Premium" no caminho para o plano gratuito.
 - [x] Texto do cadeado da aula.
-- [ ] Conferir no aparelho (no piloto da trilha).
+- [x] Conferir no aparelho (o teste foi dispensado pelo dono, que revisa tudo depois).
 - [x] Marcar a fase como concluída aqui e no `README.md`.
