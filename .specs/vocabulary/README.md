@@ -30,6 +30,7 @@ Este repositório entrega a tela do app.
 | A prática de pronúncia vale só para o termo, no detalhe de um item liberado, com gravação de até 5 segundos                                                                  | Decisão da iniciativa no site                                                                               |
 | A verificação de pronúncia é só para assinantes, num box do detalhe com um microfone de segurar para falar; o gratuito vê o selo Premium e vai para `/plans`                 | Pedido do dono do projeto depois do primeiro teste                                                          |
 | O resultado mostra o que o Scribe entendeu, palavra por palavra; não há nota de pronúncia                                                                                    | O Scribe só transcreve; no teste, a confiança dele não separou a pronúncia boa da ruim                      |
+| A lista traz só os itens das atividades concluídas; vazia, a tela troca a busca e os filtros por uma frase e o botão "Ir para os cursos", que abre a aba Início               | Pedido do dono em 01/11/2026; a regra fica no backend (`.specs/vocabulary/README.md` do site)               |
 
 ## Fora do escopo
 
