@@ -62,70 +62,74 @@ export default function VocabularyScreen() {
     categoriesById.get(item.categoryIds[0] ?? '');
 
   const isSavedFilterEmpty = onlySaved && savedIds.size === 0;
+  // O backend só manda as palavras das atividades concluídas
+  const hasNoWords = data?.items.length === 0;
 
   return (
     <SafeAreaView className="flex-1 bg-background">
       <LessonHeader title="Vocabulário" />
 
-      <View className="gap-3 pb-3 pt-2">
-        <View className="mx-5 flex-row items-center gap-2">
-          <View className="h-12 flex-1 flex-row items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4">
-            <Ionicons name="search" size={20} color={colors.gray} />
-            <TextInput
-              accessibilityLabel="Buscar"
-              value={query}
-              onChangeText={setQuery}
-              placeholder="Buscar palavra, significado ou exemplo"
-              placeholderTextColor={colors.placeholder}
-              autoCapitalize="none"
-              autoCorrect={false}
-              returnKeyType="search"
-              // Sem line-height e sem padding próprio: com a Poppins eles
-              // empurram o texto para fora do centro do campo
-              textAlignVertical="center"
-              style={{ includeFontPadding: false }}
-              className="h-full flex-1 py-0 font-poppins text-[16px] text-gray-900"
-            />
-            {query ? (
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Limpar a busca"
-                onPress={() => setQuery('')}
-                hitSlop={10}
-              >
-                <Ionicons name="close-circle" size={20} color={colors.gray} />
-              </Pressable>
-            ) : null}
+      {hasNoWords ? null : (
+        <View className="gap-3 pb-3 pt-2">
+          <View className="mx-5 flex-row items-center gap-2">
+            <View className="h-12 flex-1 flex-row items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4">
+              <Ionicons name="search" size={20} color={colors.gray} />
+              <TextInput
+                accessibilityLabel="Buscar"
+                value={query}
+                onChangeText={setQuery}
+                placeholder="Buscar palavra, significado ou exemplo"
+                placeholderTextColor={colors.placeholder}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="search"
+                // Sem line-height e sem padding próprio: com a Poppins eles
+                // empurram o texto para fora do centro do campo
+                textAlignVertical="center"
+                style={{ includeFontPadding: false }}
+                className="h-full flex-1 py-0 font-poppins text-[16px] text-gray-900"
+              />
+              {query ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Limpar a busca"
+                  onPress={() => setQuery('')}
+                  hitSlop={10}
+                >
+                  <Ionicons name="close-circle" size={20} color={colors.gray} />
+                </Pressable>
+              ) : null}
+            </View>
+
+            {/* Liga e desliga os salvos; vale junto com a busca e a categoria */}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Mostrar só os salvos"
+              accessibilityState={{ selected: onlySaved }}
+              onPress={() => setOnlySaved((previous) => !previous)}
+              className={`h-12 w-12 items-center justify-center rounded-2xl border ${
+                onlySaved
+                  ? 'border-green-600 bg-green-600'
+                  : 'border-gray-200 bg-white active:bg-gray-50'
+              }`}
+            >
+              <Ionicons
+                name={onlySaved ? 'bookmark' : 'bookmark-outline'}
+                size={20}
+                color={onlySaved ? colors.white : colors.gray}
+              />
+            </Pressable>
           </View>
 
-          {/* Liga e desliga os salvos; vale junto com a busca e a categoria */}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Mostrar só os salvos"
-            accessibilityState={{ selected: onlySaved }}
-            onPress={() => setOnlySaved((previous) => !previous)}
-            className={`h-12 w-12 items-center justify-center rounded-2xl border ${
-              onlySaved
-                ? 'border-green-600 bg-green-600'
-                : 'border-gray-200 bg-white active:bg-gray-50'
-            }`}
-          >
-            <Ionicons
-              name={onlySaved ? 'bookmark' : 'bookmark-outline'}
-              size={20}
-              color={onlySaved ? colors.white : colors.gray}
+          {data ? (
+            <VocabularyFilters
+              options={filterOptions}
+              active={filter}
+              onChange={setFilter}
             />
-          </Pressable>
+          ) : null}
         </View>
-
-        {data ? (
-          <VocabularyFilters
-            options={filterOptions}
-            active={filter}
-            onChange={setFilter}
-          />
-        ) : null}
-      </View>
+      )}
 
       <FlatList
         data={items}
@@ -151,7 +155,17 @@ export default function VocabularyScreen() {
           ) : undefined
         }
         ListEmptyComponent={
-          data ? (
+          hasNoWords ? (
+            <EmptyState
+              title="Comece uma aula e conclua os exercícios para liberar palavras aqui."
+              action={
+                <Button
+                  label="Ir para os cursos"
+                  onPress={() => router.navigate('/')}
+                />
+              }
+            />
+          ) : data ? (
             <EmptyState
               title={
                 isSavedFilterEmpty

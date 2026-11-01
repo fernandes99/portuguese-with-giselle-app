@@ -1,9 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
+import type { ReactNode } from 'react';
 import { Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 
-export function EmptyState({ title, text }: { title: string; text?: string }) {
+export function EmptyState({
+  title,
+  text,
+  action,
+}: {
+  title: string;
+  text?: string;
+  // Um botão abaixo do texto, quando a tela tem para onde levar o aluno
+  action?: ReactNode;
+}) {
   return (
     <View className="items-center rounded-lg border border-gray-100 bg-gray-50 p-6">
       <Ionicons
@@ -19,6 +29,7 @@ export function EmptyState({ title, text }: { title: string; text?: string }) {
           {text}
         </Text>
       ) : null}
+      {action ? <View className="mt-4 self-stretch">{action}</View> : null}
     </View>
   );
 }
