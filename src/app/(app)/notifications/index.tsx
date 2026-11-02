@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   FlatList,
@@ -21,6 +22,8 @@ import { useNotifications } from '@/hooks/useNotifications';
 // Lista de notificações, lidas e não lidas, da mais nova para a mais antiga.
 // Abrir uma leva ao detalhe, que a marca como lida.
 export default function NotificationsScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { unread, pushDenied } = useNotificationsUnread();
   const {
@@ -50,12 +53,12 @@ export default function NotificationsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <LessonHeader
-        title="Notificações"
+        title={t('account.notifications.title')}
         right={
           unread > 0 && !isMarkingAll ? (
             <HeaderButton
               icon="checkmark-done"
-              label="Marcar todas como lidas"
+              label={t('account.notifications.markAll')}
               onPress={markAllRead}
             />
           ) : undefined
@@ -70,12 +73,12 @@ export default function NotificationsScreen() {
             color={colors.gray}
           />
           <Text className="flex-1 font-poppins text-sm text-gray-700">
-            Ative as notificações para saber quando a professora responder.
+            {t('account.notifications.enablePrompt')}
           </Text>
           <Button
             variant="link"
-            label="Ativar"
-            accessibilityLabel="Ativar as notificações nos ajustes do aparelho"
+            label={t('account.notifications.enable')}
+            accessibilityLabel={t('account.notifications.enableLabel')}
             onPress={() => Linking.openSettings()}
           />
         </View>
@@ -84,7 +87,7 @@ export default function NotificationsScreen() {
       {error ? (
         <View className="mx-5 mb-3 gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
           <Text className="font-poppins text-sm text-red-700">{error}</Text>
-          <Button variant="link" label="Tentar de novo" onPress={reload} />
+          <Button variant="link" label={t('common.retry')} onPress={reload} />
         </View>
       ) : null}
 
@@ -125,7 +128,7 @@ export default function NotificationsScreen() {
                 />
               </View>
               <Text className="text-center font-poppins text-base text-gray-600">
-                Nenhuma notificação por enquanto
+                {t('account.notifications.empty')}
               </Text>
             </View>
           }

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -28,6 +29,8 @@ export function Button({
   onDisabledPress,
   accessibilityLabel,
 }: ButtonProps) {
+  const { t } = useTranslation();
+
   const isDisabled = disabled || loading;
 
   if (variant === 'link') {
@@ -52,7 +55,7 @@ export function Button({
         accessibilityRole="button"
         // Sem accessibilityState.disabled: no Android ele desliga o toque
         // na área do botão, e só o texto continuaria respondendo
-        accessibilityHint="Indisponível no momento"
+        accessibilityHint={t('account.unavailable')}
         onPress={onDisabledPress}
         className={`flex-row items-center justify-center gap-2 bg-gray-200 ${sizeClassName}`}
       >

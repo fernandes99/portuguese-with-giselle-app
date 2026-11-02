@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useApiQuery } from '@/hooks/useApiQuery';
+import { t } from '@/lib/i18n';
 import { getCourses } from '@/services/courses';
 import { getProgress } from '@/services/progress';
 import { getDeviceTimeZone } from '@/utils/progress';
@@ -13,8 +14,8 @@ function fetchProgress(token: string) {
 // Dados da aba Progresso: os números, o hábito e as conquistas do aluno
 // (rota de progresso) e o andamento de cada curso
 export function useProgress() {
-  const progress = useApiQuery(fetchProgress, 'Erro ao carregar o progresso.');
-  const courses = useApiQuery(getCourses, 'Erro ao carregar os cursos.');
+  const progress = useApiQuery(fetchProgress, t('account.progress.loadError'));
+  const courses = useApiQuery(getCourses, t('entry.learn.loadError'));
 
   const { refresh: refreshProgress } = progress;
   const { refresh: refreshCourses } = courses;
@@ -35,7 +36,7 @@ export function useProgress() {
 export function useAchievements() {
   const { data, error, refreshing, refresh } = useApiQuery(
     fetchProgress,
-    'Erro ao carregar as conquistas.'
+    t('account.achievements.loadError')
   );
 
   return { achievements: data?.achievements, error, refreshing, refresh };

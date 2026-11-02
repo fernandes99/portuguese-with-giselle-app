@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -32,6 +33,8 @@ const LEAVE_DURATION = 180;
 // direita; ele volta na próxima vez que o app abrir. O chat também abre pelo
 // Perfil.
 export function TeacherChatButton() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const reducedMotion = useReducedMotion();
   const { available, dismissed, unread, refreshUnread, dismiss } =
@@ -102,8 +105,8 @@ export function TeacherChatButton() {
           accessibilityRole="button"
           accessibilityLabel={
             unread > 0
-              ? `Falar com a professora, ${unread} mensagens não lidas`
-              : 'Precisa de ajuda? Fale com a professora'
+              ? t('entry.profile.teacherUnread', { count: unread })
+              : t('account.teacher.helpLabel')
           }
           onPress={() => router.push('/teacher-chat')}
           className="flex-row items-center gap-2.5 pr-2 active:opacity-70"
@@ -129,20 +132,20 @@ export function TeacherChatButton() {
               style={{ includeFontPadding: false }}
               className="font-poppins-medium text-xs leading-4 text-gray-900"
             >
-              Precisa de ajuda?
+              {t('account.teacher.needHelp')}
             </Text>
             <Text
               style={{ includeFontPadding: false }}
               className="font-poppins text-[11px] leading-4 text-gray-500"
             >
-              Fale com a professora
+              {t('account.teacher.talk')}
             </Text>
           </View>
         </Pressable>
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Fechar"
+          accessibilityLabel={t('common.close')}
           onPress={dismiss}
           hitSlop={8}
           className="h-6 w-6 items-center justify-center rounded-full active:bg-gray-100"

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useApiQuery } from '@/hooks/useApiQuery';
+import { t } from '@/lib/i18n';
 import { getRanking, type RankingPeriod } from '@/services/ranking';
 
 // Ranking do período escolhido. Ao trocar o período, `ranking` fica nulo até
@@ -12,7 +13,7 @@ export function useRanking(period: RankingPeriod) {
   );
   const { data, error, refreshing, refresh } = useApiQuery(
     fetcher,
-    'Erro ao carregar o ranking.'
+    t('account.ranking.loadError')
   );
 
   return {

@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -21,6 +22,8 @@ export function PlanComparison({
   benefits,
   selectedTier,
 }: PlanComparisonProps) {
+  const { t } = useTranslation();
+
   const columnClass = (tier: PlanTier) =>
     `${COLUMN_CLASS} ${tier === selectedTier ? 'bg-green-50' : ''}`;
 
@@ -30,7 +33,7 @@ export function PlanComparison({
         accessibilityRole="header"
         className="font-poppins-bold text-lg text-gray-900"
       >
-        Compare os planos
+        {t('account.plans.compare')}
       </Text>
 
       <View className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
@@ -62,7 +65,12 @@ export function PlanComparison({
                 <View
                   key={plan.tier}
                   accessible
-                  accessibilityLabel={`${plan.name}: ${included ? 'incluído' : 'não incluído'}`}
+                  accessibilityLabel={t(
+                    included
+                      ? 'account.plans.included'
+                      : 'account.plans.notIncluded',
+                    { plan: plan.name }
+                  )}
                   className={columnClass(plan.tier)}
                 >
                   {included ? (

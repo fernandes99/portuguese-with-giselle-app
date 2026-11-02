@@ -25,7 +25,8 @@ export interface RankingScoreRules {
   module: number;
   course: number;
   // Cada conquista vale o que está no cadastro dela
-  achievements: { title: string; score: number }[];
+  // `code` traduz o título no app
+  achievements: { code?: string; title: string; score: number }[];
 }
 
 export interface Ranking {

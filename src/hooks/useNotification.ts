@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotificationsUnread } from '@/contexts/NotificationsContext';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import {
   getNotification,
   markNotificationRead,
@@ -45,7 +46,7 @@ export function useNotification(id: string) {
         setNotFound(true);
         return;
       }
-      setError(getErrorMessage(err, 'Erro ao carregar a notificação.'));
+      setError(getErrorMessage(err, t('account.notifications.loadOneError')));
     }
   }, [token, id, setUnread]);
 

@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   FlatList,
@@ -69,13 +70,15 @@ function buildItems(
 
 // Cabeçalho com a foto e o nome da professora
 function ChatHeader() {
+  const { t } = useTranslation();
+
   const router = useRouter();
 
   return (
     <View className="flex-row items-center gap-3 border-b border-gray-200 px-4 py-2">
       <HeaderButton
         icon="arrow-back"
-        label="Voltar"
+        label={t('common.back')}
         onPress={() => router.back()}
       />
       <TeacherAvatar size={40} />
@@ -85,10 +88,10 @@ function ChatHeader() {
           numberOfLines={1}
           className="font-poppins-semibold text-base text-gray-900"
         >
-          Professora Giselle
+          {t('entry.preferences.teacherSignature')}
         </Text>
         <Text className="font-poppins text-xs text-gray-600">
-          Sua professora
+          {t('account.teacher.role')}
         </Text>
       </View>
     </View>
@@ -99,6 +102,8 @@ function ChatHeader() {
 // pelo painel do site; aqui as mensagens novas chegam a cada 30 segundos ou
 // ao puxar a lista.
 export default function TeacherChatScreen() {
+  const { t } = useTranslation();
+
   const { user } = useAuth();
   const canUse = canUseTeacherChat(user);
   const {
@@ -158,7 +163,7 @@ export default function TeacherChatScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <ChatHeader />
-        <PremiumLock description="Tire suas dúvidas direto com a professora Giselle. O chat com a professora faz parte do plano Premium." />
+        <PremiumLock description={t('account.teacher.premiumLock')} />
       </SafeAreaView>
     );
   }
@@ -182,7 +187,7 @@ export default function TeacherChatScreen() {
                 </Text>
                 <Button
                   variant="link"
-                  label="Tentar de novo"
+                  label={t('common.retry')}
                   onPress={refresh}
                 />
               </>
@@ -220,11 +225,11 @@ export default function TeacherChatScreen() {
               hasMore ? (
                 <Button
                   variant="link"
-                  label={
+                  label={t(
                     isLoadingOlder
-                      ? 'Carregando...'
-                      : 'Ver mensagens anteriores'
-                  }
+                      ? 'account.teacher.loading'
+                      : 'account.teacher.older'
+                  )}
                   onPress={loadOlder}
                   disabled={isLoadingOlder}
                 />
@@ -234,8 +239,7 @@ export default function TeacherChatScreen() {
               <View className="flex-1 items-center justify-center gap-4 px-6">
                 <TeacherAvatar size={88} />
                 <Text className="text-center font-poppins text-base text-gray-600">
-                  Mande uma mensagem para a professora Giselle. Ela responde por
-                  aqui.
+                  {t('account.teacher.empty')}
                 </Text>
               </View>
             }

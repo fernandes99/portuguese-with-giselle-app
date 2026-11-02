@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -24,6 +25,8 @@ import type { RankingPeriod, RankingScoreRules } from '@/services/ranking';
 // presa no pé da tela, logo acima do menu.
 // O backend decide quem entra e a ordem.
 export default function RankingScreen() {
+  const { t } = useTranslation();
+
   const [period, setPeriod] = useState<RankingPeriod>('month');
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const { ranking, error, refreshing, refresh } = useRanking(period);
@@ -39,12 +42,12 @@ export default function RankingScreen() {
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <LessonHeader
-        title="Ranking"
+        title={t('account.ranking.title')}
         filled
         right={
           <HeaderButton
             icon="information-circle-outline"
-            label="Como funciona o ranking"
+            label={t('account.ranking.howItWorks')}
             filled
             onPress={() => setIsInfoOpen(true)}
           />
@@ -73,7 +76,11 @@ export default function RankingScreen() {
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -81,9 +88,11 @@ export default function RankingScreen() {
           ranking.entries.length === 0 ? (
             <View className="rounded-3xl bg-surface p-6">
               <Text className="text-center font-poppins text-sm text-gray-600">
-                {period === 'month'
-                  ? 'Ninguém ganhou pontos neste mês ainda.'
-                  : 'Ninguém ganhou pontos ainda.'}
+                {t(
+                  period === 'month'
+                    ? 'account.ranking.emptyMonth'
+                    : 'account.ranking.empty'
+                )}
               </Text>
             </View>
           ) : (

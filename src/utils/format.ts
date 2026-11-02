@@ -1,3 +1,5 @@
+import { t } from '@/lib/i18n';
+
 // 45 -> "45min", 60 -> "1h", 95 -> "1h35"
 export function formatStudyTime(minutes: number) {
   if (minutes < 60) {
@@ -10,7 +12,7 @@ export function formatStudyTime(minutes: number) {
 }
 
 export function formatStreak(days: number) {
-  return `${days} dia${days === 1 ? '' : 's'}`;
+  return t('account.progress.days', { count: days });
 }
 
 export function getFirstName(name: string | null | undefined) {

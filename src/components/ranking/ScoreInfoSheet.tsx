@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
+import { translateAchievement } from '@/constants/achievements';
 import { colors } from '@/constants/theme';
 import { useModalBottomInset } from '@/hooks/useModalBottomInset';
 import type { RankingScoreRules } from '@/services/ranking';
@@ -27,6 +29,8 @@ export function ScoreInfoSheet({
   visible: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
+
   const bottomInset = useModalBottomInset();
 
   return (
@@ -39,7 +43,7 @@ export function ScoreInfoSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Fechar"
+          accessibilityLabel={t('common.close')}
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -50,11 +54,11 @@ export function ScoreInfoSheet({
         >
           <View className="flex-row items-center justify-between gap-3">
             <Text className="font-poppins-bold text-xl text-gray-900">
-              Como ganhar pontos
+              {t('account.ranking.howToEarn')}
             </Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Fechar"
+              accessibilityLabel={t('common.close')}
               onPress={onClose}
               hitSlop={12}
               className="h-9 w-9 items-center justify-center rounded-full bg-surface active:bg-surface-pressed"
@@ -65,24 +69,36 @@ export function ScoreInfoSheet({
 
           {rules ? (
             <ScrollView className="mt-3" contentContainerClassName="pb-2">
-              <RuleRow label="Aula concluída" score={rules.lesson} />
-              <RuleRow label="Atividade concluída" score={rules.activity} />
               <RuleRow
-                label="Flashcard aprendido (cada card)"
+                label={t('account.ranking.ruleLesson')}
+                score={rules.lesson}
+              />
+              <RuleRow
+                label={t('account.ranking.ruleActivity')}
+                score={rules.activity}
+              />
+              <RuleRow
+                label={t('account.ranking.ruleFlashcard')}
                 score={rules.flashcard}
               />
-              <RuleRow label="Módulo concluído" score={rules.module} />
-              <RuleRow label="Curso concluído" score={rules.course} />
+              <RuleRow
+                label={t('account.ranking.ruleModule')}
+                score={rules.module}
+              />
+              <RuleRow
+                label={t('account.ranking.ruleCourse')}
+                score={rules.course}
+              />
 
               {rules.achievements.length > 0 ? (
                 <>
                   <Text className="mt-5 font-poppins-semibold text-sm text-gray-900">
-                    Conquistas
+                    {t('account.achievements.title')}
                   </Text>
                   {rules.achievements.map((achievement) => (
                     <RuleRow
                       key={achievement.title}
-                      label={achievement.title}
+                      label={translateAchievement(achievement).title}
                       score={achievement.score}
                     />
                   ))}
@@ -91,13 +107,13 @@ export function ScoreInfoSheet({
 
               <View className="mt-5 gap-1.5">
                 <Text className="font-poppins text-sm text-gray-600">
-                  • Cada item conta uma vez, mesmo se você fizer de novo.
+                  {t('account.ranking.noteOnce')}
                 </Text>
                 <Text className="font-poppins text-sm text-gray-600">
-                  • O ranking do mês recomeça no dia 1º (horário de Brasília).
+                  {t('account.ranking.noteMonth')}
                 </Text>
                 <Text className="font-poppins text-sm text-gray-600">
-                  • A professora e a equipe não entram no ranking.
+                  {t('account.ranking.noteTeam')}
                 </Text>
               </View>
             </ScrollView>

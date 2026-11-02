@@ -3,6 +3,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
+import { t } from '@/lib/i18n';
 import type { PushPlatform } from '@/services/notifications';
 
 // Canal do Android para onde o backend manda o push (`channelId`)
@@ -32,7 +33,7 @@ export async function setupNotificationChannel() {
   }
 
   await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-    name: 'Notificações',
+    name: t('account.notifications.title'),
     importance: Notifications.AndroidImportance.HIGH,
   });
 }

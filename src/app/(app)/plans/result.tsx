@@ -8,6 +8,7 @@ import {
 } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, BackHandler, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -54,6 +55,8 @@ function Message({ children }: { children: ReactNode }) {
 // planos (sessionId) ou do endereço para onde o site devolve o aluno
 // (session_id).
 export default function PlanResultScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { refreshUser } = useAuth();
   const params = useLocalSearchParams<{
@@ -135,7 +138,7 @@ export default function PlanResultScreen() {
               accessibilityLiveRegion="polite"
               className="font-poppins text-base text-gray-600"
             >
-              Confirmando o pagamento...
+              {t('account.plans.confirming')}
             </Text>
           </View>
         ) : null}
@@ -151,9 +154,11 @@ export default function PlanResultScreen() {
                 />
               </View>
             }
-            title={`Bem-vindo ao ${getTierName(tier ?? 'premium')}!`}
+            title={t('account.plans.welcome', {
+              plan: getTierName(tier ?? 'premium'),
+            })}
           >
-            <Message>Seu plano já está ativo. Bons estudos!</Message>
+            <Message>{t('account.plans.active')}</Message>
           </Result>
         ) : null}
 
@@ -162,12 +167,9 @@ export default function PlanResultScreen() {
             icon={
               <Ionicons name="time-outline" size={72} color={colors.gray} />
             }
-            title="Ainda estamos confirmando o pagamento."
+            title={t('account.plans.stillConfirming')}
           >
-            <Message>
-              Se você não concluiu o pagamento, nada foi cobrado. Se concluiu,
-              seu plano aparece em instantes.
-            </Message>
+            <Message>{t('account.plans.stillConfirmingText')}</Message>
           </Result>
         ) : null}
 
@@ -180,9 +182,9 @@ export default function PlanResultScreen() {
                 color={colors.gray}
               />
             }
-            title="O pagamento não foi concluído."
+            title={t('account.plans.failed')}
           >
-            <Message>Nada foi cobrado.</Message>
+            <Message>{t('practice.privateLessons.notCharged')}</Message>
           </Result>
         ) : null}
       </View>
@@ -190,16 +192,28 @@ export default function PlanResultScreen() {
       {state !== 'checking' ? (
         <View className="gap-2 px-6 pb-6">
           {isPaid ? (
-            <Button size="lg" label="Começar a estudar" onPress={goLearn} />
+            <Button
+              size="lg"
+              label={t('account.plans.startStudying')}
+              onPress={goLearn}
+            />
           ) : null}
           {state === 'unconfirmed' ? (
-            <Button size="lg" label="Conferir de novo" onPress={retry} />
+            <Button
+              size="lg"
+              label={t('account.plans.checkAgain')}
+              onPress={retry}
+            />
           ) : null}
           {state === 'failed' ? (
-            <Button size="lg" label="Ver os planos" onPress={goPlans} />
+            <Button
+              size="lg"
+              label={t('account.billing.seePlans')}
+              onPress={goPlans}
+            />
           ) : null}
           {state === 'unconfirmed' ? (
-            <Button variant="link" label="Voltar" onPress={goPlans} />
+            <Button variant="link" label={t('common.back')} onPress={goPlans} />
           ) : null}
         </View>
       ) : null}

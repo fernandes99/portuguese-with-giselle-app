@@ -1,9 +1,11 @@
+import { t } from '@/lib/i18n';
 import type {
   BillingCard,
   BillingPayment,
   BillingPaymentStatus,
   BillingSubscription,
 } from '@/services/billing';
+import { formatLongDate } from '@/utils/date';
 import { formatPlanInterval } from '@/utils/plans';
 import { formatPrice } from '@/utils/privateLessons';
 
@@ -14,37 +16,28 @@ export interface Badge {
   tone: BadgeTone;
 }
 
-const SHORT_MONTHS = [
-  'jan.',
-  'fev.',
-  'mar.',
-  'abr.',
-  'mai.',
-  'jun.',
-  'jul.',
-  'ago.',
-  'set.',
-  'out.',
-  'nov.',
-  'dez.',
-];
-
-const PAYMENT_BADGES: Record<BillingPaymentStatus, Badge> = {
-  paid: { label: 'Pago', tone: 'green' },
-  pending: { label: 'Pendente', tone: 'yellow' },
-  failed: { label: 'Falhou', tone: 'red' },
-  refunded: { label: 'Reembolsado', tone: 'gray' },
+const PAYMENT_TONES: Record<BillingPaymentStatus, BadgeTone> = {
+  paid: 'green',
+  pending: 'yellow',
+  failed: 'red',
+  refunded: 'gray',
 };
 
-const SUBSCRIPTION_BADGES: Record<string, Badge> = {
-  active: { label: 'Ativa', tone: 'green' },
-  trialing: { label: 'Em teste grátis', tone: 'green' },
-  past_due: { label: 'Pagamento pendente', tone: 'yellow' },
-  unpaid: { label: 'Pagamento pendente', tone: 'yellow' },
-  incomplete: { label: 'Pagamento pendente', tone: 'yellow' },
-  canceled: { label: 'Cancelada', tone: 'gray' },
-  incomplete_expired: { label: 'Cancelada', tone: 'gray' },
-  paused: { label: 'Pausada', tone: 'gray' },
+type SubscriptionText =
+  'active' | 'trialing' | 'pastDue' | 'canceled' | 'paused';
+
+const SUBSCRIPTION_BADGES: Record<
+  string,
+  { text: SubscriptionText; tone: BadgeTone }
+> = {
+  active: { text: 'active', tone: 'green' },
+  trialing: { text: 'trialing', tone: 'green' },
+  past_due: { text: 'pastDue', tone: 'yellow' },
+  unpaid: { text: 'pastDue', tone: 'yellow' },
+  incomplete: { text: 'pastDue', tone: 'yellow' },
+  canceled: { text: 'canceled', tone: 'gray' },
+  incomplete_expired: { text: 'canceled', tone: 'gray' },
+  paused: { text: 'paused', tone: 'gray' },
 };
 
 const CARD_BRANDS: Record<string, string> = {
@@ -63,7 +56,7 @@ export function formatBillingDate(isoDate: string) {
   if (Number.isNaN(date.getTime())) {
     return '';
   }
-  return `${date.getDate()} de ${SHORT_MONTHS[date.getMonth()]} de ${date.getFullYear()}`;
+  return formatLongDate(date);
 }
 
 // "US$ 89,90"
@@ -75,28 +68,31 @@ export function formatAmount(amount: number, currency: string) {
 // Premium, então o nome da assinatura é fixo.
 export function describePayment(payment: BillingPayment) {
   if (payment.type === 'subscription') {
-    return 'Assinatura Premium';
+    return t('account.billing.premiumSubscription');
   }
   const quantity = payment.quantity ?? 1;
-  return quantity === 1
-    ? '1 aula particular'
-    : `${quantity} aulas particulares`;
+  return t('account.billing.privateLessons', { count: quantity });
 }
 
 export function getPaymentBadge(status: BillingPaymentStatus) {
-  return PAYMENT_BADGES[status];
+  return {
+    label: t(`account.billing.paymentStatus.${status}`),
+    tone: PAYMENT_TONES[status],
+  };
 }
 
 // Situação desconhecida aparece com o código do Stripe. Cancelada no fim do
 // período continua "Ativa": o aluno tem acesso até lá, e a linha da data diz
 // que foi cancelada.
 export function getSubscriptionBadge(subscription: BillingSubscription): Badge {
-  return (
-    SUBSCRIPTION_BADGES[subscription.status] ?? {
-      label: subscription.status,
-      tone: 'gray',
-    }
-  );
+  const badge = SUBSCRIPTION_BADGES[subscription.status];
+  if (!badge) {
+    return { label: subscription.status, tone: 'gray' };
+  }
+  return {
+    label: t(`account.billing.subscriptionStatus.${badge.text}`),
+    tone: badge.tone,
+  };
 }
 
 export function isSubscriptionEnded(subscription: BillingSubscription) {
@@ -115,8 +111,8 @@ export function formatSubscriptionPrice(subscription: BillingSubscription) {
 export function formatSubscriptionDate(subscription: BillingSubscription) {
   const date = formatBillingDate(subscription.currentPeriodEnd);
   return subscription.cancelAtPeriodEnd
-    ? `Cancelada, com acesso até ${date}`
-    : `Próxima cobrança em ${date}`;
+    ? t('account.billing.canceledUntil', { date })
+    : t('account.billing.nextCharge', { date });
 }
 
 export function formatCardBrand(card: BillingCard) {
@@ -132,5 +128,5 @@ export function formatCardNumber(card: BillingCard) {
 export function formatCardExpiry(card: BillingCard) {
   const month = String(card.expMonth).padStart(2, '0');
   const year = String(card.expYear).slice(-2);
-  return `Validade ${month}/${year}`;
+  return t('account.billing.expires', { date: `${month}/${year}` });
 }

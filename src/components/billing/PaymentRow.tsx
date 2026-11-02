@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -19,6 +20,8 @@ interface PaymentRowProps {
 
 // Uma linha do histórico. Com recibo, o toque abre o recibo do Stripe.
 export function PaymentRow({ payment, onOpenReceipt }: PaymentRowProps) {
+  const { t } = useTranslation();
+
   const description = describePayment(payment);
   const date = formatBillingDate(payment.date);
   const amount = formatAmount(payment.amount, payment.currency);
@@ -61,7 +64,7 @@ export function PaymentRow({ payment, onOpenReceipt }: PaymentRowProps) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      accessibilityHint="Abre o recibo"
+      accessibilityHint={t('account.billing.receiptHint')}
       onPress={() => onOpenReceipt(receiptUrl)}
       className={`${className} active:bg-gray-50`}
     >

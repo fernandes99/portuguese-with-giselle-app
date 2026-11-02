@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Pressable,
@@ -34,6 +35,8 @@ function Highlight({
   total: number;
   onSelect: (achievement: Achievement) => void;
 }) {
+  const { t } = useTranslation();
+
   const percentage = total ? Math.round((unlocked / total) * 100) : 0;
   const date = latest?.unlockedAt ? formatUnlockedDate(latest.unlockedAt) : '';
 
@@ -42,21 +45,23 @@ function Highlight({
       {latest ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Última conquista: ${latest.title}`}
+          accessibilityLabel={t('account.achievements.latestLabel', {
+            title: latest.title,
+          })}
           onPress={() => onSelect(latest)}
           className="flex-row items-center gap-4 active:opacity-70"
         >
           <AchievementBadge achievement={latest} size={96} />
           <View className="flex-1 gap-0.5">
             <Text className="font-poppins-semibold text-xs uppercase tracking-wider text-blue-700">
-              Última conquista
+              {t('account.achievements.latest')}
             </Text>
             <Text className="font-poppins-bold text-xl text-gray-900">
               {latest.title}
             </Text>
             {date ? (
               <Text className="font-poppins text-sm text-gray-500">
-                Em {date}
+                {t('account.achievements.unlockedOn', { date })}
               </Text>
             ) : null}
           </View>
@@ -64,10 +69,10 @@ function Highlight({
       ) : (
         <View className="gap-1">
           <Text className="font-poppins-bold text-xl text-gray-900">
-            Nenhuma conquista ainda
+            {t('account.achievements.none')}
           </Text>
           <Text className="font-poppins text-sm text-gray-600">
-            Toque numa medalha para ver como desbloquear.
+            {t('account.achievements.tapHint')}
           </Text>
         </View>
       )}
@@ -75,7 +80,7 @@ function Highlight({
       <View className="gap-2">
         <View className="flex-row items-baseline justify-between">
           <Text className="font-poppins-semibold text-sm text-gray-900">
-            {unlocked} de {total} desbloqueadas
+            {t('account.achievements.unlockedCount', { unlocked, total })}
           </Text>
           <Text className="font-poppins-semibold text-sm text-blue-700">
             {percentage}%
@@ -91,6 +96,8 @@ function Highlight({
 // última em destaque e as medalhas em grade, as desbloqueadas antes das que
 // faltam. Tocar numa medalha abre o detalhe.
 export default function AchievementsScreen() {
+  const { t } = useTranslation();
+
   const { achievements, error, refreshing, refresh } = useAchievements();
   const [selected, setSelected] = useState<Achievement | null>(null);
   const unlocked =
@@ -100,7 +107,7 @@ export default function AchievementsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <LessonHeader title="Conquistas" filled />
+      <LessonHeader title={t('account.achievements.title')} filled />
 
       <ScrollView
         contentContainerClassName="flex-grow gap-6 px-5 pb-8 pt-2"
@@ -116,7 +123,11 @@ export default function AchievementsScreen() {
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -132,7 +143,7 @@ export default function AchievementsScreen() {
             {unlocked.length > 0 ? (
               <View className="gap-2">
                 <Text className="font-poppins-bold text-lg text-gray-900">
-                  Desbloqueadas
+                  {t('account.achievements.unlocked')}
                 </Text>
                 <AchievementGrid
                   achievements={unlocked}
@@ -144,7 +155,7 @@ export default function AchievementsScreen() {
             {locked.length > 0 ? (
               <View className="gap-2">
                 <Text className="font-poppins-bold text-lg text-gray-900">
-                  Para desbloquear
+                  {t('account.achievements.toUnlock')}
                 </Text>
                 <AchievementGrid achievements={locked} onSelect={setSelected} />
               </View>

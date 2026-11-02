@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { type ComponentProps, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   FlatList,
@@ -24,68 +25,69 @@ import { formatDateTime } from '@/utils/date';
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
 // Os mesmos nomes da área da professora, no site
-const ENTITIES: Record<HistoryEntity, { label: string; icon: IconName }> = {
-  COURSE: { label: 'Curso', icon: 'school' },
-  MODULE: { label: 'Módulo', icon: 'layers' },
-  LESSON: { label: 'Aula', icon: 'play' },
-  ACTIVITY: { label: 'Atividade', icon: 'pencil' },
-  FLASHCARD: { label: 'Flashcard', icon: 'albums' },
-  SIMULATION: { label: 'Simulação', icon: 'chatbubbles' },
-  HOMEWORK: { label: 'Lição de casa', icon: 'document-text' },
+const ENTITY_ICONS: Record<HistoryEntity, IconName> = {
+  COURSE: 'school',
+  MODULE: 'layers',
+  LESSON: 'play',
+  ACTIVITY: 'pencil',
+  FLASHCARD: 'albums',
+  SIMULATION: 'chatbubbles',
+  HOMEWORK: 'document-text',
 };
 
 // A cor do ícone e o texto vêm da situação do item
 const ACTIONS: Record<
   HistoryAction,
-  { label: string; iconClassName: string; textClassName: string; color: string }
+  { iconClassName: string; textClassName: string; color: string }
 > = {
   STARTED: {
-    label: 'Iniciou',
     iconClassName: 'bg-gray-100',
     textClassName: 'text-gray-600',
     color: colors.gray,
   },
   IN_PROGRESS: {
-    label: 'Em andamento',
     iconClassName: 'bg-blue-50',
     textClassName: 'text-blue-600',
     color: colors.blue,
   },
   COMPLETED: {
-    label: 'Concluiu',
     iconClassName: 'bg-green-50',
     textClassName: 'text-green-700',
     color: colors.green,
   },
 };
 
-const FILTERS: { label: string; value: HistoryEntity | null }[] = [
-  { label: 'Tudo', value: null },
-  ...(Object.keys(ENTITIES) as HistoryEntity[]).map((value) => ({
-    label: ENTITIES[value].label,
-    value,
-  })),
-];
-
 function HistoryRow({ entry }: { entry: HistoryEntry }) {
-  const entity = ENTITIES[entry.entityType];
+  const { t } = useTranslation();
+
+  const entityLabel = t(`account.history.entities.${entry.entityType}`);
+  const actionLabel = t(`account.history.actions.${entry.action}`);
   const action = ACTIONS[entry.action];
 
   return (
     <View
       accessible
-      accessibilityLabel={`${entity.label}: ${entry.title}. ${action.label} em ${formatDateTime(entry.updatedAt)}`}
+      accessibilityLabel={t('account.history.rowLabel', {
+        entity: entityLabel,
+        title: entry.title,
+        action: actionLabel,
+        date: formatDateTime(entry.updatedAt),
+      })}
       className="flex-row items-center gap-3 border-b border-gray-100 bg-white px-4 py-3"
     >
       <View
         className={`h-10 w-10 items-center justify-center rounded-xl ${action.iconClassName}`}
       >
-        <Ionicons name={entity.icon} size={18} color={action.color} />
+        <Ionicons
+          name={ENTITY_ICONS[entry.entityType]}
+          size={18}
+          color={action.color}
+        />
       </View>
 
       <View className="flex-1">
         <Text className="font-poppins-semibold text-[11px] uppercase text-gray-500">
-          {entity.label}
+          {entityLabel}
         </Text>
         <Text
           numberOfLines={1}
@@ -107,7 +109,7 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
         <Text
           className={`font-poppins-semibold text-xs ${action.textClassName}`}
         >
-          {action.label}
+          {actionLabel}
         </Text>
         <Text className="mt-0.5 font-poppins text-xs text-gray-500">
           {formatDateTime(entry.updatedAt)}
@@ -120,21 +122,23 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
 // Histórico de aprendizado: a situação atual de cada item que o aluno abriu,
 // do mais recente para o mais antigo. É a lista que a professora vê no site.
 export default function HistoryScreen() {
+  const { t } = useTranslation();
+
   const [type, setType] = useState<HistoryEntity | null>(null);
   const { entries, total, error, hasMore, isLoadingMore, loadMore, reload } =
     useHistory(type);
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Histórico" />
+      <LessonHeader title={t('entry.profile.history')} />
 
       <View className="gap-3 px-5 pb-3 pt-2">
         <View>
           <Text className="font-poppins-bold text-xl text-gray-900">
-            Histórico de aprendizado
+            {t('account.history.heading')}
           </Text>
           <Text className="mt-1 font-poppins text-sm text-gray-600">
-            Situação atual de cada item e a data da última mudança.
+            {t('account.history.subtitle')}
           </Text>
         </View>
 
@@ -143,7 +147,13 @@ export default function HistoryScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerClassName="gap-2"
         >
-          {FILTERS.map((filter) => {
+          {[
+            { label: t('account.history.all'), value: null },
+            ...(Object.keys(ENTITY_ICONS) as HistoryEntity[]).map((value) => ({
+              label: t(`account.history.entities.${value}`),
+              value,
+            })),
+          ].map((filter) => {
             const isActive = filter.value === type;
 
             return (
@@ -168,7 +178,7 @@ export default function HistoryScreen() {
       {error ? (
         <View className="mx-5 mb-3 gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
           <Text className="font-poppins text-sm text-red-700">{error}</Text>
-          <Button variant="link" label="Tentar de novo" onPress={reload} />
+          <Button variant="link" label={t('common.retry')} onPress={reload} />
         </View>
       ) : null}
 
@@ -181,20 +191,22 @@ export default function HistoryScreen() {
           contentContainerClassName="flex-grow pb-8"
           ListEmptyComponent={
             <Text className="p-10 text-center font-poppins text-sm text-gray-600">
-              Nenhum registro de estudo.
+              {t('account.history.empty')}
             </Text>
           }
           ListFooterComponent={
             entries.length > 0 ? (
               <View className="gap-2 px-5 pt-4">
                 <Text className="text-center font-poppins text-xs text-gray-500">
-                  {entries.length} de {total}{' '}
-                  {total === 1 ? 'registro' : 'registros'}
+                  {t('account.history.shown', {
+                    shown: entries.length,
+                    count: total,
+                  })}
                 </Text>
                 {hasMore ? (
                   <Button
                     variant="link"
-                    label="Carregar mais"
+                    label={t('account.history.loadMore')}
                     loading={isLoadingMore}
                     onPress={loadMore}
                   />

@@ -1,6 +1,7 @@
 import { usePathname, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -22,6 +23,8 @@ const RESULT_PATH = '/plans/result';
 // assinar. O pagamento acontece numa página do Stripe, fora do app; ao
 // voltar, a tela de resultado confere a compra.
 export default function PlansScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { token, signOut } = useAuth();
   const {
@@ -29,7 +32,7 @@ export default function PlansScreen() {
     error: loadError,
     refresh,
     reload,
-  } = useApiQuery(getPlans, 'Erro ao carregar os planos.');
+  } = useApiQuery(getPlans, t('account.plans.loadError'));
 
   // null enquanto o aluno não escolhe: vale o plano destacado
   const [pickedTier, setPickedTier] = useState<PlanTier | null>(null);
@@ -101,7 +104,7 @@ export default function PlansScreen() {
         await reload();
         return;
       }
-      setError(getErrorMessage(err, 'Não foi possível iniciar o pagamento.'));
+      setError(getErrorMessage(err, t('practice.privateLessons.paymentError')));
     } finally {
       setPaying(false);
     }
@@ -118,7 +121,11 @@ export default function PlansScreen() {
               <Text className="font-poppins text-sm text-red-700">
                 {loadError}
               </Text>
-              <Button variant="link" label="Tentar de novo" onPress={refresh} />
+              <Button
+                variant="link"
+                label={t('common.retry')}
+                onPress={refresh}
+              />
             </View>
           ) : null}
 

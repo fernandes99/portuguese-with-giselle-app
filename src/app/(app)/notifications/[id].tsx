@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -11,13 +12,15 @@ import { openNotificationLink } from '@/utils/notifications';
 
 // Uma notificação inteira, com o botão do destino quando há tela para ele
 export default function NotificationScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { notification, error, notFound, reload } = useNotification(id);
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Notificação" />
+      <LessonHeader title={t('account.notifications.one')} />
 
       {notification ? (
         <ScrollView contentContainerClassName="gap-4 px-5 pb-10 pt-4">
@@ -55,11 +58,11 @@ export default function NotificationScreen() {
           {notFound ? (
             <>
               <Text className="text-center font-poppins text-base text-gray-600">
-                Esta notificação não está mais disponível.
+                {t('account.notifications.unavailable')}
               </Text>
               <Button
                 variant="link"
-                label="Voltar"
+                label={t('common.back')}
                 onPress={() => router.back()}
               />
             </>
@@ -68,7 +71,11 @@ export default function NotificationScreen() {
               <Text className="text-center font-poppins text-base text-red-700">
                 {error}
               </Text>
-              <Button variant="link" label="Tentar de novo" onPress={reload} />
+              <Button
+                variant="link"
+                label={t('common.retry')}
+                onPress={reload}
+              />
             </>
           ) : (
             <ActivityIndicator size="large" color={colors.green} />

@@ -1,15 +1,17 @@
+import { t } from '@/lib/i18n';
+import { formatShortDate } from '@/utils/date';
 import type { DayActivity } from '@/services/progress';
 
 // Na ordem de Date.getDay(): 0 é domingo
 const WEEKDAYS = [
-  { short: 'dom.', full: 'domingo' },
-  { short: 'seg.', full: 'segunda-feira' },
-  { short: 'ter.', full: 'terça-feira' },
-  { short: 'qua.', full: 'quarta-feira' },
-  { short: 'qui.', full: 'quinta-feira' },
-  { short: 'sex.', full: 'sexta-feira' },
-  { short: 'sáb.', full: 'sábado' },
-];
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+] as const;
 
 // Fuso do aparelho, enviado ao backend para ele contar os dias
 export function getDeviceTimeZone() {
@@ -24,19 +26,19 @@ export function getDeviceTimeZone() {
 // conversão de fuso de `new Date('AAAA-MM-DD')`, que o trata como UTC.
 export function getWeekday(date: string) {
   const [year, month, day] = date.split('-').map(Number);
-  return WEEKDAYS[new Date(year, month - 1, day).getDay()];
-}
-
-function plural(count: number, singular: string, pluralForm: string) {
-  return `${count} ${count === 1 ? singular : pluralForm}`;
+  const weekday = WEEKDAYS[new Date(year, month - 1, day).getDay()];
+  return {
+    short: t(`account.time.weekdaysShort.${weekday}`),
+    full: t(`account.time.weekdaysFull.${weekday}`),
+  };
 }
 
 // "1 aula, 3 exercícios, 14 práticas", para o leitor de tela
 export function formatDayActivity(day: DayActivity) {
   return [
-    plural(day.lessons, 'aula', 'aulas'),
-    plural(day.activities, 'exercício', 'exercícios'),
-    plural(day.practices, 'prática', 'práticas'),
+    t('common.lessons', { count: day.lessons }),
+    t('account.progress.exercises', { count: day.activities }),
+    t('account.progress.practices', { count: day.practices }),
   ].join(', ');
 }
 
@@ -47,9 +49,7 @@ export function formatUnlockedDate(iso: string) {
     return '';
   }
 
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  return `${day}/${month}/${date.getFullYear()}`;
+  return formatShortDate(date);
 }
 
 // Menor barra de um dia com alguma atividade, para ela não sumir ao lado

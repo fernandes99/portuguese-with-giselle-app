@@ -1,14 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import type { RankingPeriod } from '@/services/ranking';
 import { formatPeriod } from '@/utils/ranking';
 
-const OPTIONS: { value: RankingPeriod; label: string }[] = [
-  { value: 'month', label: 'Este mês' },
-  { value: 'total', label: 'Total' },
-];
+const OPTIONS = [
+  { value: 'month', label: 'thisMonth' },
+  { value: 'total', label: 'total' },
+] as const;
 
 // O seletor em pílula e, embaixo, o período que a lista cobre. As datas só
 // aparecem com a lista carregada; até lá, a linha fica vazia.
@@ -25,6 +26,8 @@ export function PeriodSelector({
   periodEnd: string | null;
   isLoaded: boolean;
 }) {
+  const { t } = useTranslation();
+
   return (
     <View className="items-center gap-4">
       <View
@@ -49,7 +52,7 @@ export function PeriodSelector({
                     : 'font-poppins text-gray-600'
                 }`}
               >
-                {option.label}
+                {t(`account.ranking.${option.label}`)}
               </Text>
             </Pressable>
           );

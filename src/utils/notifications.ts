@@ -1,6 +1,7 @@
 import type { Href, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 
+import { t } from '@/lib/i18n';
 import type { NotificationLink } from '@/services/notifications';
 
 // Abre o destino de uma notificação. O caminho da tela vem do backend como
@@ -39,7 +40,7 @@ export function parseNotificationLink(value: unknown): NotificationLink | null {
 // Rótulo do sino para o leitor de tela
 export function getBellLabel(unread: number) {
   if (unread === 0) {
-    return 'Notificações';
+    return t('account.notifications.title');
   }
-  return `Notificações, ${unread} ${unread === 1 ? 'não lida' : 'não lidas'}`;
+  return t('account.notifications.bellUnread', { count: unread });
 }

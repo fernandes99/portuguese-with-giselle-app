@@ -1,3 +1,4 @@
+import { translateAchievement } from '@/constants/achievements';
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
 
@@ -60,9 +61,17 @@ export interface Progress {
 }
 
 // `timeZone` é o fuso do aparelho (IANA): o backend conta os dias nele
-export function getProgress(token: string, timeZone: string) {
-  return api<Progress>(
+export async function getProgress(token: string, timeZone: string) {
+  const progress = await api<Progress>(
     `${API_ROUTES.progress}?timeZone=${encodeURIComponent(timeZone)}`,
     { token }
   );
+
+  return {
+    ...progress,
+    achievements: {
+      ...progress.achievements,
+      items: progress.achievements.items.map(translateAchievement),
+    },
+  };
 }

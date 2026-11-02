@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import teacherAvatar from '@assets/teacher-avatar.jpg';
@@ -58,6 +59,8 @@ export function StudentMessage({
   createdAt,
   onRetry,
 }: StudentMessageProps) {
+  const { t } = useTranslation();
+
   return (
     <View className="max-w-[88%] items-end self-end">
       <View
@@ -73,7 +76,7 @@ export function StudentMessage({
           accessibilityLiveRegion="polite"
           className="mt-1 font-poppins text-[11px] text-gray-500"
         >
-          Enviando...
+          {t('account.teacher.sending')}
         </Text>
       ) : null}
 
@@ -84,7 +87,7 @@ export function StudentMessage({
           </Text>
           <Ionicons name="checkmark" size={13} color={colors.green} />
           <Text className="font-poppins text-[11px] text-gray-500">
-            Enviada
+            {t('account.teacher.sent')}
           </Text>
         </View>
       ) : null}
@@ -95,11 +98,11 @@ export function StudentMessage({
             accessibilityLiveRegion="polite"
             className="font-poppins text-[11px] text-red-700"
           >
-            Não foi possível enviar
+            {t('account.teacher.sendError')}
           </Text>
           <Pressable accessibilityRole="button" onPress={onRetry} hitSlop={8}>
             <Text className="font-poppins-semibold text-xs text-green-700 underline">
-              Tentar de novo
+              {t('common.retry')}
             </Text>
           </Pressable>
         </View>

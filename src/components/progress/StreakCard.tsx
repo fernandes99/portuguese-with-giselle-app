@@ -1,5 +1,6 @@
 import streakMascot from '@assets/streak-mascot.png';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Image, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -36,9 +37,15 @@ function DayMark({
   isToday: boolean;
   isFuture: boolean;
 }) {
+  const { t } = useTranslation();
+
   const weekday = getWeekday(date);
   const day = Number(date.slice(8));
-  const status = studied ? 'estudou' : practiced ? 'praticou' : 'sem estudo';
+  const status = studied
+    ? t('account.progress.studied')
+    : practiced
+      ? t('account.progress.practiced')
+      : t('account.progress.noStudy');
 
   let circle: string;
   let number: string;
@@ -94,6 +101,8 @@ export function StreakCard({
   activity,
   today,
 }: StreakCardProps) {
+  const { t } = useTranslation();
+
   const practicedDates = new Set(
     activity
       .filter((day) => day.lessons + day.activities + day.practices > 0)
@@ -104,7 +113,10 @@ export function StreakCard({
     <View className="gap-4 rounded-3xl bg-orange-50 p-4">
       <View
         accessible
-        accessibilityLabel={`Sequência atual: ${formatStreak(current)}. Melhor sequência: ${formatStreak(best)}`}
+        accessibilityLabel={t('account.progress.streakLabel', {
+          current: formatStreak(current),
+          best: formatStreak(best),
+        })}
         className="flex-row items-center gap-3"
       >
         <View className="h-14 w-14 items-center justify-center rounded-full bg-orange-100">
@@ -116,11 +128,11 @@ export function StreakCard({
               {current}
             </Text>
             <Text className="font-poppins-semibold text-base text-gray-900">
-              {current === 1 ? 'dia seguido' : 'dias seguidos'}
+              {t('account.progress.inARow', { count: current })}
             </Text>
           </View>
           <Text className="font-poppins text-sm text-gray-500">
-            Melhor sequência: {formatStreak(best)}
+            {t('account.progress.bestStreak', { streak: formatStreak(best) })}
           </Text>
         </View>
         <Image

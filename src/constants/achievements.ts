@@ -17,6 +17,9 @@ import streak7Locked from '@assets/achievements/streak-7-locked.png';
 import streak30 from '@assets/achievements/streak-30.png';
 import streak30Locked from '@assets/achievements/streak-30-locked.png';
 
+import { t } from '@/lib/i18n';
+import type { Translations } from '@/locales/pt';
+
 interface AchievementImages {
   image: ImageSourcePropType;
   // A mesma medalha em cinza, para quando ainda não foi desbloqueada
@@ -35,3 +38,23 @@ export const ACHIEVEMENT_IMAGES: Record<string, AchievementImages> = {
   FIRST_DISCUSSION: { image: firstDiscussion, locked: firstDiscussionLocked },
   DISCUSSION_10: { image: discussion10, locked: discussion10Locked },
 };
+
+type AchievementCode = keyof Translations['account']['achievements']['items'];
+
+// Título e descrição no idioma do app, pelo código. Conquista nova, sem texto
+// em src/locales/, mostra o que veio do backend, que fica em inglês.
+export function translateAchievement<
+  T extends { code?: string; title: string; description?: string },
+>(achievement: T): T {
+  const { code } = achievement;
+  if (!code || !Object.hasOwn(ACHIEVEMENT_IMAGES, code)) {
+    return achievement;
+  }
+
+  const key = code as AchievementCode;
+  return {
+    ...achievement,
+    title: t(`account.achievements.items.${key}.title`),
+    description: t(`account.achievements.items.${key}.description`),
+  };
+}

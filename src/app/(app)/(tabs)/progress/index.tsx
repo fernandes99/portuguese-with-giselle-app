@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { type ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Pressable,
@@ -39,6 +40,8 @@ function Section({
   onSeeAll?: () => void;
   children: ReactNode;
 }) {
+  const { t } = useTranslation();
+
   return (
     <View className="gap-3">
       <View className="flex-row items-center justify-between gap-3">
@@ -55,13 +58,13 @@ function Section({
         {onSeeAll ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`Ver todas: ${title}`}
+            accessibilityLabel={t('account.progress.seeAllLabel', { title })}
             onPress={onSeeAll}
             hitSlop={8}
             className="flex-row items-center gap-0.5 active:opacity-70"
           >
             <Text className="font-poppins-semibold text-sm text-green-700">
-              Ver todas
+              {t('account.progress.seeAll')}
             </Text>
             <Ionicons name="chevron-forward" size={16} color={colors.green} />
           </Pressable>
@@ -79,12 +82,17 @@ function CourseProgress({
   course: Course;
   onPress: () => void;
 }) {
+  const { t } = useTranslation();
+
   const { percentage, isCompleted } = getCourseProgress(course);
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${course.title}, ${percentage}% concluído`}
+      accessibilityLabel={t('account.progress.coursePercent', {
+        title: course.title,
+        percentage,
+      })}
       onPress={onPress}
       className="gap-2 rounded-3xl bg-surface p-4 active:bg-surface-pressed"
     >
@@ -112,10 +120,12 @@ function CourseProgress({
 
 // Atalho para o ranking dos alunos pelo score
 function RankingCard({ onPress }: { onPress: () => void }) {
+  const { t } = useTranslation();
+
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Ranking: veja quem está no topo e a sua posição"
+      accessibilityLabel={t('account.ranking.cardLabel')}
       onPress={onPress}
       className="flex-row items-center gap-3 rounded-3xl bg-surface p-4 active:bg-surface-pressed"
     >
@@ -124,10 +134,10 @@ function RankingCard({ onPress }: { onPress: () => void }) {
       </View>
       <View className="flex-1">
         <Text className="font-poppins-semibold text-base text-gray-900">
-          Ranking
+          {t('account.ranking.title')}
         </Text>
         <Text className="font-poppins text-sm text-gray-500">
-          Veja quem está no topo e a sua posição
+          {t('account.ranking.cardText')}
         </Text>
       </View>
       <Ionicons name="chevron-forward" size={20} color={colors.gray} />
@@ -139,6 +149,8 @@ function RankingCard({ onPress }: { onPress: () => void }) {
 // números do aluno, a atividade dos últimos dias, as conquistas e o andamento
 // de cada curso
 export default function ProgressScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { progress, courses, error, refreshing, refresh } = useProgress();
   const [achievement, setAchievement] = useState<Achievement | null>(null);
@@ -166,17 +178,21 @@ export default function ProgressScreen() {
 
         <View>
           <Text className="font-poppins-bold text-3xl text-gray-900">
-            Progresso
+            {t('entry.tabs.progress')}
           </Text>
           <Text className="mt-1 font-poppins text-base text-gray-600">
-            Acompanhe o quanto você já avançou.
+            {t('account.progress.subtitle')}
           </Text>
         </View>
 
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -196,13 +212,13 @@ export default function ProgressScreen() {
               <View className="flex-row gap-3">
                 <StatCard
                   value={`${progress.stats.completedModules}/${progress.stats.totalModules}`}
-                  label="Módulos Completos"
+                  label={t('account.progress.completedModules')}
                   icon="book"
                   tone="blue"
                 />
                 <StatCard
                   value={formatStudyTime(progress.stats.studyMinutes)}
-                  label="Horas Estudadas"
+                  label={t('account.progress.studyHours')}
                   icon="time"
                   tone="green"
                 />
@@ -210,27 +226,30 @@ export default function ProgressScreen() {
               <View className="flex-row gap-3">
                 <StatCard
                   value={`${progress.stats.completedLessons}/${progress.stats.totalLessons}`}
-                  label="Lições Completadas"
+                  label={t('account.progress.completedLessons')}
                   icon="ribbon"
                   tone="purple"
                 />
                 <StatCard
                   value={`${progress.achievements.unlocked}/${progress.achievements.total}`}
-                  label="Conquistas"
+                  label={t('account.achievements.title')}
                   icon="trophy"
                   tone="orange"
                 />
               </View>
             </View>
 
-            <Section title="Últimos 7 dias">
+            <Section title={t('account.progress.last7Days')}>
               <ActivityChart activity={progress.activity} />
             </Section>
 
             {progress.achievements.total > 0 ? (
               <Section
-                title="Conquistas"
-                detail={`${progress.achievements.unlocked} de ${progress.achievements.total}`}
+                title={t('account.achievements.title')}
+                detail={t('account.achievements.progress', {
+                  current: progress.achievements.unlocked,
+                  target: progress.achievements.total,
+                })}
                 onSeeAll={() => router.push('/achievements')}
               >
                 <AchievementStrip
@@ -243,7 +262,7 @@ export default function ProgressScreen() {
         ) : null}
 
         {coursesWithLessons?.length ? (
-          <Section title="Meus cursos">
+          <Section title={t('entry.profile.courses')}>
             {coursesWithLessons.map((course) => (
               <CourseProgress
                 key={course.id}

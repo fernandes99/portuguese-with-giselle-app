@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text } from 'react-native';
 
 import { AchievementBadge } from '@/components/achievements/AchievementBadge';
@@ -12,6 +13,8 @@ export function AchievementStrip({
   achievements: Achievement[];
   onSelect: (achievement: Achievement) => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <ScrollView
       horizontal
@@ -23,7 +26,12 @@ export function AchievementStrip({
         <Pressable
           key={achievement.code}
           accessibilityRole="button"
-          accessibilityLabel={`${achievement.title}, ${achievement.unlockedAt ? 'desbloqueada' : 'não desbloqueada'}`}
+          accessibilityLabel={t(
+            achievement.unlockedAt
+              ? 'account.achievements.itemUnlocked'
+              : 'account.achievements.itemLocked',
+            { title: achievement.title }
+          )}
           onPress={() => onSelect(achievement)}
           className="w-24 items-center gap-2 active:opacity-70"
         >

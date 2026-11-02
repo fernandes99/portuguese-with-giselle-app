@@ -1,4 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -6,6 +7,8 @@ import { colors } from '@/constants/theme';
 
 // Bloco do alto da tela de planos: a chamada de venda e o botão de fechar
 export function PlansHero({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
 
   return (
@@ -15,7 +18,7 @@ export function PlansHero({ onClose }: { onClose: () => void }) {
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Fechar"
+        accessibilityLabel={t('common.close')}
         onPress={onClose}
         hitSlop={8}
         className="h-10 w-10 items-center justify-center self-end rounded-full bg-white/15 active:bg-white/25"
@@ -31,11 +34,10 @@ export function PlansHero({ onClose }: { onClose: () => void }) {
           accessibilityRole="header"
           className="text-center font-poppins-bold text-[26px] leading-8 text-white"
         >
-          Fale português com confiança
+          {t('account.plans.heroTitle')}
         </Text>
         <Text className="text-center font-poppins text-base leading-6 text-green-50">
-          Aulas completas, prática todos os dias e a professora Giselle ao seu
-          lado.
+          {t('account.plans.heroText')}
         </Text>
       </View>
     </View>

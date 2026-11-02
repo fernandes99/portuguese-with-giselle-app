@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -34,10 +35,12 @@ export function SubscriptionCard({
   onManage,
   onSeePlans,
 }: SubscriptionCardProps) {
+  const { t } = useTranslation();
+
   return (
     <View className="gap-3 rounded-2xl border border-gray-200 bg-white p-4">
       <Text className="font-poppins-semibold text-xs uppercase text-gray-500">
-        Assinatura
+        {t('account.billing.subscription')}
       </Text>
 
       {subscription ? (
@@ -64,10 +67,10 @@ export function SubscriptionCard({
             <View className="gap-2">
               <Button
                 variant="outline"
-                label="Gerenciar assinatura"
+                label={t('account.billing.manage')}
                 loading={managing}
                 onPress={onManage}
-                accessibilityLabel="Gerenciar assinatura, abre o portal de pagamentos"
+                accessibilityLabel={t('account.billing.manageLabel')}
               />
               {manageError ? (
                 <Text className="font-poppins text-sm text-red-700">
@@ -80,10 +83,13 @@ export function SubscriptionCard({
       ) : (
         <>
           <Text className="font-poppins text-base text-gray-700">
-            Você está no plano gratuito.
+            {t('account.billing.freePlan')}
           </Text>
           {canSeePlans ? (
-            <Button label="Ver planos" onPress={onSeePlans} />
+            <Button
+              label={t('account.billing.seePlans')}
+              onPress={onSeePlans}
+            />
           ) : null}
         </>
       )}

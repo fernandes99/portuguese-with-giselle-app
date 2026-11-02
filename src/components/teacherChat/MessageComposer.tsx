@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -15,6 +16,8 @@ interface MessageComposerProps {
 // Campo de mensagem fixo no rodapé. Nunca trava: uma mensagem em envio não
 // impede a próxima.
 export function MessageComposer({ maxLength, onSend }: MessageComposerProps) {
+  const { t } = useTranslation();
+
   const [text, setText] = useState('');
   const canSend = text.trim() !== '';
   const remaining = maxLength - text.length;
@@ -32,10 +35,10 @@ export function MessageComposer({ maxLength, onSend }: MessageComposerProps) {
     <View className="border-t border-gray-200 bg-white px-4 py-3">
       <View className="flex-row items-end gap-2">
         <TextInput
-          accessibilityLabel="Mensagem"
+          accessibilityLabel={t('practice.chat.message')}
           value={text}
           onChangeText={setText}
-          placeholder="Escreva sua mensagem..."
+          placeholder={t('account.teacher.placeholder')}
           placeholderTextColor={colors.placeholder}
           multiline
           maxLength={maxLength}
@@ -44,7 +47,7 @@ export function MessageComposer({ maxLength, onSend }: MessageComposerProps) {
         />
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Enviar"
+          accessibilityLabel={t('practice.chat.send')}
           accessibilityState={{ disabled: !canSend }}
           disabled={!canSend}
           onPress={handleSend}
@@ -60,7 +63,7 @@ export function MessageComposer({ maxLength, onSend }: MessageComposerProps) {
 
       {remaining <= COUNTER_THRESHOLD ? (
         <Text className="mt-1 text-right font-poppins text-[11px] text-gray-500">
-          {remaining} caracteres restantes
+          {t('account.teacher.charactersLeft', { count: remaining })}
         </Text>
       ) : null}
     </View>

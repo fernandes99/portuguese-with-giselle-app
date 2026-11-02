@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import { AchievementBadge } from '@/components/achievements/AchievementBadge';
@@ -19,6 +20,8 @@ export function AchievementSheet({
   achievement: Achievement | null;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
+
   const bottomInset = useModalBottomInset();
   // A última aberta continua na folha enquanto ela desce ao fechar
   const shown = useRef<Achievement | null>(null);
@@ -36,7 +39,7 @@ export function AchievementSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Fechar a conquista"
+          accessibilityLabel={t('account.achievements.close')}
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -48,7 +51,7 @@ export function AchievementSheet({
           <View className="items-end">
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Fechar a conquista"
+              accessibilityLabel={t('account.achievements.close')}
               onPress={onClose}
               hitSlop={12}
               className="h-9 w-9 items-center justify-center rounded-full bg-surface active:bg-surface-pressed"
@@ -67,6 +70,8 @@ export function AchievementSheet({
 }
 
 function AchievementDetail({ achievement }: { achievement: Achievement }) {
+  const { t } = useTranslation();
+
   const date = achievement.unlockedAt
     ? formatUnlockedDate(achievement.unlockedAt)
     : '';
@@ -94,17 +99,22 @@ function AchievementDetail({ achievement }: { achievement: Achievement }) {
         <View className="flex-row items-center gap-2 rounded-full bg-green-100 px-4 py-2">
           <Ionicons name="checkmark-circle" size={18} color={colors.green} />
           <Text className="font-poppins-semibold text-sm text-green-800">
-            {date ? `Conquistada em ${date}` : 'Conquistada'}
+            {date
+              ? t('account.achievements.earnedOn', { date })
+              : t('account.achievements.earned')}
           </Text>
         </View>
       ) : (
         <View className="w-full gap-2 rounded-3xl bg-surface p-4">
           <View className="flex-row items-baseline justify-between gap-3">
             <Text className="font-poppins-semibold text-sm text-gray-900">
-              Ainda não desbloqueada
+              {t('account.achievements.notUnlocked')}
             </Text>
             <Text className="font-poppins-semibold text-sm text-gray-500">
-              {achievement.current} de {achievement.target}
+              {t('account.achievements.progress', {
+                current: achievement.current,
+                target: achievement.target,
+              })}
             </Text>
           </View>
           <ProgressBar percentage={percentage} onGray />

@@ -2,6 +2,7 @@ import achievementSound from '@assets/sounds/achievement.wav';
 import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -15,6 +16,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 
+import { translateAchievement } from '@/constants/achievements';
 import { colors } from '@/constants/theme';
 import { setAchievementHandler, type UnlockedAchievement } from '@/lib/api';
 
@@ -28,6 +30,8 @@ const HIDDEN_OFFSET = -160;
 // Fica montado por cima de toda a área logada e mostra uma conquista por vez;
 // as que chegarem juntas esperam na fila.
 export function AchievementToast() {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
   const reducedMotion = useReducedMotion();
   const player = useAudioPlayer(achievementSound);
@@ -96,11 +100,15 @@ export function AchievementToast() {
     return null;
   }
 
+  const achievement = translateAchievement(current);
+
   return (
     <Animated.View
       pointerEvents="none"
       accessibilityLiveRegion="polite"
-      accessibilityLabel={`Conquista desbloqueada: ${current.title}`}
+      accessibilityLabel={t('account.achievements.toastLabel', {
+        title: achievement.title,
+      })}
       className="absolute inset-x-4 flex-row items-center gap-3 rounded-2xl bg-gray-900 px-4 py-3"
       style={[{ top: insets.top + 8 }, style]}
     >
@@ -109,16 +117,16 @@ export function AchievementToast() {
       </View>
       <View className="flex-1">
         <Text className="font-poppins-medium text-xs text-orange-300">
-          Conquista desbloqueada!
+          {t('account.achievements.toast')}
         </Text>
         <Text
           numberOfLines={1}
           className="font-poppins-bold text-base text-white"
         >
-          {current.title}
+          {achievement.title}
         </Text>
         <Text numberOfLines={2} className="font-poppins text-xs text-gray-300">
-          {current.description}
+          {achievement.description}
         </Text>
       </View>
     </Animated.View>

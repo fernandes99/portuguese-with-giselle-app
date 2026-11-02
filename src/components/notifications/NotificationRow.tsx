@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import type { NotificationItem } from '@/services/notifications';
@@ -14,14 +15,16 @@ export function NotificationRow({
   notification,
   onPress,
 }: NotificationRowProps) {
+  const { t } = useTranslation();
+
   const isUnread = notification.readAt === null;
   const time = formatTimeAgo(notification.receivedAt);
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${isUnread ? 'Não lida. ' : ''}${notification.title}. ${notification.body}. ${time}`}
-      accessibilityHint="Abre a notificação"
+      accessibilityLabel={`${isUnread ? t('account.notifications.unread') : ''}${notification.title}. ${notification.body}. ${time}`}
+      accessibilityHint={t('account.notifications.openHint')}
       onPress={onPress}
       className={`flex-row gap-3 border-b border-gray-100 px-5 py-4 ${isUnread ? 'bg-green-50 active:bg-green-100' : 'bg-white active:bg-gray-50'}`}
     >

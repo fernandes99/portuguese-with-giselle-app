@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -30,9 +31,11 @@ export function PlansFooter({
   error,
   onSubscribe,
 }: PlansFooterProps) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
 
-  let content = <Note>Você já tem o plano Premium.</Note>;
+  let content = <Note>{t('account.plans.hasPremium')}</Note>;
 
   if (canSubscribe && plan) {
     content = (
@@ -47,17 +50,17 @@ export function PlansFooter({
         ) : null}
         <Button
           size="lg"
-          label={`Assinar o ${plan.name}`}
+          label={t('account.plans.subscribe', { plan: plan.name })}
           loading={paying}
           onPress={onSubscribe}
         />
         <Text className="text-center font-poppins text-xs text-gray-500">
-          Pagamento seguro pelo Stripe. Cancele quando quiser.
+          {t('account.plans.secure')}
         </Text>
       </>
     );
   } else if (canSubscribe) {
-    content = <Note>O plano não está disponível no momento.</Note>;
+    content = <Note>{t('account.plans.unavailable')}</Note>;
   }
 
   return (

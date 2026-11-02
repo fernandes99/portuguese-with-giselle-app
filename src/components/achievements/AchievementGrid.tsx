@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { AchievementBadge } from '@/components/achievements/AchievementBadge';
@@ -30,6 +31,8 @@ function GridCell({
   achievement: Achievement;
   onPress: (achievement: Achievement) => void;
 }) {
+  const { t } = useTranslation();
+
   const isUnlocked = achievement.unlockedAt !== null;
   const percentage = achievement.target
     ? Math.round((achievement.current / achievement.target) * 100)
@@ -40,8 +43,12 @@ function GridCell({
       accessibilityRole="button"
       accessibilityLabel={
         isUnlocked
-          ? `${achievement.title}, desbloqueada`
-          : `${achievement.title}, ${achievement.current} de ${achievement.target}`
+          ? t('account.achievements.itemUnlocked', { title: achievement.title })
+          : t('account.achievements.itemProgress', {
+              title: achievement.title,
+              current: achievement.current,
+              target: achievement.target,
+            })
       }
       onPress={() => onPress(achievement)}
       className="items-center gap-2 rounded-3xl py-2 active:bg-surface"

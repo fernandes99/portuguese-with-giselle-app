@@ -1,11 +1,7 @@
+import { t } from '@/lib/i18n';
 import type { User } from '@/services/auth';
 import type { Plan, PlanPrice, PlanTier } from '@/services/plans';
 import { formatPrice } from '@/utils/privateLessons';
-
-const TIER_NAMES: Record<PlanTier, string> = {
-  free: 'Gratuito',
-  premium: 'Premium',
-};
 
 // Quem vê o botão "Seja Premium": só o aluno gratuito. Para as outras
 // contas não há o que vender.
@@ -20,16 +16,20 @@ export function formatPlanPrice(price: PlanPrice) {
 
 // "/mês"
 export function formatPlanInterval(interval: PlanPrice['interval']) {
-  return interval === 'year' ? '/ano' : '/mês';
+  return interval === 'year'
+    ? t('account.plans.perYearShort')
+    : t('account.plans.perMonthShort');
 }
 
 // "por mês", para o leitor de tela
 export function formatPlanIntervalLong(interval: PlanPrice['interval']) {
-  return interval === 'year' ? 'por ano' : 'por mês';
+  return interval === 'year'
+    ? t('account.plans.perYear')
+    : t('account.plans.perMonth');
 }
 
 export function getTierName(tier: PlanTier) {
-  return TIER_NAMES[tier];
+  return t(`account.plans.${tier}`);
 }
 
 // Planos que têm preço: os que aparecem como cartão

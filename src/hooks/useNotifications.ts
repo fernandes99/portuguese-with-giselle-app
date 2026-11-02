@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotificationsUnread } from '@/contexts/NotificationsContext';
 import { getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import {
   getNotifications,
   markAllNotificationsRead,
@@ -41,7 +42,7 @@ export function useNotifications() {
       setUnread(page.unread);
     } catch (err) {
       if (request.current === current) {
-        setError(getErrorMessage(err, 'Erro ao carregar as notificações.'));
+        setError(getErrorMessage(err, t('account.notifications.loadError')));
       }
     }
   }, [token, setUnread]);
@@ -79,7 +80,7 @@ export function useNotifications() {
       setUnread(page.unread);
     } catch (err) {
       if (request.current === current) {
-        setError(getErrorMessage(err, 'Erro ao carregar as notificações.'));
+        setError(getErrorMessage(err, t('account.notifications.loadError')));
       }
     } finally {
       setIsLoadingMore(false);
@@ -104,7 +105,7 @@ export function useNotifications() {
           ) ?? null
       );
     } catch (err) {
-      setError(getErrorMessage(err, 'Não foi possível marcar como lidas.'));
+      setError(getErrorMessage(err, t('account.notifications.markError')));
     } finally {
       setIsMarkingAll(false);
     }

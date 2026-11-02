@@ -1,19 +1,6 @@
+import { t } from '@/lib/i18n';
+import { formatDayMonth, formatLongDate } from '@/utils/date';
 import type { User } from '@/services/auth';
-
-const MONTHS = [
-  'jan.',
-  'fev.',
-  'mar.',
-  'abr.',
-  'mai.',
-  'jun.',
-  'jul.',
-  'ago.',
-  'set.',
-  'out.',
-  'nov.',
-  'dez.',
-];
 
 // O chat com a professora só não vale para o aluno gratuito; o backend
 // aplica a mesma regra. Contas da equipe também podem escrever por aqui.
@@ -44,14 +31,13 @@ export function formatDayLabel(isoDate: string, now = new Date()) {
   yesterday.setDate(now.getDate() - 1);
 
   if (date.toDateString() === now.toDateString()) {
-    return 'Hoje';
+    return t('account.time.today');
   }
   if (date.toDateString() === yesterday.toDateString()) {
-    return 'Ontem';
+    return t('account.time.yesterday');
   }
 
-  const label = `${date.getDate()} de ${MONTHS[date.getMonth()]}`;
   return date.getFullYear() === now.getFullYear()
-    ? label
-    : `${label} de ${date.getFullYear()}`;
+    ? formatDayMonth(date)
+    : formatLongDate(date);
 }

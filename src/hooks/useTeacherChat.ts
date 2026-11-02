@@ -5,6 +5,7 @@ import { AppState } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTeacherChatUnread } from '@/contexts/TeacherChatUnreadContext';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import {
   getTeacherChat,
   sendTeacherChatMessage,
@@ -99,7 +100,7 @@ export function useTeacherChat(enabled: boolean) {
         return;
       }
       if (!hasLoaded.current) {
-        setError(getErrorMessage(err, 'Erro ao carregar as mensagens.'));
+        setError(getErrorMessage(err, t('account.teacher.loadError')));
       }
     }
   }, [token, enabled, clearUnread, handleAccessError]);

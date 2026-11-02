@@ -1,13 +1,15 @@
+import { getLocale, t } from '@/lib/i18n';
+
 const TIME_ZONE = 'America/Sao_Paulo';
 
 // 1621 → "1.621"
 export function formatScore(score: number) {
-  return score.toLocaleString('pt-BR');
+  return score.toLocaleString(getLocale());
 }
 
 // 4 → "4º"
 export function formatPosition(position: number) {
-  return `${position}º`;
+  return t('account.ranking.position', { position });
 }
 
 // O mês do ranking, no horário de Brasília: "De 01 a 31 out 2026". O fim que
@@ -17,20 +19,23 @@ export function formatPeriod(
   periodEnd: string | null
 ) {
   if (!periodStart || !periodEnd) {
-    return 'Desde o início';
+    return t('account.ranking.allTime');
   }
 
   const start = new Date(periodStart);
   const end = new Date(new Date(periodEnd).getTime() - 1);
   const part = (date: Date, options: Intl.DateTimeFormatOptions) =>
-    new Intl.DateTimeFormat('pt-BR', {
+    new Intl.DateTimeFormat(getLocale(), {
       timeZone: TIME_ZONE,
       ...options,
     }).format(date);
   // "out." vira "out"
   const month = part(end, { month: 'short' }).replace('.', '');
 
-  return `De ${part(start, { day: '2-digit' })} a ${part(end, {
-    day: '2-digit',
-  })} ${month} ${part(end, { year: 'numeric' })}`;
+  return t('account.ranking.period', {
+    start: part(start, { day: '2-digit' }),
+    end: part(end, { day: '2-digit' }),
+    month,
+    year: part(end, { year: 'numeric' }),
+  });
 }

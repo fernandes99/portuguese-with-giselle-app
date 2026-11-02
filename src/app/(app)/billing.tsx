@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -24,16 +25,16 @@ import { ApiError, getErrorMessage } from '@/lib/api';
 import { createBillingPortal, getBilling } from '@/services/billing';
 import { canSeePlans } from '@/utils/plans';
 
-const LOAD_ERROR = 'Não foi possível carregar seus pagamentos.';
-
 // Pagamentos do aluno: a assinatura, o cartão, o saldo de aulas
 // particulares e o histórico de tudo o que foi pago (assinatura e aulas)
 export default function BillingScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { token, user, signOut } = useAuth();
   const { data, error, refreshing, refresh, reload } = useApiQuery(
     getBilling,
-    LOAD_ERROR
+    t('account.billing.loadError')
   );
   const [managing, setManaging] = useState(false);
   const [manageError, setManageError] = useState('');
@@ -56,9 +57,7 @@ export default function BillingScreen() {
         await signOut();
         return;
       }
-      setManageError(
-        getErrorMessage(err, 'Não foi possível abrir o portal de pagamentos.')
-      );
+      setManageError(getErrorMessage(err, t('account.billing.portalError')));
     } finally {
       setManaging(false);
     }
@@ -66,7 +65,7 @@ export default function BillingScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Pagamentos" />
+      <LessonHeader title={t('entry.profile.billing')} />
 
       {!data && !error ? (
         <View className="flex-1 items-center justify-center">
@@ -87,7 +86,11 @@ export default function BillingScreen() {
           {error ? (
             <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
               <Text className="font-poppins text-sm text-red-700">{error}</Text>
-              <Button variant="link" label="Tentar de novo" onPress={refresh} />
+              <Button
+                variant="link"
+                label={t('common.retry')}
+                onPress={refresh}
+              />
             </View>
           ) : null}
 
@@ -112,11 +115,11 @@ export default function BillingScreen() {
 
               <View className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
                 <Text className="px-4 pb-2 pt-4 font-poppins-semibold text-xs uppercase text-gray-500">
-                  Histórico
+                  {t('account.billing.history')}
                 </Text>
                 {data.payments.length === 0 ? (
                   <Text className="px-4 pb-4 font-poppins text-sm text-gray-600">
-                    Nenhum pagamento ainda.
+                    {t('account.billing.noPayments')}
                   </Text>
                 ) : (
                   data.payments.map((payment) => (

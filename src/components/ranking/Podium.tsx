@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -6,7 +7,6 @@ import type { RankingEntry } from '@/services/ranking';
 import { formatPosition, formatScore } from '@/utils/ranking';
 
 import { RankingAvatar } from './RankingAvatar';
-import { STUDENT_FALLBACK_NAME } from './RankingRow';
 import { ScoreValue } from './ScoreValue';
 
 // A medalha de cada posição: ouro, prata e bronze
@@ -19,6 +19,8 @@ const MEDALS: Record<number, { circle: string; text: string }> = {
 // Os 3 primeiros, na ordem 2º, 1º, 3º. O 1º fica mais alto, com a foto maior,
 // o anel verde e a coroa.
 export function Podium({ entries }: { entries: RankingEntry[] }) {
+  const { t } = useTranslation();
+
   const [first, second, third] = entries;
   const places = [second, first, third].filter(
     (entry): entry is RankingEntry => entry !== undefined
@@ -29,13 +31,19 @@ export function Podium({ entries }: { entries: RankingEntry[] }) {
       {places.map((entry) => {
         const isFirst = entry.position === 1;
         const medal = MEDALS[entry.position];
-        const name = entry.name ?? STUDENT_FALLBACK_NAME;
+        const name = entry.name ?? t('lesson.discussions.student');
 
         return (
           <View
             key={entry.position}
             accessible
-            accessibilityLabel={`${formatPosition(entry.position)} lugar, ${name}${entry.isMe ? ' (você)' : ''}, ${formatScore(entry.score)} pontos, ${entry.streak} dias seguidos`}
+            accessibilityLabel={t('account.ranking.entryLabel', {
+              position: formatPosition(entry.position),
+              name,
+              you: entry.isMe ? t('account.ranking.you') : '',
+              score: formatScore(entry.score),
+              streak: entry.streak,
+            })}
             // Os três dividem a largura, até 120 de cada, para caber no celular
             style={{ maxWidth: 120 }}
             className={`flex-1 items-center ${isFirst ? '' : 'mt-8'}`}
@@ -83,7 +91,7 @@ export function Podium({ entries }: { entries: RankingEntry[] }) {
             </Text>
             <Text className="font-poppins text-xs text-orange-600">
               🔥 {entry.streak}
-              {entry.isMe ? ' · você' : ''}
+              {entry.isMe ? t('account.ranking.youShort') : ''}
             </Text>
             <View className="mt-1">
               <ScoreValue score={entry.score} size={isFirst ? 'md' : 'sm'} />

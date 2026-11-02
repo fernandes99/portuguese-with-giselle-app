@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import {
   getHistory,
   type HistoryEntity,
@@ -49,7 +50,7 @@ export function useHistory(type: HistoryEntity | null) {
         setPage(nextPage);
       } catch (err) {
         if (request.current === current) {
-          setError(getErrorMessage(err, 'Erro ao carregar o histórico.'));
+          setError(getErrorMessage(err, t('account.history.loadError')));
         }
       }
     },

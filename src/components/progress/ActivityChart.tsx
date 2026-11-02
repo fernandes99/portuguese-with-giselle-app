@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -9,13 +10,15 @@ const CHART_HEIGHT = 140;
 
 // De cima para baixo na barra; a legenda mostra na ordem inversa
 const SERIES = [
-  { key: 'practices', label: 'Práticas', color: colors.green },
-  { key: 'activities', label: 'Exercícios', color: colors.purple },
-  { key: 'lessons', label: 'Aulas', color: colors.blue },
+  { key: 'practices', color: colors.green },
+  { key: 'activities', color: colors.purple },
+  { key: 'lessons', color: colors.blue },
 ] as const;
 
 // O que o aluno fez em cada um dos últimos 7 dias, em barras empilhadas
 export function ActivityChart({ activity }: { activity: DayActivity[] }) {
+  const { t } = useTranslation();
+
   const bars = getChartBars(activity, CHART_HEIGHT);
   const isEmpty = bars.every((bar) => bar.total === 0);
   const today = activity[activity.length - 1]?.date;
@@ -28,7 +31,7 @@ export function ActivityChart({ activity }: { activity: DayActivity[] }) {
           style={{ height: CHART_HEIGHT }}
         >
           <Text className="text-center font-poppins text-sm text-gray-500">
-            Nenhuma atividade nos últimos 7 dias
+            {t('account.progress.noActivity')}
           </Text>
         </View>
       ) : (
@@ -98,8 +101,10 @@ export function ActivityChart({ activity }: { activity: DayActivity[] }) {
                 style={{ backgroundColor: series.color }}
               />
               <Text className="font-poppins text-xs text-gray-600">
-                {series.label} ·{' '}
-                {bars.reduce((sum, bar) => sum + bar[series.key], 0)}
+                {t('account.progress.seriesLine', {
+                  label: t(`account.progress.series.${series.key}`),
+                  total: bars.reduce((sum, bar) => sum + bar[series.key], 0),
+                })}
               </Text>
             </View>
           ))}

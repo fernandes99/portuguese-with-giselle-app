@@ -1,23 +1,30 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import type { RankingEntry } from '@/services/ranking';
+import { formatStreak } from '@/utils/format';
 import { formatPosition, formatScore } from '@/utils/ranking';
 
 import { RankingAvatar } from './RankingAvatar';
 import { ScoreValue } from './ScoreValue';
 
-// Nome mostrado para a conta sem nome
-export const STUDENT_FALLBACK_NAME = 'Aluno';
-
 // Uma linha do ranking: posição, foto, nome com os dias seguidos embaixo e o
 // score. A do próprio aluno fica destacada.
 export function RankingRow({ entry }: { entry: RankingEntry }) {
-  const name = entry.name ?? STUDENT_FALLBACK_NAME;
+  const { t } = useTranslation();
+
+  const name = entry.name ?? t('lesson.discussions.student');
 
   return (
     <View
       accessible
-      accessibilityLabel={`${formatPosition(entry.position)} lugar, ${name}${entry.isMe ? ' (você)' : ''}, ${formatScore(entry.score)} pontos, ${entry.streak} dias seguidos`}
+      accessibilityLabel={t('account.ranking.entryLabel', {
+        position: formatPosition(entry.position),
+        name,
+        you: entry.isMe ? t('account.ranking.you') : '',
+        score: formatScore(entry.score),
+        streak: entry.streak,
+      })}
       className={`flex-row items-center gap-3 rounded-2xl px-3 py-3 ${
         entry.isMe ? 'border border-green-200 bg-green-50' : ''
       }`}
@@ -32,10 +39,12 @@ export function RankingRow({ entry }: { entry: RankingEntry }) {
           className="font-poppins-medium text-base text-gray-900"
         >
           {name}
-          {entry.isMe ? <Text className="text-gray-500"> (você)</Text> : null}
+          {entry.isMe ? (
+            <Text className="text-gray-500">{t('account.ranking.you')}</Text>
+          ) : null}
         </Text>
         <Text className="font-poppins text-xs text-orange-600">
-          🔥 {entry.streak} {entry.streak === 1 ? 'dia' : 'dias'}
+          🔥 {formatStreak(entry.streak)}
         </Text>
       </View>
       <ScoreValue score={entry.score} />

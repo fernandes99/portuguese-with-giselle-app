@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import type { Plan } from '@/services/plans';
@@ -40,6 +41,8 @@ export function PlanCard({
   disabled,
   onPress,
 }: PlanCardProps) {
+  const { t } = useTranslation();
+
   if (!plan.price) {
     return null;
   }
@@ -49,9 +52,9 @@ export function PlanCard({
 
   let tag: string | null = null;
   if (current) {
-    tag = 'Seu plano';
+    tag = t('account.plans.yourPlan');
   } else if (plan.highlighted) {
-    tag = 'Mais completo';
+    tag = t('account.plans.mostComplete');
   }
 
   return (
