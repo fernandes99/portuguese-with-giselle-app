@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { type ComponentProps, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import {
@@ -76,6 +77,8 @@ export function StudySession({
   flashcard: Flashcard;
   onExit: () => void;
 }) {
+  const { t } = useTranslation();
+
   const {
     round,
     position,
@@ -94,8 +97,8 @@ export function StudySession({
     return (
       <View className="flex-1 justify-center px-5">
         <EmptyState
-          title="Nenhum card disponível"
-          text="Este flashcard não possui cards ainda"
+          title={t('practice.flashcards.noCardsTitle')}
+          text={t('practice.flashcards.noCardsText')}
         />
       </View>
     );
@@ -103,7 +106,7 @@ export function StudySession({
 
   const saveError = hasSaveError ? (
     <Text className="text-center font-poppins text-xs text-red-700">
-      Algumas respostas não foram salvas. Verifique sua internet.
+      {t('practice.flashcards.saveError')}
     </Text>
   ) : null;
 
@@ -131,12 +134,12 @@ export function StudySession({
       <View className="gap-3 px-5 pt-2">
         <View className="flex-row items-center justify-between">
           <Counter
-            label="Aprendendo"
+            label={t('practice.flashcards.learning')}
             count={learningCount}
             className="border-orange-500 text-orange-600"
           />
           <Counter
-            label="Aprendi"
+            label={t('practice.flashcards.learnedIt')}
             count={learnedCount}
             className="border-green-600 text-green-700"
           />
@@ -144,7 +147,10 @@ export function StudySession({
 
         <View className="gap-1.5">
           <Text className="font-poppins text-xs text-gray-600">
-            Card {position + 1} de {total}
+            {t('practice.flashcards.position', {
+              position: position + 1,
+              total,
+            })}
           </Text>
           <ProgressBar percentage={Math.round((position / total) * 100)} />
         </View>
@@ -170,13 +176,13 @@ export function StudySession({
       <View className="flex-row justify-center gap-12 px-5 pb-4">
         <AnswerButton
           icon="close"
-          label="Ainda aprendendo"
+          label={t('practice.flashcards.stillLearning')}
           className="bg-orange-500"
           onPress={() => topCard.current?.answer(false)}
         />
         <AnswerButton
           icon="checkmark"
-          label="Aprendi"
+          label={t('practice.flashcards.learnedIt')}
           className="bg-green-600"
           onPress={() => topCard.current?.answer(true)}
         />

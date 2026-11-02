@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import type { ChatMessage } from '@/hooks/usePracticeChat';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import { transcribePracticeAnswer } from '@/services/practice';
 import {
   SIMULATION_ERROR_CODES,
@@ -29,8 +30,6 @@ export interface SimulationStartError {
   message: string;
   isDailyLimit: boolean;
 }
-
-const NOT_UNDERSTOOD = 'Não entendi, tente de novo.';
 
 // Campo opcional do backend: vazio vira ausente
 function optional(value: string | undefined) {
@@ -138,10 +137,7 @@ export function useSimulation(simulationId: string) {
         return { locked: true };
       }
       setStartError({
-        message: getErrorMessage(
-          err,
-          'Não foi possível começar a simulação. Tente novamente.'
-        ),
+        message: getErrorMessage(err, t('practice.simulations.startError')),
         isDailyLimit: code === SIMULATION_ERROR_CODES.dailyLimit,
       });
       return { locked: false };
@@ -213,7 +209,9 @@ export function useSimulation(simulationId: string) {
           code === SIMULATION_ERROR_CODES.monthlyLimit
         ) {
           setMessages([...history, { ...pending, status: 'sent' }]);
-          setEndNotice(getErrorMessage(err, 'Esta simulação já terminou.'));
+          setEndNotice(
+            getErrorMessage(err, t('practice.simulations.finished'))
+          );
           setStatus('NOT_COMPLETED');
           setPhase('finished');
           return;
@@ -224,7 +222,7 @@ export function useSimulation(simulationId: string) {
           {
             ...pending,
             status: 'failed',
-            error: getErrorMessage(err, 'Não foi possível enviar.'),
+            error: getErrorMessage(err, t('practice.chat.sendError')),
           },
         ]);
       } finally {
@@ -285,10 +283,7 @@ export function useSimulation(simulationId: string) {
       setMessages(history);
       return {
         ok: false,
-        message: getErrorMessage(
-          err,
-          'Não foi possível ouvir seu áudio. Tente de novo.'
-        ),
+        message: getErrorMessage(err, t('practice.chat.hearError')),
         code: errorCode(err),
       };
     }
@@ -298,7 +293,7 @@ export function useSimulation(simulationId: string) {
     }
     if (!text) {
       setMessages(history);
-      return { ok: false, message: NOT_UNDERSTOOD };
+      return { ok: false, message: t('practice.chat.notUnderstood') };
     }
 
     deliver(history, {

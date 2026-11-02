@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import { type Flashcard, getFlashcard } from '@/services/flashcards';
 
 // Carrega um conjunto de flashcards uma vez por abertura da tela. Não
@@ -25,9 +26,7 @@ export function useFlashcard(slug: string) {
         await signOut();
         return;
       }
-      setError(
-        getErrorMessage(err, 'Erro ao carregar o flashcard. Tente novamente.')
-      );
+      setError(getErrorMessage(err, t('practice.flashcards.loadOneError')));
     }
   }, [token, slug, signOut]);
 

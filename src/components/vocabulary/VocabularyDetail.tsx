@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, View } from 'react-native';
 import {
   GestureHandlerRootView,
@@ -69,6 +70,8 @@ function DetailContent({
   onToggleSaved,
   onOpenPlans,
 }: DetailContentProps) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
   const bottomInset = useModalBottomInset();
   const { stop } = useActivityAudio();
@@ -85,7 +88,7 @@ function DetailContent({
       <View className="px-4 py-2">
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Fechar"
+          accessibilityLabel={t('common.close')}
           onPress={close}
           hitSlop={6}
           className="h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white active:bg-gray-50"
@@ -110,9 +113,11 @@ function DetailContent({
             </View>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={
-                isSaved ? 'Salvo. Tirar dos salvos' : 'Salvar'
-              }
+              accessibilityLabel={t(
+                isSaved
+                  ? 'practice.vocabulary.savedRemove'
+                  : 'practice.vocabulary.save'
+              )}
               accessibilityState={{ selected: isSaved }}
               onPress={onToggleSaved}
               hitSlop={6}
@@ -126,12 +131,15 @@ function DetailContent({
             </Pressable>
           </View>
           {item.termAudioUrl ? (
-            <AudioButton url={item.termAudioUrl} label="Ouvir" />
+            <AudioButton
+              url={item.termAudioUrl}
+              label={t('lesson.exercise.listen')}
+            />
           ) : null}
         </View>
 
         <View className="gap-2 rounded-2xl border border-gray-200 bg-white p-4">
-          <SectionLabel>Significado</SectionLabel>
+          <SectionLabel>{t('practice.vocabulary.meaning')}</SectionLabel>
           <Text className="font-poppins text-base text-gray-800">
             {item.meaning}
           </Text>
@@ -139,7 +147,7 @@ function DetailContent({
 
         {item.example ? (
           <View className="gap-2 rounded-2xl border border-gray-200 bg-white p-4">
-            <SectionLabel>Exemplo</SectionLabel>
+            <SectionLabel>{t('practice.vocabulary.example')}</SectionLabel>
             <Text className="font-poppins-semibold text-lg text-gray-900">
               “{item.example}”
             </Text>
@@ -149,7 +157,10 @@ function DetailContent({
               </Text>
             ) : null}
             {item.exampleAudioUrl ? (
-              <AudioButton url={item.exampleAudioUrl} label="Ouvir exemplo" />
+              <AudioButton
+                url={item.exampleAudioUrl}
+                label={t('practice.vocabulary.listenExample')}
+              />
             ) : null}
           </View>
         ) : null}

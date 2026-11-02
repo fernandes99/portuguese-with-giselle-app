@@ -1,5 +1,6 @@
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
+import { useTranslation } from 'react-i18next';
 import { Alert, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -27,6 +28,8 @@ export function LessonActions({
   contactEmail,
   onChanged,
 }: LessonActionsProps) {
+  const { t } = useTranslation();
+
   if (lesson.status !== 'scheduled') {
     return null;
   }
@@ -44,7 +47,7 @@ export function LessonActions({
     try {
       await Linking.openURL(lesson.joinUrl);
     } catch {
-      Alert.alert('Não foi possível abrir o link da aula.');
+      Alert.alert(t('practice.privateLessons.openLinkError'));
     }
   };
 
@@ -59,32 +62,41 @@ export function LessonActions({
   };
 
   const confirmCancel = () => {
-    Alert.alert('Cancelar esta aula?', 'A aula volta para o seu saldo.', [
-      { text: 'Manter aula', style: 'cancel' },
-      {
-        text: 'Cancelar aula',
-        style: 'destructive',
-        onPress: () => openChangePage(lesson.cancelUrl),
-      },
-    ]);
+    Alert.alert(
+      t('practice.privateLessons.cancelConfirm'),
+      t('practice.privateLessons.cancelText'),
+      [
+        { text: t('practice.privateLessons.keepLesson'), style: 'cancel' },
+        {
+          text: t('practice.privateLessons.cancelLesson'),
+          style: 'destructive',
+          onPress: () => openChangePage(lesson.cancelUrl),
+        },
+      ]
+    );
   };
 
   const sendEmail = async () => {
-    const subject = encodeURIComponent(`Aula particular de ${moment}`);
+    const subject = encodeURIComponent(
+      t('practice.privateLessons.emailSubject', { moment })
+    );
     try {
       await Linking.openURL(`mailto:${contactEmail}?subject=${subject}`);
     } catch {
-      Alert.alert('Fale com a professora Giselle', contactEmail);
+      Alert.alert(t('practice.privateLessons.talkToTeacher'), contactEmail);
     }
   };
 
   return (
     <View className="gap-3">
       {lesson.joinUrl ? (
-        <Button label="Entrar na aula" onPress={joinLesson} />
+        <Button
+          label={t('practice.privateLessons.join')}
+          onPress={joinLesson}
+        />
       ) : (
         <Text className="font-poppins text-sm text-gray-600">
-          O link da aula chega por email.
+          {t('practice.privateLessons.linkByEmail')}
         </Text>
       )}
 
@@ -93,16 +105,20 @@ export function LessonActions({
           <View className="flex-1">
             <Button
               variant="outline"
-              label="Remarcar"
-              accessibilityLabel={`Remarcar aula de ${moment}`}
+              label={t('practice.privateLessons.reschedule')}
+              accessibilityLabel={t('practice.privateLessons.rescheduleLabel', {
+                moment,
+              })}
               onPress={() => openChangePage(lesson.rescheduleUrl)}
             />
           </View>
           <View className="flex-1">
             <Button
               variant="outline"
-              label="Cancelar"
-              accessibilityLabel={`Cancelar aula de ${moment}`}
+              label={t('common.cancel')}
+              accessibilityLabel={t('practice.privateLessons.cancelLabel', {
+                moment,
+              })}
               onPress={confirmCancel}
             />
           </View>
@@ -112,10 +128,18 @@ export function LessonActions({
       {!canChange && !isNow ? (
         <View className="gap-2 rounded-lg bg-gray-100 p-3">
           <Text className="font-poppins text-sm text-gray-700">
-            {inTime ? '' : `Faltam menos de ${changeNoticeHours} horas. `}
-            Para remarcar ou cancelar, fale com a professora Giselle.
+            {inTime
+              ? ''
+              : `${t('practice.privateLessons.lessThanHours', {
+                  hours: changeNoticeHours,
+                })} `}
+            {t('practice.privateLessons.contactTeacher')}
           </Text>
-          <Button variant="outline" label="Enviar email" onPress={sendEmail} />
+          <Button
+            variant="outline"
+            label={t('practice.privateLessons.sendEmail')}
+            onPress={sendEmail}
+          />
         </View>
       ) : null}
     </View>

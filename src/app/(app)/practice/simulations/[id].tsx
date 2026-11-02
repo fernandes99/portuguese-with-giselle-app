@@ -7,6 +7,7 @@ import {
 import { usePreventRemove } from 'expo-router/react-navigation';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Alert,
@@ -56,10 +57,6 @@ import {
   REMAINING_MESSAGES_WARNING_AT,
 } from '@/utils/simulations';
 
-const AI_NOTICE =
-  'A personagem é uma IA e pode errar. Não compartilhe dados pessoais sensíveis.';
-const DAILY_LIMIT_MESSAGE =
-  'Você fez todas as simulações de hoje. Volte amanhã!';
 // A resposta falada é enviada sozinha depois disso, como no chat
 const MAX_VOICE_MS = 30_000;
 const VOICE_NOTICE_MS = 4000;
@@ -76,6 +73,8 @@ const SPEECH_MAX_WAIT_MS = 30_000;
 // segurando o microfone ou pelo teclado, como no chat; o aluno gratuito
 // conversa só por texto.
 export default function SimulationScreen() {
+  const { t } = useTranslation();
+
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const navigation = useNavigation();
@@ -99,7 +98,7 @@ export default function SimulationScreen() {
   );
   const { data, error, refresh, reload } = useApiQuery(
     fetchSimulation,
-    'Não foi possível carregar a simulação.'
+    t('practice.simulations.loadOneError')
   );
   const simulation = data ? data.simulation : getCachedSimulation(id);
 
@@ -274,12 +273,12 @@ export default function SimulationScreen() {
   // salva
   usePreventRemove(isPlaying && !sim.isOver, ({ data: event }) => {
     Alert.alert(
-      'Sair da simulação?',
-      'A conversa não é salva, e esta simulação conta como uma das de hoje.',
+      t('practice.simulations.exitConfirm'),
+      t('practice.simulations.exitText'),
       [
-        { text: 'Continuar', style: 'cancel' },
+        { text: t('common.continue'), style: 'cancel' },
         {
-          text: 'Sair',
+          text: t('practice.simulations.leave'),
           style: 'destructive',
           onPress: () => {
             voice.stop();
@@ -340,12 +339,12 @@ export default function SimulationScreen() {
     }
 
     Alert.alert(
-      'Microfone bloqueado',
-      'Permita o acesso ao microfone nas configurações para responder falando.',
+      t('practice.chat.micBlocked'),
+      t('practice.chat.micBlockedText'),
       [
-        { text: 'Agora não', style: 'cancel' },
+        { text: t('practice.chat.notNow'), style: 'cancel' },
         {
-          text: 'Abrir configurações',
+          text: t('lesson.vocabulary.openSettings'),
           onPress: () => Linking.openSettings(),
         },
       ]
@@ -355,15 +354,19 @@ export default function SimulationScreen() {
   if (!simulation) {
     return (
       <SafeAreaView className="flex-1 bg-background">
-        <LessonHeader title="Simulação" />
+        <LessonHeader title={t('practice.simulations.screenTitle')} />
         {error ? (
           <View className="m-5 gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : data ? (
           <View className="p-5">
-            <EmptyState title="Esta simulação não está mais disponível." />
+            <EmptyState title={t('practice.simulations.unavailable')} />
           </View>
         ) : (
           <View className="flex-1 items-center justify-center">
@@ -378,7 +381,7 @@ export default function SimulationScreen() {
     const limitMessage = sim.startError?.isDailyLimit
       ? sim.startError.message
       : data?.remainingToday === 0
-        ? DAILY_LIMIT_MESSAGE
+        ? t('practice.simulations.dailyLimit')
         : null;
     // Sem cabeçalho: a foto vai até o topo, com a barra de status clara
     return (
@@ -447,7 +450,9 @@ export default function SimulationScreen() {
           keyExtractor={(message) => message.id}
           keyboardShouldPersistTaps="handled"
           contentContainerClassName="gap-4 px-4 py-4"
-          ListHeaderComponent={<ChatNotice text={AI_NOTICE} />}
+          ListHeaderComponent={
+            <ChatNotice text={t('practice.simulations.aiNotice')} />
+          }
           renderItem={({ item }) => {
             if (item.role === 'notice') {
               return <ChatNotice text={item.content} />;
@@ -466,7 +471,7 @@ export default function SimulationScreen() {
                     isPremium && signature ? (
                       <ListenButton
                         state={voice.stateOf(item.id)}
-                        label="Ouvir a personagem"
+                        label={t('practice.simulations.listenCharacter')}
                         onPress={() =>
                           voice.toggle(
                             item.id,
@@ -493,7 +498,7 @@ export default function SimulationScreen() {
                   isPremium && correctedSignature && correction ? (
                     <ListenButton
                       state={voice.stateOf(correctedKey)}
-                      label="Ouvir a correção"
+                      label={t('practice.chat.listenCorrection')}
                       onPress={() =>
                         voice.toggle(
                           correctedKey,
@@ -528,7 +533,10 @@ export default function SimulationScreen() {
 
         {sim.isOver ? (
           <View className="bg-white px-5 py-4">
-            <Button label="Ver resultado" onPress={sim.finish} />
+            <Button
+              label={t('lesson.exercise.seeResult')}
+              onPress={sim.finish}
+            />
           </View>
         ) : (
           <>

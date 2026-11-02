@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -33,9 +34,11 @@ async function getBookingsScreen(token: string) {
 // Todos os agendamentos do aluno: as aulas agendadas e, depois, as
 // realizadas e canceladas. A situação de cada uma vem calculada do backend.
 export default function BookingsScreen() {
+  const { t } = useTranslation();
+
   const { data, error, refreshing, refresh, reload } = useApiQuery(
     getBookingsScreen,
-    'Erro ao carregar os agendamentos.'
+    t('practice.privateLessons.bookingsError')
   );
   const refreshSoon = useRefreshAfterBrowser(reload);
 
@@ -45,10 +48,10 @@ export default function BookingsScreen() {
     const previous = bookings.filter((item) => item.status !== 'scheduled');
 
     return [
-      { title: 'Agendadas', data: scheduled },
-      { title: 'Anteriores', data: previous },
+      { title: t('practice.privateLessons.scheduled'), data: scheduled },
+      { title: t('practice.privateLessons.previous'), data: previous },
     ].filter((section) => section.data.length > 0);
-  }, [data]);
+  }, [data, t]);
 
   const renderItem = useCallback(
     ({ item }: { item: PrivateLesson }) =>
@@ -65,7 +68,7 @@ export default function BookingsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Agendamentos" />
+      <LessonHeader title={t('practice.privateLessons.bookings')} />
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id}
@@ -93,14 +96,18 @@ export default function BookingsScreen() {
           error ? (
             <View className="mt-3 gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
               <Text className="font-poppins text-sm text-red-700">{error}</Text>
-              <Button variant="link" label="Tentar de novo" onPress={refresh} />
+              <Button
+                variant="link"
+                label={t('common.retry')}
+                onPress={refresh}
+              />
             </View>
           ) : undefined
         }
         ListEmptyComponent={
           data ? (
             <View className="mt-3">
-              <EmptyState title="Você ainda não agendou nenhuma aula." />
+              <EmptyState title={t('practice.privateLessons.noBookings')} />
             </View>
           ) : error ? undefined : (
             <View className="flex-1 items-center justify-center">

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
 import type { HoldToTalkState } from '@/hooks/useHoldToTalk';
+import { t } from '@/lib/i18n';
 import { speechRecognition } from '@/lib/speechRecognition';
 
 // Menos que isso é um toque, não uma fala: não envia (o mesmo da gravação)
@@ -176,7 +177,7 @@ export function useSpeechRecognitionHold({
     } catch {
       pressRef.current.released = true;
       finish(IDLE);
-      Alert.alert('Não foi possível ouvir', 'Tente novamente.');
+      Alert.alert(t('practice.chat.listenError'), t('practice.chat.tryAgain'));
     }
   }, [finish]);
 
@@ -230,7 +231,7 @@ export function useSpeechRecognitionHold({
         return;
       }
       finish(IDLE);
-      Alert.alert('Não foi possível ouvir', 'Tente novamente.');
+      Alert.alert(t('practice.chat.listenError'), t('practice.chat.tryAgain'));
     };
 
     const onEnd = () => {

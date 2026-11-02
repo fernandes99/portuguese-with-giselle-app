@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -37,6 +38,8 @@ export function SimulationIntro({
   onStart: () => void;
   onBack: () => void;
 }) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
   const [isRulesOpen, setIsRulesOpen] = useState(false);
   const count = simulation.tasks.length;
@@ -56,7 +59,7 @@ export function SimulationIntro({
           >
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Voltar"
+              accessibilityLabel={t('common.back')}
               onPress={onBack}
               hitSlop={8}
               className="h-9 w-9 items-center justify-center rounded-full bg-white/90 active:bg-white"
@@ -66,7 +69,7 @@ export function SimulationIntro({
             {rules ? (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Como funciona a simulação"
+                accessibilityLabel={t('practice.simulations.howItWorks')}
                 onPress={() => setIsRulesOpen(true)}
                 hitSlop={8}
                 className="h-9 w-9 items-center justify-center rounded-full bg-white/90 active:bg-white"
@@ -105,7 +108,7 @@ export function SimulationIntro({
             {simulation.description}
           </Text>
           <Text className="font-poppins text-sm text-gray-500">
-            Você vai conversar com:{' '}
+            {t('practice.simulations.talkingTo')}{' '}
             <Text className="font-poppins-semibold text-gray-900">
               {simulation.aiRole}
             </Text>
@@ -115,7 +118,7 @@ export function SimulationIntro({
         <View className="mx-5 gap-3 rounded-3xl border border-gray-200 bg-white p-4">
           <View className="flex-row items-center justify-between">
             <Text className="font-poppins-semibold text-base text-gray-900">
-              Seus objetivos
+              {t('practice.simulations.yourGoals')}
             </Text>
             <Text className="font-poppins text-sm text-gray-500">{count}</Text>
           </View>
@@ -139,11 +142,10 @@ export function SimulationIntro({
           </View>
           <View className="flex-1 gap-0.5">
             <Text className="font-poppins-semibold text-sm text-gray-900">
-              Feedback no final
+              {t('practice.simulations.feedbackTitle')}
             </Text>
             <Text className="font-poppins text-sm text-gray-600">
-              Ao terminar, você recebe um comentário sobre o seu desempenho, os
-              objetivos cumpridos e as frases corrigidas.
+              {t('practice.simulations.feedbackText')}
             </Text>
           </View>
         </View>
@@ -160,7 +162,7 @@ export function SimulationIntro({
               color={colors.green}
             />
             <Text className="flex-1 font-poppins-semibold text-sm text-gray-900">
-              Como funciona a simulação
+              {t('practice.simulations.howItWorks')}
             </Text>
             <Ionicons name="chevron-forward" size={18} color={colors.gray} />
           </Pressable>
@@ -174,7 +176,7 @@ export function SimulationIntro({
               {limitMessage}
             </Text>
             <Text className="text-center font-poppins text-xs text-gray-500">
-              Os limites voltam à meia-noite (horário de Brasília).
+              {t('practice.simulations.limitsReset')}
             </Text>
           </View>
         ) : (
@@ -188,7 +190,11 @@ export function SimulationIntro({
               </Text>
             ) : null}
             <Button
-              label={isStarting ? 'Preparando...' : 'Começar simulação'}
+              label={t(
+                isStarting
+                  ? 'practice.simulations.preparing'
+                  : 'practice.simulations.start'
+              )}
               loading={isStarting}
               onPress={onStart}
             />

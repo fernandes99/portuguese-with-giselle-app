@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -14,9 +15,6 @@ import {
   saveExplanationLanguage,
 } from '@/services/preferences';
 
-const LOAD_ERROR = 'Não foi possível carregar os idiomas.';
-const SAVE_ERROR = 'Não foi possível salvar o idioma.';
-
 // Escolha do idioma em que a Gisa explica os erros e traduz as falas. A
 // conversa continua em português e não recomeça: o idioma novo vale a
 // partir da próxima resposta.
@@ -25,8 +23,13 @@ export function ExplanationLanguageSelector({
 }: {
   onDone: () => void;
 }) {
+  const { t } = useTranslation();
+
   const { token } = useAuth();
-  const { data, error, refresh } = useApiQuery(getPreferences, LOAD_ERROR);
+  const { data, error, refresh } = useApiQuery(
+    getPreferences,
+    t('practice.chat.languageLoadError')
+  );
   // null até o aluno tocar numa opção: vale o idioma atual
   const [choice, setChoice] = useState<ExplanationLanguage | null>(null);
   const [saving, setSaving] = useState(false);
@@ -45,7 +48,7 @@ export function ExplanationLanguageSelector({
       await saveExplanationLanguage(token, selected);
       onDone();
     } catch (err) {
-      setSaveError(getErrorMessage(err, SAVE_ERROR));
+      setSaveError(getErrorMessage(err, t('practice.chat.languageSaveError')));
     } finally {
       setSaving(false);
     }
@@ -59,7 +62,11 @@ export function ExplanationLanguageSelector({
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : (
           <ActivityIndicator color={colors.green} />
@@ -72,8 +79,7 @@ export function ExplanationLanguageSelector({
     <View className="flex-1">
       <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-4">
         <Text className="font-poppins text-base text-gray-600">
-          A Gisa sempre conversa em português. Escolha em que idioma ela explica
-          seus erros e traduz as mensagens.
+          {t('practice.chat.languageText')}
         </Text>
 
         <View accessibilityRole="radiogroup" className="gap-3">
@@ -91,7 +97,7 @@ export function ExplanationLanguageSelector({
       </ScrollView>
 
       <FlowFooter
-        label="Salvar"
+        label={t('common.save')}
         onPress={save}
         disabled={!selected}
         loading={saving}

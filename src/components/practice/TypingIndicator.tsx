@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -37,6 +38,8 @@ function Dot({ delay }: { delay: number }) {
 
 // Conteúdo do balão da Gisa enquanto a resposta não chega
 export function TypingIndicator() {
+  const { t } = useTranslation();
+
   const reducedMotion = useReducedMotion();
 
   if (reducedMotion) {
@@ -49,7 +52,7 @@ export function TypingIndicator() {
 
   return (
     <View
-      accessibilityLabel="Gisa está digitando"
+      accessibilityLabel={t('practice.chat.typing')}
       className="h-6 flex-row items-center gap-1.5"
     >
       <Dot delay={0} />

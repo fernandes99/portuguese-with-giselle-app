@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { AudioButton } from '@/components/activity/ActivityAudio';
@@ -11,6 +12,8 @@ import type {
 // Certa: normal; trocada: a ouvida riscada e a certa ao lado; faltando: a
 // certa em vermelho, sublinhada
 function HeardWord({ word }: { word: PronunciationWord }) {
+  const { t } = useTranslation();
+
   if (word.status === 'ok') {
     return (
       <Text className="font-poppins text-xl text-gray-900">
@@ -33,7 +36,9 @@ function HeardWord({ word }: { word: PronunciationWord }) {
 
   return (
     <Text
-      accessibilityLabel={`${word.expected}, faltou`}
+      accessibilityLabel={t('practice.pronunciation.missing', {
+        word: word.expected,
+      })}
       className="font-poppins text-xl text-red-500 underline"
     >
       {word.expected}
@@ -48,12 +53,14 @@ export function PronunciationResult({
   evaluation: PronunciationEvaluation;
   termAudioUrl: string | null;
 }) {
+  const { t } = useTranslation();
+
   if (evaluation.result === 'correct') {
     return (
       <View className="flex-row items-center gap-3 rounded-2xl bg-green-50 p-4">
         <Ionicons name="checkmark-circle" size={28} color={colors.darkGreen} />
         <Text className="flex-1 font-poppins-semibold text-base text-green-700">
-          Muito bem! Um brasileiro entenderia você.
+          {t('practice.pronunciation.understood')}
         </Text>
       </View>
     );
@@ -64,7 +71,7 @@ export function PronunciationResult({
       {evaluation.result === 'incorrect' ? (
         <View className="gap-1">
           <Text className="font-poppins text-sm text-gray-500">
-            Entendemos:
+            {t('practice.pronunciation.weHeard')}
           </Text>
           <View className="flex-row flex-wrap items-baseline gap-x-2 gap-y-1">
             {evaluation.words.map((word, index) => (
@@ -75,11 +82,14 @@ export function PronunciationResult({
         </View>
       ) : (
         <Text className="font-poppins text-base text-gray-700">
-          Não conseguimos ouvir. Fale mais perto do microfone e tente de novo.
+          {t('practice.pronunciation.notHeard')}
         </Text>
       )}
       {termAudioUrl ? (
-        <AudioButton url={termAudioUrl} label="Ouvir a pronúncia" />
+        <AudioButton
+          url={termAudioUrl}
+          label={t('practice.pronunciation.listen')}
+        />
       ) : null}
     </View>
   );

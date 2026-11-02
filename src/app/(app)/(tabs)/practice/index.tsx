@@ -1,6 +1,7 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -30,16 +31,18 @@ function ChatCard({
   isPremiumOnly: boolean;
   onPress: () => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={
         isPremiumOnly
-          ? 'Chat com IA, exclusivo do plano Premium'
-          : 'Chat com IA'
+          ? t('practice.home.chatLocked')
+          : t('practice.home.chatTitle')
       }
       accessibilityHint={
-        isPremiumOnly ? 'Abre a tela do plano Premium' : undefined
+        isPremiumOnly ? t('practice.home.chatLockedHint') : undefined
       }
       onPress={onPress}
       className="gap-4 rounded-3xl bg-green-600 p-5 active:bg-green-700"
@@ -63,17 +66,16 @@ function ChatCard({
             </View>
           ) : null}
           <Text className="font-poppins-bold text-xl text-white">
-            Chat com IA
+            {t('practice.home.chatTitle')}
           </Text>
           <Text className="font-poppins text-sm leading-5 text-white/90">
-            Converse com a Gisa, sua parceira de conversação com IA, e receba
-            correções a cada frase.
+            {t('practice.home.chatDescription')}
           </Text>
         </View>
       </View>
       <View className="h-12 items-center justify-center rounded-2xl bg-white">
         <Text className="font-poppins-semibold text-base text-green-700">
-          {isPremiumOnly ? 'Ver Premium' : 'Conversar'}
+          {t(isPremiumOnly ? 'practice.home.seePremium' : 'practice.home.talk')}
         </Text>
       </View>
     </Pressable>
@@ -149,6 +151,8 @@ function HalfOption({
 // simulações, os flashcards, o vocabulário e as aulas particulares com a
 // professora
 export default function PracticeScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { user } = useAuth();
   const canChat = canUsePractice(user);
@@ -159,10 +163,10 @@ export default function PracticeScreen() {
         <TabTopBar />
         <View>
           <Text className="font-poppins-bold text-3xl text-gray-900">
-            Praticar
+            {t('entry.tabs.practice')}
           </Text>
           <Text className="mt-1 font-poppins text-base text-gray-600">
-            Escolha como treinar seu português.
+            {t('practice.home.subtitle')}
           </Text>
         </View>
 
@@ -173,28 +177,28 @@ export default function PracticeScreen() {
           />
           <WideOption
             icon="people"
-            title="Simulações"
-            description="Pratique situações do dia a dia, como pedir um café, e cumpra as tarefas."
+            title={t('practice.home.simulations')}
+            description={t('practice.home.simulationsDescription')}
             onPress={() => router.push('/practice/simulations')}
           />
           <View className="flex-row gap-3">
             <HalfOption
               icon="albums"
-              title="Flashcards"
-              description="Vire os cards e memorize"
+              title={t('practice.home.flashcards')}
+              description={t('practice.home.flashcardsDescription')}
               onPress={() => router.push('/practice/flashcards')}
             />
             <HalfOption
               icon="language"
-              title="Vocabulário"
-              description="Gírias e expressões com áudio"
+              title={t('practice.home.vocabulary')}
+              description={t('practice.home.vocabularyDescription')}
               onPress={() => router.push('/practice/vocabulary')}
             />
           </View>
           <WideOption
             icon="calendar"
-            title="Aulas particulares"
-            description="Aulas individuais com a professora Giselle."
+            title={t('practice.home.privateLessons')}
+            description={t('practice.home.privateLessonsDescription')}
             onPress={() => router.push('/practice/private-lessons')}
           />
         </View>

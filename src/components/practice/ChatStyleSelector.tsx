@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -14,9 +15,6 @@ import {
   saveChatStyle,
 } from '@/services/preferences';
 
-const LOAD_ERROR = 'Não foi possível carregar os estilos.';
-const SAVE_ERROR = 'Não foi possível salvar o estilo.';
-
 // Escolha de como a Gisa conversa. `first`: a primeira vez no chat, antes
 // da conversa; `edit`: troca pelo chat ou pelo Perfil. O estilo salvo vai
 // para a sessão, e o chat recomeça nele.
@@ -27,8 +25,13 @@ export function ChatStyleSelector({
   mode: 'first' | 'edit';
   onDone: () => void;
 }) {
+  const { t } = useTranslation();
+
   const { token, user, updateUser } = useAuth();
-  const { data, error, refresh } = useApiQuery(getPreferences, LOAD_ERROR);
+  const { data, error, refresh } = useApiQuery(
+    getPreferences,
+    t('practice.chat.styleLoadError')
+  );
   const [selected, setSelected] = useState<ChatStyle | null>(
     user?.chatStyle ?? null
   );
@@ -47,7 +50,7 @@ export function ChatStyleSelector({
       await updateUser({ chatStyle });
       onDone();
     } catch (err) {
-      setSaveError(getErrorMessage(err, SAVE_ERROR));
+      setSaveError(getErrorMessage(err, t('practice.chat.styleSaveError')));
     } finally {
       setSaving(false);
     }
@@ -61,7 +64,11 @@ export function ChatStyleSelector({
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : (
           <ActivityIndicator color={colors.green} />
@@ -78,11 +85,10 @@ export function ChatStyleSelector({
             accessibilityRole="header"
             className="font-poppins-bold text-2xl text-gray-900"
           >
-            Como você quer que a Gisa seja?
+            {t('practice.chat.styleTitle')}
           </Text>
           <Text className="font-poppins text-base text-gray-600">
-            A Gisa é uma IA que conversa com você em português. Escolha o jeito
-            dela; você pode mudar quando quiser.
+            {t('practice.chat.styleText2')}
           </Text>
         </View>
 
@@ -99,7 +105,9 @@ export function ChatStyleSelector({
       </ScrollView>
 
       <FlowFooter
-        label={mode === 'first' ? 'Começar' : 'Salvar'}
+        label={
+          mode === 'first' ? t('entry.preferences.start') : t('common.save')
+        }
         onPress={save}
         disabled={!selected}
         loading={saving}

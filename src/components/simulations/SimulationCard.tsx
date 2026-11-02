@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { PremiumBadge } from '@/components/premium/PremiumBadge';
@@ -23,6 +24,8 @@ export function SimulationCard({
   simulation: Simulation;
   onPress: () => void;
 }) {
+  const { t } = useTranslation();
+
   const badge = getCardBadge(simulation);
   const label = [
     simulation.title,
@@ -63,7 +66,7 @@ export function SimulationCard({
                 style={{ includeFontPadding: false }}
                 className="font-poppins-semibold text-[11px] leading-4 text-green-700"
               >
-                Feita
+                {t('practice.simulations.done')}
               </Text>
             </View>
           )}

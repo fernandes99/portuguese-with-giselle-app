@@ -1,6 +1,7 @@
 import { usePathname, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -23,13 +24,15 @@ const RESULT_PATH = '/practice/private-lessons/purchase';
 // Escolha de quantas aulas comprar. O pagamento acontece numa página do
 // Stripe, fora do app; ao voltar, a tela de resultado confere a compra.
 export default function BuyLessonsScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { token, signOut } = useAuth();
   const {
     data: summary,
     error: loadError,
     refresh,
-  } = useApiQuery(getPrivateLessons, 'Erro ao carregar as aulas particulares.');
+  } = useApiQuery(getPrivateLessons, t('practice.privateLessons.loadError'));
 
   const [quantity, setQuantity] = useState(1);
   const [paying, setPaying] = useState(false);
@@ -76,7 +79,7 @@ export default function BuyLessonsScreen() {
         await signOut();
         return;
       }
-      setError(getErrorMessage(err, 'Não foi possível iniciar o pagamento.'));
+      setError(getErrorMessage(err, t('practice.privateLessons.paymentError')));
     } finally {
       setPaying(false);
     }
@@ -84,14 +87,18 @@ export default function BuyLessonsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Comprar aulas" />
+      <LessonHeader title={t('practice.privateLessons.buyTitle')} />
       <ScrollView contentContainerClassName="flex-grow gap-6 px-5 pb-8 pt-4">
         {loadError ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">
               {loadError}
             </Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -99,10 +106,12 @@ export default function BuyLessonsScreen() {
           <>
             <View className="gap-1">
               <Text className="font-poppins-bold text-2xl text-gray-900">
-                Quantas aulas?
+                {t('practice.privateLessons.howMany')}
               </Text>
               <Text className="font-poppins text-base text-gray-600">
-                {formatPrice(summary.price)} por aula
+                {t('practice.privateLessons.perLesson', {
+                  price: formatPrice(summary.price),
+                })}
               </Text>
             </View>
 
@@ -124,8 +133,7 @@ export default function BuyLessonsScreen() {
             </View>
 
             <Text className="font-poppins text-sm text-gray-600">
-              O pagamento é feito com cartão, em uma página segura do Stripe.
-              Depois de pagar, você volta para o app.
+              {t('practice.privateLessons.paymentInfo')}
             </Text>
 
             <View className="mt-auto gap-3">
@@ -139,7 +147,7 @@ export default function BuyLessonsScreen() {
               ) : null}
               <Button
                 size="lg"
-                label="Continuar para o pagamento"
+                label={t('practice.privateLessons.continueToPayment')}
                 loading={paying}
                 onPress={pay}
               />

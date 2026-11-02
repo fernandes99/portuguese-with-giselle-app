@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { HoldToTalkButton } from '@/components/vocabulary/HoldToTalkButton';
@@ -34,6 +35,8 @@ export function ChatVoiceBar({
   maxDurationMs,
   onKeyboard,
 }: ChatVoiceBarProps) {
+  const { t } = useTranslation();
+
   const { state } = hold;
   const { phase } = state;
   const isHolding = phase === 'starting' || phase === 'recording';
@@ -53,7 +56,7 @@ export function ChatVoiceBar({
     <View className="flex-row items-end justify-between bg-white px-8">
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Digitar a resposta"
+        accessibilityLabel={t('practice.chat.typeAnswer')}
         accessibilityState={{ disabled: isHolding }}
         disabled={isHolding}
         onPress={onKeyboard}

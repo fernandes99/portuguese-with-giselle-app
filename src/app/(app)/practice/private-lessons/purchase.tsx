@@ -8,6 +8,7 @@ import {
 } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
 import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, BackHandler, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -55,6 +56,8 @@ function Message({ children }: { children: ReactNode }) {
 // de compra (sessionId) ou do endereço para onde o site devolve o aluno
 // (session_id).
 export default function PurchaseResultScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const params = useLocalSearchParams<{
     sessionId?: string;
@@ -115,7 +118,7 @@ export default function PurchaseResultScreen() {
               accessibilityLiveRegion="polite"
               className="font-poppins text-base text-gray-600"
             >
-              Confirmando seu pagamento...
+              {t('practice.privateLessons.confirming')}
             </Text>
           </View>
         ) : null}
@@ -124,10 +127,14 @@ export default function PurchaseResultScreen() {
           <Result
             icon="checkmark-circle"
             iconColor={colors.green}
-            title="Compra confirmada!"
+            title={t('practice.privateLessons.purchaseConfirmed')}
           >
             <Message>{formatAddedLessons(purchase.quantity)}</Message>
-            <Message>Você tem {formatAvailable(purchase.available)}.</Message>
+            <Message>
+              {t('practice.privateLessons.youHave', {
+                available: formatAvailable(purchase.available),
+              })}
+            </Message>
           </Result>
         ) : null}
 
@@ -135,12 +142,9 @@ export default function PurchaseResultScreen() {
           <Result
             icon="time-outline"
             iconColor={colors.gray}
-            title="Não recebemos a confirmação do pagamento."
+            title={t('practice.privateLessons.notConfirmed')}
           >
-            <Message>
-              Se você não concluiu o pagamento, nada foi cobrado. Se concluiu,
-              suas aulas aparecem em instantes.
-            </Message>
+            <Message>{t('practice.privateLessons.notConfirmedText')}</Message>
           </Result>
         ) : null}
 
@@ -148,9 +152,9 @@ export default function PurchaseResultScreen() {
           <Result
             icon="close-circle-outline"
             iconColor={colors.gray}
-            title="Compra não concluída."
+            title={t('practice.privateLessons.notCompleted')}
           >
-            <Message>Nada foi cobrado.</Message>
+            <Message>{t('practice.privateLessons.notCharged')}</Message>
           </Result>
         ) : null}
       </View>
@@ -158,19 +162,23 @@ export default function PurchaseResultScreen() {
       {state !== 'checking' ? (
         <View className="gap-2 px-6 pb-6">
           {state === 'unconfirmed' ? (
-            <Button size="lg" label="Verificar de novo" onPress={retry} />
+            <Button
+              size="lg"
+              label={t('practice.privateLessons.checkAgain')}
+              onPress={retry}
+            />
           ) : null}
           {state === 'failed' ? (
             <Button
               size="lg"
-              label="Tentar novamente"
+              label={t('practice.privateLessons.tryAgain')}
               onPress={() => router.replace('/practice/private-lessons/buy')}
             />
           ) : null}
           <Button
             size={state === 'paid' ? 'lg' : 'md'}
             variant={state === 'paid' ? 'primary' : 'link'}
-            label="Voltar para as aulas"
+            label={t('practice.privateLessons.backToLessons')}
             onPress={goHome}
           />
         </View>

@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -28,13 +29,15 @@ import {
 // Recarrega ao voltar de uma simulação, para "Feita" e o que resta hoje
 // aparecerem atualizados.
 export default function SimulationsScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const {
     data: list,
     error,
     refreshing,
     refresh,
-  } = useApiQuery(getSimulations, 'Não foi possível carregar as simulações.');
+  } = useApiQuery(getSimulations, t('practice.simulations.loadError'));
   // A categoria escolhida, só enquanto a tela está aberta; null é "Todas"
   const [categoryId, setCategoryId] = useState<string | null>(null);
 
@@ -49,7 +52,7 @@ export default function SimulationsScreen() {
   return (
     // O menu de baixo já cuida da área de baixo da tela
     <SafeAreaView edges={['top']} className="flex-1 bg-background">
-      <LessonHeader title="Simulações" />
+      <LessonHeader title={t('practice.simulations.title')} />
       <ScrollView
         contentContainerClassName="flex-grow gap-4 px-5 pb-8 pt-4"
         refreshControl={
@@ -63,7 +66,7 @@ export default function SimulationsScreen() {
       >
         <View className="gap-2">
           <Text className="font-poppins text-base text-gray-600">
-            Converse em situações do dia a dia e cumpra os objetivos.
+            {t('practice.simulations.subtitle')}
           </Text>
           {list ? (
             <View className="self-start rounded-full bg-green-100 px-3 py-1">
@@ -85,7 +88,11 @@ export default function SimulationsScreen() {
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -108,7 +115,7 @@ export default function SimulationsScreen() {
         </View>
 
         {list?.simulations.length === 0 ? (
-          <EmptyState title="Nenhuma simulação por aqui ainda." />
+          <EmptyState title={t('practice.simulations.empty')} />
         ) : null}
 
         {!list && !error ? (

@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { ProgressBar } from '@/components/ProgressBar';
@@ -14,6 +15,8 @@ export function FlashcardItem({
   flashcard: FlashcardSummary;
   onPress: () => void;
 }) {
+  const { t } = useTranslation();
+
   const { percentage, isStarted, isCompleted } =
     getFlashcardProgress(flashcard);
 
@@ -48,8 +51,10 @@ export function FlashcardItem({
         <View className="mt-1 gap-1.5">
           <ProgressBar percentage={percentage} />
           <Text className="font-poppins text-xs text-gray-500">
-            {flashcard.learnedCards} de {formatCards(flashcard.totalCards)}{' '}
-            aprendidos
+            {t('practice.flashcards.learned', {
+              learned: flashcard.learnedCards,
+              cards: formatCards(flashcard.totalCards),
+            })}
           </Text>
         </View>
       ) : (

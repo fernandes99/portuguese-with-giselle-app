@@ -1,5 +1,6 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, FlatList, Linking, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -32,9 +33,6 @@ import {
 } from '@/utils/practice';
 
 const TITLE = 'Gisa';
-const SUBTITLE = 'Parceira de conversação com IA';
-const AI_NOTICE =
-  'A Gisa é uma IA e pode errar. Não compartilhe dados pessoais sensíveis.';
 // A resposta falada é enviada sozinha depois disso
 const MAX_VOICE_MS = 30_000;
 // Quanto tempo o aviso acima da barra fica à vista
@@ -51,6 +49,8 @@ interface ComposerSeed {
 // O aluno responde segurando o microfone ou pelo teclado, ouve as falas
 // dela e pode pedir uma dica.
 export default function PracticeChatScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { user } = useAuth();
   const {
@@ -236,12 +236,12 @@ export default function PracticeChatScreen() {
     }
 
     Alert.alert(
-      'Microfone bloqueado',
-      'Permita o acesso ao microfone nas configurações para responder falando.',
+      t('practice.chat.micBlocked'),
+      t('practice.chat.micBlockedText'),
       [
-        { text: 'Agora não', style: 'cancel' },
+        { text: t('practice.chat.notNow'), style: 'cancel' },
         {
-          text: 'Abrir configurações',
+          text: t('lesson.vocabulary.openSettings'),
           onPress: () => Linking.openSettings(),
         },
       ]
@@ -263,12 +263,12 @@ export default function PracticeChatScreen() {
     }
 
     Alert.alert(
-      'Recomeçar a conversa?',
-      'As mensagens desta conversa serão apagadas.',
+      t('practice.chat.restartConfirm'),
+      t('practice.chat.restartText'),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Recomeçar',
+          text: t('practice.chat.restart'),
           style: 'destructive',
           onPress: () => {
             voice.stop();
@@ -288,27 +288,23 @@ export default function PracticeChatScreen() {
       return;
     }
 
-    Alert.alert(
-      'Trocar o estilo da Gisa?',
-      'Trocar o estilo recomeça a conversa. Continuar?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Continuar',
-          onPress: () => {
-            voice.stop();
-            router.push('/practice/style');
-          },
+    Alert.alert(t('practice.chat.styleConfirm'), t('practice.chat.styleText'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.continue'),
+        onPress: () => {
+          voice.stop();
+          router.push('/practice/style');
         },
-      ]
-    );
+      },
+    ]);
   }
 
   if (!canUsePractice(user) || isBlocked) {
     return (
       <SafeAreaView className="flex-1 bg-background">
-        <LessonHeader title={TITLE} subtitle={SUBTITLE} />
-        <PremiumLock description="Converse com a Gisa, sua parceira de conversação com IA, e receba a correção de cada frase. O chat com IA faz parte do plano Premium." />
+        <LessonHeader title={TITLE} subtitle={t('practice.chat.subtitle')} />
+        <PremiumLock description={t('practice.chat.premiumLock')} />
       </SafeAreaView>
     );
   }
@@ -317,7 +313,7 @@ export default function PracticeChatScreen() {
   if (user?.chatStyle === null) {
     return (
       <SafeAreaView edges={['top']} className="flex-1 bg-background">
-        <LessonHeader title={TITLE} subtitle={SUBTITLE} />
+        <LessonHeader title={TITLE} subtitle={t('practice.chat.subtitle')} />
         <ChatStyleSelector mode="first" onDone={() => {}} />
       </SafeAreaView>
     );
@@ -335,13 +331,13 @@ export default function PracticeChatScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <LessonHeader
         title={TITLE}
-        subtitle={SUBTITLE}
+        subtitle={t('practice.chat.subtitle')}
         avatar={<GisaAvatar size={32} />}
         filled
         right={
           <HeaderButton
             icon="settings"
-            label="Configurações do chat"
+            label={t('practice.chat.settings')}
             filled
             onPress={() => setIsSettingsOpen(true)}
           />
@@ -365,7 +361,9 @@ export default function PracticeChatScreen() {
           keyExtractor={(message) => message.id}
           keyboardShouldPersistTaps="handled"
           contentContainerClassName="gap-4 px-4 py-12"
-          ListHeaderComponent={<ChatNotice text={AI_NOTICE} />}
+          ListHeaderComponent={
+            <ChatNotice text={t('practice.chat.aiNotice')} />
+          }
           renderItem={({ item }) => {
             if (item.role === 'notice') {
               return <ChatNotice text={item.content} />;
@@ -383,7 +381,7 @@ export default function PracticeChatScreen() {
                     signature ? (
                       <ListenButton
                         state={voice.stateOf(item.id)}
-                        label="Ouvir a Gisa"
+                        label={t('practice.chat.listenGisa')}
                         onPress={() =>
                           voice.toggle(item.id, item.content, signature)
                         }
@@ -404,7 +402,7 @@ export default function PracticeChatScreen() {
                   correctedSignature && correction ? (
                     <ListenButton
                       state={voice.stateOf(correctedKey)}
-                      label="Ouvir a correção"
+                      label={t('practice.chat.listenCorrection')}
                       onPress={() =>
                         voice.toggle(
                           correctedKey,

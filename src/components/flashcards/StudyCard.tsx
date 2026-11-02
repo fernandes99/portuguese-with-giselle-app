@@ -1,4 +1,5 @@
 import { type Ref, useEffect, useImperativeHandle, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, Text, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -71,6 +72,8 @@ export function StudyCard({
   onAnswer,
   ref,
 }: StudyCardProps) {
+  const { t } = useTranslation();
+
   const { width } = useWindowDimensions();
   const reducedMotion = useReducedMotion();
   const [isBack, setIsBack] = useState(!isShowFront);
@@ -200,7 +203,9 @@ export function StudyCard({
       <Animated.View
         accessible={isTop}
         accessibilityRole="button"
-        accessibilityLabel={`${getSideLabel(isBack ? card.back : card.front)}. Toque para virar.`}
+        accessibilityLabel={t('practice.flashcards.sideLabel', {
+          side: getSideLabel(isBack ? card.back : card.front),
+        })}
         accessibilityActions={[{ name: 'activate' }]}
         onAccessibilityAction={() => setIsBack((current) => !current)}
         accessibilityElementsHidden={!isTop}
@@ -214,7 +219,7 @@ export function StudyCard({
         >
           <SideContent side={card.front} />
           <Text className="absolute bottom-5 font-poppins text-sm text-white/70">
-            Toque para virar
+            {t('practice.flashcards.tapToFlip')}
           </Text>
         </Animated.View>
 
@@ -224,7 +229,7 @@ export function StudyCard({
         >
           <SideContent side={card.back} />
           <Text className="absolute bottom-5 font-poppins text-sm text-white/70">
-            Toque para virar
+            {t('practice.flashcards.tapToFlip')}
           </Text>
         </Animated.View>
 
@@ -233,7 +238,7 @@ export function StudyCard({
           className="absolute left-4 top-4 rounded-full bg-white px-3 py-1"
         >
           <Text className="font-poppins-semibold text-sm text-green-700">
-            Aprendi
+            {t('practice.flashcards.learnedIt')}
           </Text>
         </Animated.View>
         <Animated.View
@@ -241,7 +246,7 @@ export function StudyCard({
           className="absolute right-4 top-4 rounded-full bg-white px-3 py-1"
         >
           <Text className="font-poppins-semibold text-sm text-orange-600">
-            Ainda aprendendo
+            {t('practice.flashcards.stillLearning')}
           </Text>
         </Animated.View>
       </Animated.View>

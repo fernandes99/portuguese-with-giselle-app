@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -52,6 +53,8 @@ export function SimulationRulesSheet({
   maxDeviations: number;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
+
   const bottomInset = useModalBottomInset();
 
   return (
@@ -64,7 +67,7 @@ export function SimulationRulesSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Fechar as regras"
+          accessibilityLabel={t('practice.simulations.rules.close')}
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -78,11 +81,11 @@ export function SimulationRulesSheet({
               accessibilityRole="header"
               className="font-poppins-bold text-lg text-gray-900"
             >
-              Como funciona
+              {t('practice.simulations.rules.title')}
             </Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Fechar as regras"
+              accessibilityLabel={t('practice.simulations.rules.close')}
               onPress={onClose}
               hitSlop={12}
               className="h-9 w-9 items-center justify-center rounded-full bg-surface active:bg-surface-pressed"
@@ -96,33 +99,39 @@ export function SimulationRulesSheet({
               icon="flag-outline"
               color={colors.green}
               tint="bg-green-100"
-              title="Cumpra os objetivos"
-              text="Converse em português até cumprir todos. Eles vão sendo marcados na tela."
+              title={t('practice.simulations.rules.goalsTitle')}
+              text={t('practice.simulations.rules.goalsText')}
             />
             <Rule
               icon="chatbubbles-outline"
               color={colors.orange}
               tint="bg-orange-100"
-              title="Fique na cena"
-              text="Não mude de assunto, não escreva em outro idioma e não vá contra um objetivo."
+              title={t('practice.simulations.rules.sceneTitle')}
+              text={t('practice.simulations.rules.sceneText')}
             />
             <Rule
               icon="warning-outline"
               color={colors.red}
               tint="bg-red-100"
-              title={`${maxDeviations} avisos encerram`}
-              text={`A cada desvio você recebe um aviso. No ${maxDeviations}º, a simulação é encerrada.`}
+              title={t('practice.simulations.rules.warningsTitle', {
+                max: maxDeviations,
+              })}
+              text={t('practice.simulations.rules.warningsText', {
+                max: maxDeviations,
+              })}
             />
             <Rule
               icon="time-outline"
               color={colors.blue}
               tint="bg-blue-100"
-              title={`Até ${maxMessages} mensagens`}
-              text="Cada simulação começada conta no limite do dia, mesmo se você sair no meio."
+              title={t('practice.simulations.rules.messagesTitle', {
+                max: maxMessages,
+              })}
+              text={t('practice.simulations.rules.messagesText')}
             />
           </View>
 
-          <Button label="Entendi" onPress={onClose} />
+          <Button label={t('lesson.exercise.gotIt')} onPress={onClose} />
         </View>
       </View>
     </Modal>

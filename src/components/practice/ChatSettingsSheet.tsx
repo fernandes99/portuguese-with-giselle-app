@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Switch, Text, View } from 'react-native';
 
 import { UsageToday } from '@/components/practice/UsageToday';
@@ -70,6 +71,8 @@ export function ChatSettingsSheet({
   onRestart,
   onClose,
 }: ChatSettingsSheetProps) {
+  const { t } = useTranslation();
+
   const bottomInset = useModalBottomInset();
 
   // Fecha a folha e só depois sai da tela ou abre a confirmação: no iPhone,
@@ -91,7 +94,7 @@ export function ChatSettingsSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Fechar as configurações"
+          accessibilityLabel={t('practice.chat.closeSettings')}
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -105,11 +108,11 @@ export function ChatSettingsSheet({
               accessibilityRole="header"
               className="flex-1 font-poppins-semibold text-lg text-gray-900"
             >
-              Configurações do chat
+              {t('practice.chat.settings')}
             </Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Fechar"
+              accessibilityLabel={t('common.close')}
               onPress={onClose}
               hitSlop={8}
               className="h-10 w-10 items-center justify-center rounded-full bg-surface active:bg-surface-pressed"
@@ -124,14 +127,14 @@ export function ChatSettingsSheet({
             <RowIcon icon="volume-high" />
             <View className="flex-1 gap-0.5">
               <Text className="font-poppins-medium text-base text-gray-900">
-                Voz automática
+                {t('practice.chat.autoVoice')}
               </Text>
               <Text className="font-poppins text-sm text-gray-500">
-                A Gisa lê cada resposta em voz alta.
+                {t('practice.chat.autoVoiceText')}
               </Text>
             </View>
             <Switch
-              accessibilityLabel="Voz automática"
+              accessibilityLabel={t('practice.chat.autoVoice')}
               value={autoplay}
               onValueChange={onAutoplayChange}
               trackColor={{ true: colors.green, false: colors.lightGray }}
@@ -141,17 +144,17 @@ export function ChatSettingsSheet({
 
           <SettingsRow
             icon="language"
-            title="Idioma das explicações"
+            title={t('practice.chat.explanationLanguage')}
             onPress={closeThen(onLanguage)}
           />
           <SettingsRow
             icon="color-palette"
-            title="Estilo da Gisa"
+            title={t('practice.chat.gisaStyle')}
             onPress={closeThen(onStyle)}
           />
           <SettingsRow
             icon="refresh"
-            title="Recomeçar conversa"
+            title={t('practice.chat.restartChat')}
             disabled={!canRestart}
             onPress={closeThen(onRestart)}
           />

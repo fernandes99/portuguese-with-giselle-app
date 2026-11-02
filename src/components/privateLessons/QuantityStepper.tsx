@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -41,11 +42,13 @@ export function QuantityStepper({
   max: number;
   onChange: (quantity: number) => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <View className="flex-row items-center justify-center gap-6">
       <StepButton
         icon="remove"
-        label="Diminuir quantidade"
+        label={t('practice.privateLessons.decrease')}
         disabled={quantity <= 1}
         onPress={() => onChange(quantity - 1)}
       />
@@ -58,7 +61,7 @@ export function QuantityStepper({
       </Text>
       <StepButton
         icon="add"
-        label="Aumentar quantidade"
+        label={t('practice.privateLessons.increase')}
         disabled={quantity >= max}
         onPress={() => onChange(quantity + 1)}
       />

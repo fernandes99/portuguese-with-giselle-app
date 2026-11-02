@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -37,17 +38,19 @@ export function SimulationSummary({
   onRetry: () => void;
   onOther: () => void;
 }) {
+  const { t } = useTranslation();
+
   const isCompleted = status === 'COMPLETED';
   const isInterrupted = endReason === 'DEVIATIONS';
   const title = isCompleted
-    ? 'Simulação concluída!'
+    ? t('practice.simulations.summary.completed')
     : isInterrupted
-      ? 'Simulação interrompida'
-      : 'Quase lá!';
+      ? t('practice.simulations.summary.interrupted')
+      : t('practice.simulations.summary.almost');
   const subtitle = isInterrupted
-    ? 'A conversa parou porque você saiu das suas tarefas. Veja o que melhorar.'
+    ? t('practice.simulations.summary.interruptedText')
     : !isCompleted && !endNotice
-      ? 'Suas mensagens desta simulação acabaram.'
+      ? t('practice.simulations.summary.noMessages')
       : null;
   const review = getReviewMessages(messages);
 
@@ -83,7 +86,7 @@ export function SimulationSummary({
 
         <View className="gap-3 rounded-2xl border border-gray-200 bg-white p-4">
           <Text className="font-poppins-semibold text-base text-gray-900">
-            Tarefas
+            {t('practice.simulations.summary.tasks')}
           </Text>
           {simulation.tasks.map((task, index) => {
             const isDone = completedTasks.includes(index);
@@ -91,7 +94,12 @@ export function SimulationSummary({
               <View
                 key={task}
                 accessible
-                accessibilityLabel={`${task}, ${isDone ? 'cumprida' : 'não cumprida'}`}
+                accessibilityLabel={t(
+                  isDone
+                    ? 'practice.simulations.summary.taskDone'
+                    : 'practice.simulations.summary.taskNotDone',
+                  { task }
+                )}
                 className="flex-row items-start gap-3"
               >
                 <Ionicons
@@ -109,7 +117,7 @@ export function SimulationSummary({
 
         <View className="gap-3">
           <Text className="font-poppins-semibold text-base text-gray-900">
-            Frases para revisar
+            {t('practice.simulations.summary.review')}
           </Text>
           {review.length > 0 ? (
             review.map((message) =>
@@ -124,15 +132,19 @@ export function SimulationSummary({
             )
           ) : (
             <Text className="font-poppins text-sm text-gray-600">
-              Nenhuma correção. Muito bem!
+              {t('practice.simulations.summary.noCorrections')}
             </Text>
           )}
         </View>
       </ScrollView>
 
       <View className="gap-1 border-t border-gray-200 bg-white px-5 py-4">
-        <Button label="Tentar de novo" onPress={onRetry} />
-        <Button variant="link" label="Outras simulações" onPress={onOther} />
+        <Button label={t('common.retry')} onPress={onRetry} />
+        <Button
+          variant="link"
+          label={t('practice.simulations.summary.others')}
+          onPress={onOther}
+        />
       </View>
     </View>
   );

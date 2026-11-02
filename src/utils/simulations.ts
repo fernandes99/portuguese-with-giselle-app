@@ -1,4 +1,5 @@
 import type { ChatMessage } from '@/hooks/usePracticeChat';
+import { t } from '@/lib/i18n';
 import type { Simulation, SimulationCategory } from '@/services/simulations';
 
 // As categorias do filtro da lista: uma vez cada, na ordem em que aparecem
@@ -40,15 +41,15 @@ export function getCardBadge(
 // Linha da lista com as simulações que restam hoje
 export function getRemainingTodayLabel(remaining: number, limit: number) {
   return remaining <= 0
-    ? 'Você fez todas as simulações de hoje'
-    : `Restam ${remaining} de ${limit} hoje`;
+    ? t('practice.simulations.noneLeftToday')
+    : t('practice.simulations.leftToday', { remaining, limit });
 }
 
 // Com tão poucas mensagens restantes na simulação, a tela avisa o aluno
 export const REMAINING_MESSAGES_WARNING_AT = 3;
 
 export function getRemainingMessagesLabel(remaining: number) {
-  return remaining === 1 ? 'Resta 1 mensagem' : `Restam ${remaining} mensagens`;
+  return t('practice.simulations.messagesLeft', { count: remaining });
 }
 
 type StudentMessage = Extract<ChatMessage, { role: 'user' }>;

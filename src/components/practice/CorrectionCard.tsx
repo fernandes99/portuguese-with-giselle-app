@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -30,12 +31,14 @@ export function CorrectionCard({
   // cartão fica branco para não sumir
   onBackground?: boolean;
 }) {
+  const { t } = useTranslation();
+
   if (!correction.hasErrors) {
     return (
       <View className="flex-row items-center gap-1.5 self-end rounded-full bg-surface px-3 py-1.5">
         <Ionicons name="checkmark" size={16} color={colors.green} />
         <Text className="font-poppins-medium text-xs text-green-700">
-          Boa resposta
+          {t('practice.chat.goodAnswer')}
         </Text>
       </View>
     );
@@ -50,13 +53,15 @@ export function CorrectionCard({
       <View className="flex-row items-center gap-1.5">
         <Ionicons name="sparkles" size={16} color={SPARKLE_COLOR} />
         <Text className="font-poppins-semibold text-sm text-amber-600">
-          Correção
+          {t('practice.chat.correction')}
         </Text>
       </View>
 
       <View className="flex-row items-start gap-3">
         <Text
-          accessibilityLabel={`Correção: ${correction.corrected}`}
+          accessibilityLabel={t('practice.chat.correctionLabel', {
+            text: correction.corrected,
+          })}
           className="flex-1 font-poppins text-base leading-7 text-gray-900"
         >
           {parts.map((part, index) => (
@@ -94,13 +99,13 @@ export function CorrectionCard({
       {onRedo ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityHint="Tira esta resposta para você responder de novo"
+          accessibilityHint={t('practice.chat.redoHint')}
           onPress={onRedo}
           className="flex-row items-center justify-center gap-2 rounded-2xl bg-white py-3 active:bg-surface-pressed"
         >
           <Ionicons name="refresh" size={18} color={colors.darkGreen} />
           <Text className="font-poppins-semibold text-sm text-green-700">
-            Tentar de novo
+            {t('common.retry')}
           </Text>
         </Pressable>
       ) : null}

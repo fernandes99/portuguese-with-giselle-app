@@ -2,6 +2,7 @@ import warningSound from '@assets/sounds/warning.wav';
 import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 import { type ComponentProps, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -14,12 +15,6 @@ import type {
 // Âmbar do ícone do aviso (amber-600)
 const WARNING_COLOR = '#d97706';
 
-const TITLES: Record<SimulationDeviationKind, string> = {
-  AGAINST_TASK: 'Lembre-se da sua tarefa',
-  OFF_TOPIC: 'Volte para a cena',
-  OTHER_LANGUAGE: 'Fale em português',
-};
-
 const ICONS: Record<
   SimulationDeviationKind,
   ComponentProps<typeof Ionicons>['name']
@@ -27,13 +22,6 @@ const ICONS: Record<
   AGAINST_TASK: 'flag-outline',
   OFF_TOPIC: 'compass-outline',
   OTHER_LANGUAGE: 'chatbubble-ellipses-outline',
-};
-
-// Texto de quando o backend não mandou o motivo
-const FALLBACK_REASONS: Record<SimulationDeviationKind, string> = {
-  AGAINST_TASK: 'Sua resposta foi contra uma das suas tarefas.',
-  OFF_TOPIC: 'Sua resposta saiu do assunto da cena.',
-  OTHER_LANGUAGE: 'Sua resposta não foi em português.',
 };
 
 // Aviso por cima da conversa quando o aluno vai contra uma tarefa, sai da
@@ -52,6 +40,8 @@ export function GoalReminder({
   pendingTasks: number[];
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
+
   const player = useAudioPlayer(warningSound);
 
   // Um aviso novo chega como outro objeto, a cada turno com desvio
@@ -94,17 +84,23 @@ export function GoalReminder({
               accessibilityRole="header"
               className="text-center font-poppins-bold text-lg text-gray-900"
             >
-              {TITLES[reminder.kind]}
+              {t(`practice.simulations.reminder.titles.${reminder.kind}`)}
             </Text>
             <Text className="text-center font-poppins text-sm leading-5 text-gray-600">
-              {reminder.reason || FALLBACK_REASONS[reminder.kind]}
+              {/* Sem o motivo do backend, vale o texto do tipo */}
+              {reminder.reason ||
+                t(`practice.simulations.reminder.reasons.${reminder.kind}`)}
             </Text>
           </View>
 
           {shown.length > 0 ? (
             <View className="gap-2 rounded-2xl border border-gray-200 bg-background p-4">
               <Text className="font-poppins-semibold text-xs uppercase text-gray-500">
-                {shown.length === 1 ? 'Sua tarefa' : 'Suas tarefas'}
+                {t(
+                  shown.length === 1
+                    ? 'practice.simulations.reminder.yourTask'
+                    : 'practice.simulations.reminder.yourTasks'
+                )}
               </Text>
               {shown.map((task) => (
                 <View key={task} className="flex-row items-start gap-2">
@@ -122,13 +118,18 @@ export function GoalReminder({
           ) : null}
 
           <Text className="text-center font-poppins-medium text-xs text-amber-800">
-            Aviso {reminder.count} de {reminder.max - 1}.{' '}
+            {t('practice.simulations.reminder.warning', {
+              current: reminder.count,
+              total: reminder.max - 1,
+            })}{' '}
             {isLast
-              ? 'No próximo, a simulação é interrompida.'
-              : `Na ${reminder.max}ª vez, a simulação é interrompida.`}
+              ? t('practice.simulations.reminder.nextStops')
+              : t('practice.simulations.reminder.stopsAt', {
+                  max: reminder.max,
+                })}
           </Text>
 
-          <Button label="Entendi" onPress={onClose} />
+          <Button label={t('lesson.exercise.gotIt')} onPress={onClose} />
         </View>
       </View>
     </Modal>

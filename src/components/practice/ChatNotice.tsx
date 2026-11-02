@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -21,13 +22,19 @@ export function ChatStopNotice({
   message: string;
   onRestart?: () => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <View className="gap-2 border-t border-gray-200 bg-white px-4 py-4">
       <Text className="text-center font-poppins text-sm text-gray-700">
         {message}
       </Text>
       {onRestart ? (
-        <Button variant="link" label="Recomeçar" onPress={onRestart} />
+        <Button
+          variant="link"
+          label={t('practice.chat.restart')}
+          onPress={onRestart}
+        />
       ) : null}
     </View>
   );

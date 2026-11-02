@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Pressable,
@@ -32,6 +33,8 @@ import { formatPrice } from '@/utils/privateLessons';
 // Só agenda quem tem aula disponível; o saldo e os agendamentos são sempre
 // os do backend.
 export default function PrivateLessonsScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { token, signOut } = useAuth();
   const {
@@ -40,7 +43,7 @@ export default function PrivateLessonsScreen() {
     refreshing,
     refresh,
     reload,
-  } = useApiQuery(getPrivateLessons, 'Erro ao carregar as aulas particulares.');
+  } = useApiQuery(getPrivateLessons, t('practice.privateLessons.loadError'));
   const refreshSoon = useRefreshAfterBrowser(reload);
 
   const [scheduling, setScheduling] = useState(false);
@@ -65,7 +68,7 @@ export default function PrivateLessonsScreen() {
         return;
       }
       setScheduleError(
-        getErrorMessage(err, 'Não foi possível abrir a agenda agora.')
+        getErrorMessage(err, t('practice.privateLessons.scheduleError'))
       );
       // 409: o saldo acabou em outro aparelho
       reload();
@@ -78,7 +81,7 @@ export default function PrivateLessonsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Aulas particulares" />
+      <LessonHeader title={t('practice.privateLessons.title')} />
       <ScrollView
         contentContainerClassName="flex-grow gap-5 px-5 pb-8 pt-4"
         refreshControl={
@@ -93,7 +96,11 @@ export default function PrivateLessonsScreen() {
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -112,7 +119,7 @@ export default function PrivateLessonsScreen() {
                 accessibilityRole="header"
                 className="font-poppins-bold text-lg text-gray-900"
               >
-                Suas aulas
+                {t('practice.privateLessons.yourLessons')}
               </Text>
 
               {summary.nextLesson ? (
@@ -125,7 +132,7 @@ export default function PrivateLessonsScreen() {
               ) : (
                 <View className="rounded-2xl border border-dashed border-gray-300 p-4">
                   <Text className="text-center font-poppins text-sm text-gray-600">
-                    Você não tem nenhuma aula agendada.
+                    {t('practice.privateLessons.noneScheduled')}
                   </Text>
                 </View>
               )}
@@ -141,9 +148,11 @@ export default function PrivateLessonsScreen() {
 
               <Button
                 size="lg"
-                label={
-                  summary.nextLesson ? 'Agendar outra aula' : 'Agendar aula'
-                }
+                label={t(
+                  summary.nextLesson
+                    ? 'practice.privateLessons.scheduleAnother'
+                    : 'practice.privateLessons.schedule'
+                )}
                 disabled={!hasBalance}
                 loading={scheduling}
                 onPress={schedule}
@@ -161,7 +170,7 @@ export default function PrivateLessonsScreen() {
               >
                 <Ionicons name="list" size={22} color={colors.green} />
                 <Text className="flex-1 font-poppins-semibold text-base text-gray-900">
-                  Ver agendamentos
+                  {t('practice.privateLessons.seeBookings')}
                 </Text>
                 <Ionicons
                   name="chevron-forward"
@@ -179,8 +188,9 @@ export default function PrivateLessonsScreen() {
                 color={colors.gray}
               />
               <Text className="flex-1 font-poppins text-sm text-gray-600">
-                Cada agendamento usa uma aula do saldo. Remarque ou cancele até{' '}
-                {summary.changeNoticeHours} horas antes para não perder a aula.
+                {t('practice.privateLessons.changeNotice', {
+                  hours: summary.changeNoticeHours,
+                })}
               </Text>
             </View>
           </>

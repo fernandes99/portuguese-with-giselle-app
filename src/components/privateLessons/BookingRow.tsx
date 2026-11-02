@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { LessonActions } from '@/components/privateLessons/LessonActions';
@@ -9,20 +10,17 @@ import { formatLessonDate, formatLessonTime } from '@/utils/privateLessons';
 
 const STATUS: Record<
   PrivateLessonStatus,
-  { label: string; badgeClassName: string; textClassName: string }
+  { badgeClassName: string; textClassName: string }
 > = {
   scheduled: {
-    label: 'Agendada',
     badgeClassName: 'bg-green-100',
     textClassName: 'text-green-800',
   },
   completed: {
-    label: 'Realizada',
     badgeClassName: 'bg-gray-100',
     textClassName: 'text-gray-700',
   },
   canceled: {
-    label: 'Cancelada',
     badgeClassName: 'bg-red-50',
     textClassName: 'text-red-700',
   },
@@ -43,7 +41,10 @@ export function BookingRow({
   contactEmail,
   onChanged,
 }: BookingRowProps) {
+  const { t } = useTranslation();
+
   const status = STATUS[lesson.status];
+  const statusLabel = t(`practice.privateLessons.status.${lesson.status}`);
   const date = formatLessonDate(lesson.startTime);
   const time = formatLessonTime(lesson);
 
@@ -51,7 +52,7 @@ export function BookingRow({
     <View className="gap-3 rounded-2xl border border-gray-200 bg-white p-4">
       <View
         accessible
-        accessibilityLabel={`${date}, ${time}, ${lesson.title}, ${status.label}`}
+        accessibilityLabel={`${date}, ${time}, ${lesson.title}, ${statusLabel}`}
         className="flex-row items-start gap-3"
       >
         <View className="flex-1 gap-0.5">
@@ -65,8 +66,8 @@ export function BookingRow({
           {lesson.status === 'canceled' ? (
             <Text className="mt-1 font-poppins text-xs text-gray-500">
               {lesson.creditReturned
-                ? 'Aula devolvida ao seu saldo.'
-                : 'Cancelada fora do prazo.'}
+                ? t('practice.privateLessons.creditReturned')
+                : t('practice.privateLessons.canceledLate')}
             </Text>
           ) : null}
         </View>
@@ -74,7 +75,7 @@ export function BookingRow({
           <Text
             className={`font-poppins-semibold text-xs ${status.textClassName}`}
           >
-            {status.label}
+            {statusLabel}
           </Text>
         </View>
       </View>

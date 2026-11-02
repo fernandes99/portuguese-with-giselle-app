@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { type RecorderHint, useHoldToTalk } from '@/hooks/useHoldToTalk';
 import { useSpeechRecognitionHold } from '@/hooks/useSpeechRecognitionHold';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import { isSpeechRecognitionAvailable } from '@/lib/speechRecognition';
 import {
   evaluatePronunciation,
@@ -97,11 +98,8 @@ export function usePronunciationRecorder(
           return;
         }
         Alert.alert(
-          'Não foi possível conferir',
-          getErrorMessage(
-            error,
-            'Erro ao avaliar a pronúncia. Tente novamente.'
-          )
+          t('practice.pronunciation.checkError'),
+          getErrorMessage(error, t('practice.pronunciation.checkErrorText'))
         );
       }
     },

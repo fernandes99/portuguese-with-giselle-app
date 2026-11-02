@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { LessonActions } from '@/components/privateLessons/LessonActions';
@@ -22,6 +23,8 @@ export function NextLessonCard({
   contactEmail,
   onChanged,
 }: NextLessonCardProps) {
+  const { t } = useTranslation();
+
   const date = formatLessonDate(lesson.startTime);
   const time = formatLessonTime(lesson);
 
@@ -29,17 +32,21 @@ export function NextLessonCard({
     <View className="gap-4 rounded-2xl border border-gray-200 bg-white p-4">
       <View
         accessible
-        accessibilityLabel={`Próxima aula: ${date}, ${time}, ${lesson.title}`}
+        accessibilityLabel={t('practice.privateLessons.nextLessonLabel', {
+          date,
+          time,
+          title: lesson.title,
+        })}
         className="gap-1"
       >
         <View className="flex-row items-center gap-2">
           <Text className="font-poppins-semibold text-xs uppercase text-gray-500">
-            Próxima aula
+            {t('practice.privateLessons.nextLesson')}
           </Text>
           {isLessonNow(lesson) ? (
             <View className="rounded-full bg-green-600 px-2 py-0.5">
               <Text className="font-poppins-semibold text-xs text-white">
-                Agora
+                {t('practice.privateLessons.now')}
               </Text>
             </View>
           ) : null}

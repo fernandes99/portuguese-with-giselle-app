@@ -4,13 +4,14 @@ import { Alert } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import { getVocabulary, setVocabularySaved } from '@/services/vocabulary';
 
 // A lista do vocabulário e os itens salvos. Salvar muda o estado na hora e
 // desfaz se a rota falhar.
 export function useVocabulary() {
   const { token } = useAuth();
-  const query = useApiQuery(getVocabulary, 'Erro ao carregar o vocabulário.');
+  const query = useApiQuery(getVocabulary, t('practice.vocabulary.loadError'));
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   // Cópia para o toggleSaved ler o estado atual sem mudar de identidade
   const savedIdsRef = useRef(savedIds);
@@ -53,8 +54,8 @@ export function useVocabulary() {
       } catch (error) {
         setSaved(id, !saved);
         Alert.alert(
-          'Não foi possível salvar',
-          getErrorMessage(error, 'Tente de novo em instantes.')
+          t('practice.vocabulary.saveError'),
+          getErrorMessage(error, t('practice.vocabulary.saveErrorText'))
         );
       }
     },

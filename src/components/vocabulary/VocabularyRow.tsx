@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { PremiumBadge } from '@/components/premium/PremiumBadge';
@@ -24,15 +25,21 @@ export function VocabularyRow({
   onPress,
   onToggleSaved,
 }: VocabularyRowProps) {
+  const { t } = useTranslation();
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={
-        item.isLocked ? `${item.term}, exclusivo do plano Premium` : item.term
+        item.isLocked
+          ? t('practice.vocabulary.lockedItem', { term: item.term })
+          : item.term
       }
-      accessibilityHint={
-        item.isLocked ? 'Abre a tela do plano Premium' : 'Abre os detalhes'
-      }
+      accessibilityHint={t(
+        item.isLocked
+          ? 'practice.vocabulary.openPlans'
+          : 'practice.vocabulary.openDetails'
+      )}
       onPress={onPress}
       className="flex-row items-start gap-3 rounded-2xl border border-gray-200 bg-white p-4 active:bg-gray-50"
     >
@@ -51,7 +58,11 @@ export function VocabularyRow({
       ) : (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={isSaved ? 'Tirar dos salvos' : 'Salvar'}
+          accessibilityLabel={t(
+            isSaved
+              ? 'practice.vocabulary.removeSaved'
+              : 'practice.vocabulary.save'
+          )}
           onPress={onToggleSaved}
           hitSlop={10}
           className="h-9 w-9 items-center justify-center rounded-full active:bg-gray-100"

@@ -9,6 +9,7 @@ import { Alert } from 'react-native';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import { getChatAutoplay, setChatAutoplay } from '@/lib/storage';
 import {
   getPracticeSpeech,
@@ -184,8 +185,8 @@ export function useGisaVoice() {
       // Na voz automática, a falha é silenciosa
       if (fromUser && current === request.current) {
         Alert.alert(
-          'Não foi possível tocar o áudio',
-          getErrorMessage(err, 'Erro ao gerar o áudio. Tente novamente.')
+          t('practice.chat.audioError'),
+          getErrorMessage(err, t('practice.chat.audioErrorText'))
         );
       }
     } finally {

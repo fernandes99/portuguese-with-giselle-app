@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n';
 import type {
   CardSide,
   CardStatus,
@@ -6,7 +7,7 @@ import type {
 } from '@/services/flashcards';
 
 export function formatCards(count: number) {
-  return `${count} ${count === 1 ? 'card' : 'cards'}`;
+  return t('practice.flashcards.cards', { count });
 }
 
 // Quanto do conjunto o aluno já marcou como aprendido
@@ -54,5 +55,5 @@ export function getCardFontSize(text: string) {
 
 // O que o leitor de tela fala sobre o lado visível do card
 export function getSideLabel(side: CardSide) {
-  return side.text || 'Imagem';
+  return side.text || t('practice.flashcards.image');
 }

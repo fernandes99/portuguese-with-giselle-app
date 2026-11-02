@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import Animated, {
   cancelAnimation,
@@ -183,6 +184,8 @@ export function GisaMessage({
   // No lugar da foto da Gisa (a personagem das simulações)
   avatar?: ReactNode;
 }) {
+  const { t } = useTranslation();
+
   const [isTranslated, setIsTranslated] = useState(false);
 
   return (
@@ -200,7 +203,11 @@ export function GisaMessage({
           {translation ? (
             <BubbleAction
               icon="language"
-              label={isTranslated ? 'Esconder tradução' : 'Traduzir'}
+              label={t(
+                isTranslated
+                  ? 'practice.chat.hideTranslation'
+                  : 'practice.chat.translate'
+              )}
               active={isTranslated}
               onPress={() => setIsTranslated((current) => !current)}
             />
@@ -228,12 +235,14 @@ export function StudentMessage({
   onRetry: () => void;
   onRedo: () => void;
 }) {
+  const { t } = useTranslation();
+
   const { correction } = message;
 
   if (message.status === 'transcribing') {
     return (
       <View
-        accessibilityLabel="Ouvindo sua resposta"
+        accessibilityLabel={t('practice.chat.listeningAnswer')}
         className="max-w-[88%] self-end rounded-3xl bg-green-600 px-4 py-3 opacity-60"
       >
         <Text className="font-poppins text-[15px] italic leading-6 text-white">
@@ -255,7 +264,10 @@ export function StudentMessage({
         // O leitor de tela não depende do sublinhado para saber da correção
         accessibilityLabel={
           correction?.hasErrors
-            ? `${message.content}. Correção: ${correction.corrected}`
+            ? t('practice.chat.messageWithCorrection', {
+                message: message.content,
+                text: correction.corrected,
+              })
             : message.content
         }
         className={`max-w-[88%] self-end rounded-3xl bg-green-600 px-4 py-3 ${message.status === 'sending' ? 'opacity-60' : ''}`}
@@ -293,11 +305,11 @@ export function StudentMessage({
       {message.status === 'failed' ? (
         <View className="items-end gap-1">
           <Text className="text-right font-poppins text-xs text-red-700">
-            {message.error ?? 'Não foi possível enviar.'}
+            {message.error ?? t('practice.chat.sendError')}
           </Text>
           <Pressable accessibilityRole="button" onPress={onRetry} hitSlop={8}>
             <Text className="font-poppins-semibold text-sm text-green-700">
-              Tentar de novo
+              {t('common.retry')}
             </Text>
           </Pressable>
         </View>

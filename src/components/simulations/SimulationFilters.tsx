@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text } from 'react-native';
 
 import type { SimulationCategory } from '@/services/simulations';
@@ -14,8 +15,10 @@ export function SimulationFilters({
   selectedId: string | null;
   onSelect: (id: string | null) => void;
 }) {
+  const { t } = useTranslation();
+
   const options = [
-    { id: null, title: 'Todas' },
+    { id: null, title: t('practice.simulations.all') },
     ...categories.map(({ id, title }) => ({ id, title })),
   ];
 

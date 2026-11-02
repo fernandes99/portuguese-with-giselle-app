@@ -1,5 +1,6 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { PRACTICE_MESSAGE_MAX_LENGTH } from '@/constants/config';
@@ -33,6 +34,8 @@ export function ChatComposer({
   onVoice,
   isVoiceLocked = false,
 }: ChatComposerProps) {
+  const { t } = useTranslation();
+
   const [text, setText] = useState(initialText);
   const canSend = !disabled && text.trim() !== '';
 
@@ -58,11 +61,11 @@ export function ChatComposer({
             accessibilityRole="button"
             accessibilityLabel={
               isVoiceLocked
-                ? 'Responder falando, exclusivo do plano Premium'
-                : 'Responder falando'
+                ? t('practice.chat.voiceAnswerLocked')
+                : t('practice.chat.voiceAnswer')
             }
             accessibilityHint={
-              isVoiceLocked ? 'Abre a tela do plano Premium' : undefined
+              isVoiceLocked ? t('practice.home.chatLockedHint') : undefined
             }
             onPress={onVoice}
             className="h-11 w-11 items-center justify-center rounded-full bg-surface active:bg-surface-pressed"
@@ -80,10 +83,10 @@ export function ChatComposer({
           </Pressable>
         ) : null}
         <TextInput
-          accessibilityLabel="Mensagem"
+          accessibilityLabel={t('practice.chat.message')}
           value={text}
           onChangeText={setText}
-          placeholder="Escreva em português..."
+          placeholder={t('practice.chat.placeholder')}
           placeholderTextColor={colors.placeholder}
           multiline
           maxLength={PRACTICE_MESSAGE_MAX_LENGTH}
@@ -94,7 +97,7 @@ export function ChatComposer({
         />
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Enviar"
+          accessibilityLabel={t('practice.chat.send')}
           accessibilityState={{ disabled: !canSend }}
           disabled={!canSend}
           onPress={handleSend}

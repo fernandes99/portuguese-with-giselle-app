@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,13 +11,15 @@ import { useFlashcard } from '@/hooks/useFlashcard';
 
 // Estudo de um conjunto de flashcards
 export default function FlashcardScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { data, error, reload } = useFlashcard(slug);
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title={data?.title ?? 'Flashcards'} />
+      <LessonHeader title={data?.title ?? t('practice.home.flashcards')} />
 
       {data ? (
         <StudySession
@@ -31,7 +34,11 @@ export default function FlashcardScreen() {
               <Text className="text-center font-poppins text-base text-red-700">
                 {error}
               </Text>
-              <Button variant="link" label="Tentar de novo" onPress={reload} />
+              <Button
+                variant="link"
+                label={t('common.retry')}
+                onPress={reload}
+              />
             </>
           ) : (
             <ActivityIndicator size="large" color={colors.green} />

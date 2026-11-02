@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Linking,
@@ -15,7 +16,6 @@ import { PronunciationResult } from '@/components/vocabulary/PronunciationResult
 import { colors } from '@/constants/theme';
 import {
   MAX_RECORDING_MS,
-  type RecorderHint,
   usePronunciationRecorder,
 } from '@/hooks/usePronunciationRecorder';
 import type { PronunciationEngine } from '@/services/vocabulary';
@@ -30,11 +30,6 @@ interface PronunciationPracticeProps {
   onOpenPlans: () => void;
 }
 
-const HINTS: Record<Exclude<RecorderHint, null>, string> = {
-  too_short: 'Segure o botão enquanto fala.',
-  cancelled: 'Gravação cancelada.',
-};
-
 // Box "Verificar pronúncia" do detalhe. Fechado, mostra o convite (com o selo
 // Premium para o gratuito); aberto, o microfone de segurar para falar e o
 // resultado. Fica dentro do ActivityAudioProvider do detalhe.
@@ -45,6 +40,8 @@ export function PronunciationPractice({
   engine,
   onOpenPlans,
 }: PronunciationPracticeProps) {
+  const { t } = useTranslation();
+
   const { playingUrl, stop: stopAudio } = useActivityAudio();
   const { state, metering, requestPermission, pressIn, release } =
     usePronunciationRecorder(itemId, { engine });
@@ -91,8 +88,8 @@ export function PronunciationPractice({
         accessibilityRole="button"
         accessibilityLabel={
           canCheck
-            ? 'Verificar pronúncia'
-            : 'Verificar pronúncia, exclusivo do Premium'
+            ? t('practice.pronunciation.title')
+            : t('practice.pronunciation.titleLocked')
         }
         onPress={open}
         disabled={isOpening}
@@ -103,10 +100,10 @@ export function PronunciationPractice({
         </View>
         <View className="flex-1 gap-0.5">
           <Text className="font-poppins-semibold text-base text-gray-900">
-            Verificar pronúncia
+            {t('practice.pronunciation.title')}
           </Text>
           <Text className="font-poppins text-sm text-gray-600">
-            Fale a expressão e veja se um brasileiro entenderia.
+            {t('practice.pronunciation.description')}
           </Text>
         </View>
         {isOpening ? (
@@ -124,18 +121,17 @@ export function PronunciationPractice({
     <View className="gap-3">
       <View className="gap-0.5">
         <Text className="font-poppins-semibold text-base text-gray-900">
-          Verificar pronúncia
+          {t('practice.pronunciation.title')}
         </Text>
         <Text className="font-poppins text-sm text-gray-500">
-          Segure o microfone, fale a expressão e solte.
+          {t('practice.pronunciation.instruction')}
         </Text>
       </View>
 
       {state.phase === 'denied' ? (
         <View className="gap-3">
           <Text className="font-poppins text-sm text-red-500">
-            Permita o acesso ao microfone nas configurações para verificar a
-            pronúncia.
+            {t('practice.pronunciation.micDenied')}
           </Text>
           <View className="flex-row flex-wrap gap-2">
             <Pressable
@@ -145,7 +141,7 @@ export function PronunciationPractice({
             >
               <Ionicons name="settings-outline" size={18} color={colors.gray} />
               <Text className="font-poppins-semibold text-sm text-gray-700">
-                Abrir configurações
+                {t('lesson.vocabulary.openSettings')}
               </Text>
             </Pressable>
             <Pressable
@@ -155,7 +151,7 @@ export function PronunciationPractice({
             >
               <Ionicons name="refresh" size={18} color={colors.gray} />
               <Text className="font-poppins-semibold text-sm text-gray-700">
-                Tentar de novo
+                {t('common.retry')}
               </Text>
             </Pressable>
           </View>
@@ -190,12 +186,12 @@ export function PronunciationPractice({
 
           {state.phase === 'idle' && state.hint ? (
             <Text className="text-center font-poppins text-sm text-gray-500">
-              {HINTS[state.hint]}
+              {t(`lesson.vocabulary.hints.${state.hint}`)}
             </Text>
           ) : null}
           {state.phase === 'result' ? (
             <Text className="text-center font-poppins text-sm text-gray-500">
-              Segure o microfone para tentar de novo.
+              {t('practice.pronunciation.tryAgainHint')}
             </Text>
           ) : null}
         </>

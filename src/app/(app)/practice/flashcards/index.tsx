@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -19,17 +20,19 @@ import { getFlashcards } from '@/services/flashcards';
 // Conjuntos de flashcards, os mesmos do site. Recarrega ao voltar de uma
 // sessão de estudo, para o progresso aparecer atualizado.
 export default function FlashcardsScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const {
     data: flashcards,
     error,
     refreshing,
     refresh,
-  } = useApiQuery(getFlashcards, 'Erro ao carregar os flashcards.');
+  } = useApiQuery(getFlashcards, t('practice.flashcards.loadError'));
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Flashcards" />
+      <LessonHeader title={t('practice.home.flashcards')} />
       <ScrollView
         contentContainerClassName="flex-grow gap-4 px-5 pb-8 pt-4"
         refreshControl={
@@ -42,13 +45,17 @@ export default function FlashcardsScreen() {
         }
       >
         <Text className="font-poppins text-base text-gray-600">
-          Escolha um tema e memorize o vocabulário.
+          {t('practice.flashcards.subtitle')}
         </Text>
 
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -67,8 +74,8 @@ export default function FlashcardsScreen() {
 
         {flashcards?.length === 0 ? (
           <EmptyState
-            title="Nenhum flashcard disponível"
-            text="Os flashcards serão adicionados em breve"
+            title={t('practice.flashcards.emptyTitle')}
+            text={t('practice.flashcards.emptyText')}
           />
         ) : null}
 

@@ -1,68 +1,67 @@
+import { getLocale, t } from '@/lib/i18n';
 import type { LessonPrice, PrivateLesson } from '@/services/privateLessons';
 
 const CURRENCY_SYMBOLS: Record<string, string> = { usd: 'US$' };
 
 const WEEKDAYS = [
-  'domingo',
-  'segunda',
-  'terça',
-  'quarta',
-  'quinta',
-  'sexta',
-  'sábado',
-];
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+] as const;
 const MONTHS = [
-  'janeiro',
-  'fevereiro',
-  'março',
-  'abril',
-  'maio',
-  'junho',
-  'julho',
-  'agosto',
-  'setembro',
-  'outubro',
-  'novembro',
-  'dezembro',
-];
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+] as const;
 
 const HOUR_MS = 60 * 60 * 1000;
 
-// Preço de `quantity` aulas: "US$ 75,00"
+// Preço de `quantity` aulas: "US$ 75,00", no formato do idioma do app
 export function formatPrice(price: LessonPrice, quantity = 1) {
   const cents = price.unitAmount * quantity;
-  const whole = Math.floor(cents / 100)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  const fraction = String(cents % 100).padStart(2, '0');
+  const amount = (cents / 100).toLocaleString(getLocale(), {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
   const symbol =
     CURRENCY_SYMBOLS[price.currency.toLowerCase()] ??
     price.currency.toUpperCase();
 
-  return `${symbol} ${whole},${fraction}`;
+  return `${symbol} ${amount}`;
 }
 
 export function formatLessons(count: number) {
-  return `${count} ${count === 1 ? 'aula' : 'aulas'}`;
+  return t('common.lessons', { count });
 }
 
 // Texto que acompanha o número do saldo
 export function formatAvailableLabel(count: number) {
-  return count === 1 ? 'aula disponível' : 'aulas disponíveis';
+  return t('practice.privateLessons.available', { count });
 }
 
 // Saldo por extenso, para o leitor de tela
 export function formatAvailable(count: number) {
   return count === 0
-    ? 'Nenhuma aula disponível'
+    ? t('practice.privateLessons.noneAvailable')
     : `${count} ${formatAvailableLabel(count)}`;
 }
 
 // "3 aulas adicionadas à sua conta."
 export function formatAddedLessons(count: number) {
-  return count === 1
-    ? '1 aula adicionada à sua conta.'
-    : `${count} aulas adicionadas à sua conta.`;
+  return t('practice.privateLessons.added', { count });
 }
 
 function isSameDay(a: Date, b: Date) {
@@ -80,14 +79,20 @@ export function formatLessonDate(isoDate: string, now = new Date()) {
   const tomorrow = new Date(now);
   tomorrow.setDate(now.getDate() + 1);
 
-  let day = WEEKDAYS[date.getDay()];
+  let day: string = t(
+    `practice.privateLessons.weekdays.${WEEKDAYS[date.getDay()]}`
+  );
   if (isSameDay(date, now)) {
-    day = 'Hoje';
+    day = t('practice.privateLessons.today');
   } else if (isSameDay(date, tomorrow)) {
-    day = 'Amanhã';
+    day = t('practice.privateLessons.tomorrow');
   }
 
-  return `${day}, ${date.getDate()} de ${MONTHS[date.getMonth()]}`;
+  return t('practice.privateLessons.date', {
+    day,
+    date: date.getDate(),
+    month: t(`practice.privateLessons.months.${MONTHS[date.getMonth()]}`),
+  });
 }
 
 function formatTime(date: Date) {

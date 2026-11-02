@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AccessibilityInfo, Pressable, Text, View } from 'react-native';
 
 import { ProgressBar } from '@/components/ProgressBar';
@@ -26,6 +27,8 @@ export function TaskStrip({
   // Avisos de desvio até agora; com algum, a faixa mostra quantos
   warnings?: number;
 }) {
+  const { t } = useTranslation();
+
   const [isOpen, setIsOpen] = useState(false);
   const [highlighted, setHighlighted] = useState<number[]>([]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -39,7 +42,9 @@ export function TaskStrip({
     setHighlighted(highlight.tasks);
     AccessibilityInfo.announceForAccessibility(
       highlight.tasks
-        .map((task) => `Tarefa cumprida: ${tasks[task]}`)
+        .map((task) =>
+          t('practice.simulations.tasks.done', { task: tasks[task] })
+        )
         .join('. ')
     );
     if (timer.current) {
@@ -66,14 +71,20 @@ export function TaskStrip({
     <View className="border-b border-gray-200 bg-white px-4 py-2.5">
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Tarefas, ${done} de ${tasks.length} cumpridas${warnings > 0 ? `, ${warnings} ${warnings === 1 ? 'aviso' : 'avisos'}` : ''}`}
+        accessibilityLabel={`${t('practice.simulations.tasks.label', {
+          done,
+          total: tasks.length,
+        })}${warnings > 0 ? `, ${t('practice.simulations.tasks.warnings', { count: warnings })}` : ''}`}
         accessibilityState={{ expanded: isOpen }}
         onPress={() => setIsOpen((current) => !current)}
         className="gap-2"
       >
         <View className="flex-row items-center gap-2">
           <Text className="flex-1 font-poppins-semibold text-sm text-gray-900">
-            Tarefas {done}/{tasks.length}
+            {t('practice.simulations.tasks.strip', {
+              done,
+              total: tasks.length,
+            })}
           </Text>
           {warnings > 0 ? (
             <View className="flex-row items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5">
@@ -83,7 +94,7 @@ export function TaskStrip({
                 color={WARNING_COLOR}
               />
               <Text className="font-poppins-medium text-xs text-amber-800">
-                {warnings === 1 ? '1 aviso' : `${warnings} avisos`}
+                {t('practice.simulations.tasks.warnings', { count: warnings })}
               </Text>
             </View>
           ) : null}

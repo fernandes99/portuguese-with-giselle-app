@@ -10,6 +10,8 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
+import { t } from '@/lib/i18n';
+
 // Menos que isso é um toque, não uma fala: não envia
 const MIN_RECORDING_MS = 500;
 
@@ -164,7 +166,10 @@ export function useHoldToTalk({
       await setPlaybackMode();
       if (isMountedRef.current) {
         setState(IDLE);
-        Alert.alert('Não foi possível gravar', 'Tente novamente.');
+        Alert.alert(
+          t('practice.chat.recordError'),
+          t('practice.chat.tryAgain')
+        );
       }
       return;
     }

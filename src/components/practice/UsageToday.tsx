@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { type ComponentProps, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -11,8 +12,6 @@ import {
   type PracticeAllowanceItem,
 } from '@/services/practice';
 
-const LOAD_ERROR = 'Não foi possível carregar seu uso.';
-
 // Uma linha do uso: ícone, nome, quanto resta e a barra do que resta
 function UsageRow({
   icon,
@@ -23,13 +22,19 @@ function UsageRow({
   label: string;
   item: PracticeAllowanceItem;
 }) {
+  const { t } = useTranslation();
+
   const isOver = item.remaining === 0;
   const share = item.limit > 0 ? item.remaining / item.limit : 0;
 
   return (
     <View
       accessible
-      accessibilityLabel={`${label}: restam ${item.remaining} de ${item.limit}`}
+      accessibilityLabel={t('practice.usage.label', {
+        label,
+        remaining: item.remaining,
+        limit: item.limit,
+      })}
       className="flex-row items-center gap-3"
     >
       <View className="h-10 w-10 items-center justify-center rounded-full bg-surface">
@@ -47,7 +52,10 @@ function UsageRow({
           <Text
             className={`font-poppins-semibold text-sm ${isOver ? 'text-red-600' : 'text-gray-900'}`}
           >
-            {item.remaining} de {item.limit}
+            {t('practice.usage.value', {
+              remaining: item.remaining,
+              limit: item.limit,
+            })}
           </Text>
         </View>
         <View className="h-1.5 overflow-hidden rounded-full bg-surface">
@@ -64,6 +72,8 @@ function UsageRow({
 // Quanto resta hoje de mensagens, falas da Gisa e respostas por voz. Carrega
 // ao aparecer (a folha monta o conteúdo só quando abre).
 export function UsageToday() {
+  const { t } = useTranslation();
+
   const { token } = useAuth();
   const [allowance, setAllowance] = useState<PracticeAllowance | null>(null);
   const [error, setError] = useState('');
@@ -82,38 +92,38 @@ export function UsageToday() {
       })
       .catch((err) => {
         if (isCurrent) {
-          setError(getErrorMessage(err, LOAD_ERROR));
+          setError(getErrorMessage(err, t('practice.usage.loadError')));
         }
       });
     return () => {
       isCurrent = false;
     };
-  }, [token]);
+  }, [token, t]);
 
   return (
     <View className="gap-4 px-1 py-2">
       <Text className="font-poppins-semibold text-base text-gray-900">
-        Seu uso hoje
+        {t('practice.usage.title')}
       </Text>
       {allowance ? (
         <>
           <UsageRow
             icon="chatbubble-ellipses"
-            label="Mensagens"
+            label={t('practice.usage.messages')}
             item={allowance.messages}
           />
           <UsageRow
             icon="volume-high"
-            label="Falas da Gisa"
+            label={t('practice.usage.speech')}
             item={allowance.speech}
           />
           <UsageRow
             icon="mic"
-            label="Respostas por voz"
+            label={t('practice.usage.voiceAnswers')}
             item={allowance.voiceAnswers}
           />
           <Text className="font-poppins text-xs text-gray-500">
-            Os limites voltam à meia-noite (horário de Brasília).
+            {t('practice.simulations.limitsReset')}
           </Text>
         </>
       ) : error ? (

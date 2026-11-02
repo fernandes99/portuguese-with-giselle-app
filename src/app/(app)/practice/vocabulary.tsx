@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   FlatList,
@@ -32,6 +33,8 @@ import {
 // dos salvos ao lado da busca. O toque abre o detalhe com os áudios; o item exclusivo do Premium
 // leva aos planos.
 export default function VocabularyScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { user } = useAuth();
   const { data, error, refreshing, refresh, savedIds, toggleSaved } =
@@ -53,7 +56,7 @@ export default function VocabularyScreen() {
     [data, query, filter, onlySaved, savedIds]
   );
   const filterOptions = [
-    { id: VOCABULARY_FILTER_ALL, title: 'Todas' },
+    { id: VOCABULARY_FILTER_ALL, title: t('practice.vocabulary.all') },
     ...(data?.categories ?? []),
   ];
 
@@ -67,7 +70,7 @@ export default function VocabularyScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Vocabulário" />
+      <LessonHeader title={t('practice.vocabulary.title')} />
 
       {hasNoWords ? null : (
         <View className="gap-3 pb-3 pt-2">
@@ -75,10 +78,10 @@ export default function VocabularyScreen() {
             <View className="h-12 flex-1 flex-row items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4">
               <Ionicons name="search" size={20} color={colors.gray} />
               <TextInput
-                accessibilityLabel="Buscar"
+                accessibilityLabel={t('practice.vocabulary.search')}
                 value={query}
                 onChangeText={setQuery}
-                placeholder="Buscar palavra, significado ou exemplo"
+                placeholder={t('practice.vocabulary.searchPlaceholder')}
                 placeholderTextColor={colors.placeholder}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -92,7 +95,7 @@ export default function VocabularyScreen() {
               {query ? (
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Limpar a busca"
+                  accessibilityLabel={t('practice.vocabulary.clearSearch')}
                   onPress={() => setQuery('')}
                   hitSlop={10}
                 >
@@ -104,7 +107,7 @@ export default function VocabularyScreen() {
             {/* Liga e desliga os salvos; vale junto com a busca e a categoria */}
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Mostrar só os salvos"
+              accessibilityLabel={t('practice.vocabulary.onlySaved')}
               accessibilityState={{ selected: onlySaved }}
               onPress={() => setOnlySaved((previous) => !previous)}
               className={`h-12 w-12 items-center justify-center rounded-2xl border ${
@@ -150,17 +153,21 @@ export default function VocabularyScreen() {
           error ? (
             <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
               <Text className="font-poppins text-sm text-red-700">{error}</Text>
-              <Button variant="link" label="Tentar de novo" onPress={refresh} />
+              <Button
+                variant="link"
+                label={t('common.retry')}
+                onPress={refresh}
+              />
             </View>
           ) : undefined
         }
         ListEmptyComponent={
           hasNoWords ? (
             <EmptyState
-              title="Comece uma aula e conclua os exercícios para liberar palavras aqui."
+              title={t('practice.vocabulary.noWords')}
               action={
                 <Button
-                  label="Ir para os cursos"
+                  label={t('practice.vocabulary.goToCourses')}
                   onPress={() => router.navigate('/')}
                 />
               }
@@ -169,12 +176,12 @@ export default function VocabularyScreen() {
             <EmptyState
               title={
                 isSavedFilterEmpty
-                  ? 'Você ainda não salvou nada.'
-                  : 'Nenhuma expressão encontrada.'
+                  ? t('practice.vocabulary.noSaved')
+                  : t('practice.vocabulary.noResults')
               }
               text={
                 isSavedFilterEmpty
-                  ? 'Toque no marcador de uma expressão para revê-la aqui.'
+                  ? t('practice.vocabulary.noSavedText')
                   : undefined
               }
             />

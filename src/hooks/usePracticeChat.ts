@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import {
   PRACTICE_ERROR_CODES,
   type PracticeCorrection,
@@ -65,8 +66,6 @@ export interface PracticeLimit {
 // conversa mudou no meio); senão, o aviso para mostrar acima da barra
 export type VoiceAnswerResult =
   { ok: true } | { ok: false; message: string; code?: string };
-
-const NOT_UNDERSTOOD = 'Não entendi, tente de novo.';
 
 // Campo opcional do backend: vazio vira ausente
 function optional(value: string | undefined) {
@@ -225,7 +224,9 @@ export function usePracticeChat() {
           next.push({
             id: `aviso-${nextId.current++}`,
             role: 'notice',
-            content: `Explicações agora em ${EXPLANATION_LANGUAGE_TITLES[turn.explanationLanguage]}`,
+            content: t('practice.chat.languageChanged', {
+              language: EXPLANATION_LANGUAGE_TITLES[turn.explanationLanguage],
+            }),
           });
         }
         setMessages(next);
@@ -249,7 +250,7 @@ export function usePracticeChat() {
           {
             ...pending,
             status: 'failed',
-            error: getErrorMessage(err, 'Não foi possível enviar.'),
+            error: getErrorMessage(err, t('practice.chat.sendError')),
           },
         ]);
       } finally {
@@ -312,10 +313,7 @@ export function usePracticeChat() {
       setMessages(history);
       return {
         ok: false,
-        message: getErrorMessage(
-          err,
-          'Não foi possível ouvir seu áudio. Tente de novo.'
-        ),
+        message: getErrorMessage(err, t('practice.chat.hearError')),
         code: err instanceof ApiError ? (err.code ?? undefined) : undefined,
       };
     }
@@ -325,7 +323,7 @@ export function usePracticeChat() {
     }
     if (!text) {
       setMessages(history);
-      return { ok: false, message: NOT_UNDERSTOOD };
+      return { ok: false, message: t('practice.chat.notUnderstood') };
     }
 
     deliver(history, {

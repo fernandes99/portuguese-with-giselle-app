@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
@@ -29,6 +30,8 @@ export function StudySummary({
   onStudyAll,
   onExit,
 }: StudySummaryProps) {
+  const { t } = useTranslation();
+
   const isCompleted = remainingCount === 0;
 
   return (
@@ -42,33 +45,49 @@ export function StudySummary({
           />
         </View>
         <Text className="text-center font-poppins-bold text-2xl text-gray-900">
-          {isCompleted ? 'Você aprendeu todos os cards!' : 'Rodada concluída'}
+          {t(
+            isCompleted
+              ? 'practice.flashcards.allLearned'
+              : 'practice.flashcards.roundDone'
+          )}
         </Text>
         <Text className="text-center font-poppins text-base text-gray-600">
           {isCompleted
-            ? 'Revise quando quiser para não esquecer.'
-            : `Você já aprendeu ${learnedCount} de ${formatCards(totalCards)}.`}
+            ? t('practice.flashcards.reviewAnytime')
+            : t('practice.flashcards.learnedSoFar', {
+                learned: learnedCount,
+                cards: formatCards(totalCards),
+              })}
         </Text>
       </View>
 
       <View className="gap-2">
         {notice}
         {isCompleted ? (
-          <Button label="Revisar todos os cards" onPress={onStudyAll} />
+          <Button
+            label={t('practice.flashcards.reviewAll')}
+            onPress={onStudyAll}
+          />
         ) : (
           <>
             <Button
-              label={`Continuar com ${formatCards(remainingCount)}`}
+              label={t('practice.flashcards.continueWith', {
+                cards: formatCards(remainingCount),
+              })}
               onPress={onStudyRemaining}
             />
             <Button
               variant="link"
-              label="Revisar todos os cards"
+              label={t('practice.flashcards.reviewAll')}
               onPress={onStudyAll}
             />
           </>
         )}
-        <Button variant="link" label="Voltar aos flashcards" onPress={onExit} />
+        <Button
+          variant="link"
+          label={t('practice.flashcards.backToFlashcards')}
+          onPress={onExit}
+        />
       </View>
     </Animated.View>
   );

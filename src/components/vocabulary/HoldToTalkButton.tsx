@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -66,6 +67,8 @@ export function HoldToTalkButton({
   onPressIn,
   onRelease,
 }: HoldToTalkButtonProps) {
+  const { t } = useTranslation();
+
   const translateX = useSharedValue(0);
   const pressed = useSharedValue(0);
   const level = useSharedValue(0);
@@ -167,11 +170,11 @@ export function HoldToTalkButton({
   }));
 
   const action = isInCancelZone
-    ? 'Solte para cancelar'
+    ? t('practice.pronunciation.releaseToCancel')
     : isHolding
-      ? '‹ Deslize para cancelar'
+      ? t('practice.pronunciation.slideToCancel')
       : showIdleHint
-        ? 'Segure para falar'
+        ? t('practice.pronunciation.holdToTalk')
         : '';
   // Sem a barra, o tempo vai junto do aviso
   const hint =
@@ -195,8 +198,8 @@ export function HoldToTalkButton({
         <View
           accessible
           accessibilityRole="button"
-          accessibilityLabel="Segure para falar"
-          accessibilityHint="Solte para enviar. Arraste para a esquerda para cancelar."
+          accessibilityLabel={t('practice.pronunciation.holdToTalk')}
+          accessibilityHint={t('practice.pronunciation.holdHint')}
           accessibilityState={{ disabled, busy: isRecording }}
           style={{
             width: size,
