@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import { LessonDiscussions } from '@/components/lesson/LessonDiscussions';
@@ -21,6 +22,8 @@ export function DiscussionsSheet({
   lessonId,
   onClose,
 }: DiscussionsSheetProps) {
+  const { t } = useTranslation();
+
   const bottomInset = useModalBottomInset();
 
   return (
@@ -33,7 +36,7 @@ export function DiscussionsSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Fechar as discussões"
+          accessibilityLabel={t('lesson.guided.closeDiscussions')}
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -44,11 +47,11 @@ export function DiscussionsSheet({
         >
           <View className="mb-3 flex-row items-center justify-between">
             <Text className="font-poppins-semibold text-base text-gray-900">
-              Discussões
+              {t('lesson.guided.discussions')}
             </Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Fechar as discussões"
+              accessibilityLabel={t('lesson.guided.closeDiscussions')}
               onPress={onClose}
               hitSlop={12}
             >

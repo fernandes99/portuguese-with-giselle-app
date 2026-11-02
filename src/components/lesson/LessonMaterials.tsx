@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, Linking, Pressable, Text, View } from 'react-native';
 
 import {
@@ -22,16 +23,6 @@ const KINDS: Record<Kind, { label: string; box: string; text: string }> = {
   zip: { label: 'ZIP', box: 'bg-orange-100', text: 'text-orange-700' },
   link: { label: 'LINK', box: 'bg-green-100', text: 'text-green-700' },
   file: { label: 'ARQ', box: 'bg-purple-100', text: 'text-purple-700' },
-};
-
-const KIND_NAMES: Record<Kind, string> = {
-  pdf: 'PDF',
-  image: 'Imagem',
-  audio: 'Áudio',
-  video: 'Vídeo',
-  zip: 'ZIP',
-  link: 'Link',
-  file: 'Arquivo',
 };
 
 function getKind(material: LessonMaterial): Kind {
@@ -84,15 +75,18 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function MaterialRow({ material }: { material: LessonMaterial }) {
+  const { t } = useTranslation();
+
   const kind = getKind(material);
   const style = KINDS[kind];
   const isFile = material.type === 'file';
   // Áudio enviado como arquivo toca aqui mesmo, sem sair do app
   const playsInline = isFile && kind === 'audio';
 
+  const kindName = t(`lesson.materials.kinds.${kind}`);
   const details = isFile
-    ? [KIND_NAMES[kind], formatFileSize(material.size)]
-    : [getHost(material.url) ?? KIND_NAMES[kind]];
+    ? [kindName, formatFileSize(material.size)]
+    : [getHost(material.url) ?? kindName];
 
   return (
     <Pressable
@@ -114,7 +108,7 @@ function MaterialRow({ material }: { material: LessonMaterial }) {
             <Ionicons name="open-outline" size={20} color={colors.darkGreen} />
           ) : (
             <Text className={`font-poppins-bold text-xs ${style.text}`}>
-              {style.label}
+              {kind === 'file' ? t('lesson.materials.fileBadge') : style.label}
             </Text>
           )}
         </View>
@@ -148,6 +142,8 @@ export function LessonMaterials({
 }: {
   materials: LessonMaterial[];
 }) {
+  const { t } = useTranslation();
+
   const files = materials.filter((material) => material.type === 'file');
   const links = materials.filter((material) => material.type !== 'file');
 
@@ -156,25 +152,25 @@ export function LessonMaterials({
       <View className="gap-6">
         <View className="gap-1">
           <Text className="font-poppins-semibold text-xs tracking-widest text-gray-500">
-            MATERIAIS DE APOIO
+            {t('lesson.materials.eyebrow')}
           </Text>
           <Text className="font-poppins-semibold text-2xl text-gray-900">
-            Recursos da aula
+            {t('lesson.materials.title')}
           </Text>
           <Text className="font-poppins text-base text-gray-600">
-            Salve os materiais e continue praticando fora do app.
+            {t('lesson.materials.subtitle')}
           </Text>
         </View>
 
         {materials.length === 0 ? (
           <EmptyState
-            title="Nenhum material de apoio disponível"
-            text="Os materiais de apoio desta aula serão adicionados em breve."
+            title={t('lesson.materials.emptyTitle')}
+            text={t('lesson.materials.emptyText')}
           />
         ) : null}
 
         {files.length > 0 ? (
-          <Section title="Documentos">
+          <Section title={t('lesson.materials.documents')}>
             {files.map((material) => (
               <MaterialRow key={material.id} material={material} />
             ))}
@@ -182,7 +178,7 @@ export function LessonMaterials({
         ) : null}
 
         {links.length > 0 ? (
-          <Section title="Links e atividades">
+          <Section title={t('lesson.materials.links')}>
             {links.map((material) => (
               <MaterialRow key={material.id} material={material} />
             ))}

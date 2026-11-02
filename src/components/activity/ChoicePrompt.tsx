@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
@@ -9,12 +10,13 @@ import {
   type ChoicePromptKind,
   isAudio,
   isImage,
-  PROMPT_INSTRUCTIONS,
 } from '@/utils/choice';
 
 // Botão grande, no centro, para ouvir o áudio da pergunta. Usado também pela
 // atividade de vocabulário.
 export function ListenButton({ url }: { url: string }) {
+  const { t } = useTranslation();
+
   const { playingUrl, toggle } = useActivityAudio();
   const isPlaying = playingUrl === url;
 
@@ -23,7 +25,11 @@ export function ListenButton({ url }: { url: string }) {
       <View className="h-36 w-36 items-center justify-center rounded-full bg-green-100">
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={isPlaying ? 'Pausar áudio' : 'Ouvir áudio'}
+          accessibilityLabel={t(
+            isPlaying
+              ? 'lesson.exercise.pauseAudio'
+              : 'lesson.exercise.listenAudio'
+          )}
           onPress={() => toggle(url)}
           className="h-28 w-28 items-center justify-center rounded-full bg-green-600 active:bg-green-700"
         >
@@ -35,7 +41,9 @@ export function ListenButton({ url }: { url: string }) {
         </Pressable>
       </View>
       <Text className="font-poppins text-sm text-gray-500">
-        {isPlaying ? 'Tocando...' : 'Toque para ouvir'}
+        {t(
+          isPlaying ? 'lesson.exercise.playing' : 'lesson.exercise.tapToListen'
+        )}
       </Text>
     </View>
   );
@@ -54,6 +62,8 @@ export function ChoicePrompt({
   kind,
   allowsMultiple,
 }: ChoicePromptProps) {
+  const { t } = useTranslation();
+
   const question = exercise.question.trim();
   // Sem áudio nem imagem, a própria pergunta é o destaque
   const hasMedia = kind === 'listen' || kind === 'look';
@@ -62,11 +72,11 @@ export function ChoicePrompt({
     <View className="items-center gap-5">
       <View className="items-center gap-1">
         <Text className="text-center font-poppins-bold text-xl text-gray-900">
-          {PROMPT_INSTRUCTIONS[kind]}
+          {t(`lesson.exercise.prompts.${kind}`)}
         </Text>
         {allowsMultiple ? (
           <Text className="text-center font-poppins text-sm text-gray-500">
-            Há mais de uma resposta certa.
+            {t('lesson.exercise.multipleAnswers')}
           </Text>
         ) : null}
       </View>

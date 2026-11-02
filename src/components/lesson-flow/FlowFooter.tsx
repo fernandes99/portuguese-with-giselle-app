@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,7 +22,7 @@ interface FlowFooterProps {
 
 // Rodapé fixo da aula guiada, com o botão que avança
 export function FlowFooter({
-  label = 'Continuar',
+  label,
   onPress,
   disabled,
   onDisabledPress,
@@ -29,6 +30,8 @@ export function FlowFooter({
   error,
   toast = null,
 }: FlowFooterProps) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
 
   return (
@@ -44,7 +47,7 @@ export function FlowFooter({
       ) : null}
       <Button
         size="lg"
-        label={label}
+        label={label ?? t('common.continue')}
         onPress={onPress}
         disabled={disabled}
         onDisabledPress={onDisabledPress}

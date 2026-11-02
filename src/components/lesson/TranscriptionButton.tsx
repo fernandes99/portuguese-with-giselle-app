@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { getLessonTranscriptionUrl } from '@/services/lesson';
-
-const ERROR_MESSAGE = 'Não foi possível baixar a transcrição. Tente de novo.';
 
 interface TranscriptionButtonProps {
   lessonId: string;
@@ -17,6 +16,8 @@ interface TranscriptionButtonProps {
 // compartilha. A URL é assinada e expira em 60 segundos, por isso é pedida
 // só no toque.
 export function TranscriptionButton({ lessonId }: TranscriptionButtonProps) {
+  const { t } = useTranslation();
+
   const { token } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -32,7 +33,7 @@ export function TranscriptionButton({ lessonId }: TranscriptionButtonProps) {
       const { url } = await getLessonTranscriptionUrl(token, lessonId);
       await WebBrowser.openBrowserAsync(url);
     } catch {
-      setError(ERROR_MESSAGE);
+      setError(t('lesson.transcription.error'));
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +43,7 @@ export function TranscriptionButton({ lessonId }: TranscriptionButtonProps) {
     <View className="gap-2">
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Baixar a transcrição da aula em PDF"
+        accessibilityLabel={t('lesson.transcription.download')}
         accessibilityState={{ busy: isLoading, disabled: isLoading }}
         disabled={isLoading}
         onPress={handlePress}
@@ -58,10 +59,10 @@ export function TranscriptionButton({ lessonId }: TranscriptionButtonProps) {
 
         <View className="flex-1">
           <Text className="font-poppins-semibold text-sm text-gray-900">
-            Transcrição da aula
+            {t('lesson.transcription.title')}
           </Text>
           <Text className="font-poppins text-xs text-gray-500">
-            PDF com o texto completo, vocabulário e gramática.
+            {t('lesson.transcription.description')}
           </Text>
         </View>
 

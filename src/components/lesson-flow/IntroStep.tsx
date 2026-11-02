@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { LessonMedia } from '@/components/lesson/LessonMedia';
@@ -19,6 +20,8 @@ export function IntroStep({
   // O aluno tocou no play; é o que libera o "Continuar" desta parte
   onPlay: () => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <View className="gap-5">
       {/* O vídeo é opcional: sem ele, a parte fica só com a apresentação */}
@@ -33,7 +36,7 @@ export function IntroStep({
           <View className="flex-row items-center gap-1.5">
             <Ionicons name="time-outline" size={16} color={colors.gray} />
             <Text className="font-poppins-medium text-xs text-gray-600">
-              {lesson.duration} {lesson.duration === 1 ? 'minuto' : 'minutos'}
+              {t('lesson.lesson.minutes', { count: lesson.duration })}
             </Text>
           </View>
         ) : null}

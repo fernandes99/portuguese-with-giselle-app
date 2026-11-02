@@ -6,6 +6,7 @@ import {
   useActivityAudio,
 } from '@/components/activity/ActivityAudio';
 import { colors } from '@/constants/theme';
+import { t } from '@/lib/i18n';
 import {
   type ChoiceAlternative,
   type ChoiceExercise,
@@ -75,7 +76,7 @@ function getAccessibilityLabel(
   const title = alternative.title.trim();
   return title
     ? `${getLetter(position)}: ${title}`
-    : `Alternativa ${getLetter(position)}`;
+    : t('lesson.exercise.alternative', { letter: getLetter(position) });
 }
 
 interface ChoiceAlternativesProps {
@@ -117,7 +118,7 @@ export function ChoiceAlternatives({
               key={alternative.id}
               accessibilityRole={role}
               accessibilityLabel={getAccessibilityLabel(alternative, position)}
-              accessibilityHint="Toca o áudio e escolhe esta alternativa"
+              accessibilityHint={t('lesson.exercise.alternativeHint')}
               accessibilityState={{ checked: isSelected }}
               // Depois de verificar, o toque ainda toca o áudio
               onPress={() => {
@@ -213,7 +214,8 @@ export function ChoiceAnswer({ exercise }: { exercise: ChoiceExercise }) {
     alternative.isCorrect ? (
       <View key={alternative.id} className="flex-row items-center gap-3">
         <Text className="flex-1 font-poppins-medium text-base text-gray-900">
-          {alternative.title.trim() || `Alternativa ${getLetter(position)}`}
+          {alternative.title.trim() ||
+            t('lesson.exercise.alternative', { letter: getLetter(position) })}
         </Text>
         {isAudio(alternative.file) ? (
           <AudioButton url={alternative.file.url} />

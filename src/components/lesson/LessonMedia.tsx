@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Image, Pressable, Text, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
@@ -19,11 +20,13 @@ function getEmbedUrl(lesson: Lesson) {
 }
 
 function Loading() {
+  const { t } = useTranslation();
+
   return (
     <View className="absolute inset-0 items-center justify-center gap-3 bg-gray-100">
       <ActivityIndicator color={colors.gray} />
       <Text className="font-poppins-medium text-sm text-gray-500">
-        Carregando o vídeo...
+        {t('lesson.lesson.loadingVideo')}
       </Text>
     </View>
   );
@@ -39,6 +42,8 @@ export function LessonMedia({
   // Avisa quando o aluno toca no play
   onPlay?: () => void;
 }) {
+  const { t } = useTranslation();
+
   const [isPlaying, setIsPlaying] = useState(false);
   const embedUrl = getEmbedUrl(lesson);
 
@@ -64,7 +69,7 @@ export function LessonMedia({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Reproduzir ${lesson.title}`}
+      accessibilityLabel={t('lesson.lesson.play', { title: lesson.title })}
       onPress={() => {
         setIsPlaying(true);
         onPlay?.();

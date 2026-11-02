@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -21,6 +22,8 @@ interface LessonRouteProps {
 // ainda não concluiu (ou pediu para recomeçar), a tela com abas para a que
 // ele já concluiu.
 function LessonRoute({ courseSlug, lessonSlug, restart }: LessonRouteProps) {
+  const { t } = useTranslation();
+
   const { data, error, locked, reload, setCompleted, saveActivityProgress } =
     useLesson(courseSlug, lessonSlug);
 
@@ -35,7 +38,7 @@ function LessonRoute({ courseSlug, lessonSlug, restart }: LessonRouteProps) {
       <SafeAreaView className="flex-1 bg-background">
         <LessonHeader title="" />
         {locked ? (
-          <PremiumLock description="Esta lição faz parte do plano Premium. O 1º módulo de cada nível é grátis." />
+          <PremiumLock description={t('lesson.lesson.premiumLock')} />
         ) : (
           <View className="flex-1 items-center justify-center gap-4 px-6">
             {error ? (
@@ -45,7 +48,7 @@ function LessonRoute({ courseSlug, lessonSlug, restart }: LessonRouteProps) {
                 </Text>
                 <Button
                   variant="link"
-                  label="Tentar de novo"
+                  label={t('common.retry')}
                   onPress={reload}
                 />
               </>

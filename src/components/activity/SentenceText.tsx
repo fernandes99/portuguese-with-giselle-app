@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { tokenizeText } from '@/utils/sentence';
@@ -27,12 +28,14 @@ function TipWord({
   tip: string;
   className: string;
 }) {
+  const { t } = useTranslation();
+
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Text
       accessibilityRole="button"
-      accessibilityHint="Mostra a tradução"
+      accessibilityHint={t('lesson.exercise.showTranslation')}
       onPress={() => setIsOpen((value) => !value)}
       className={`${className} text-cyan-700 underline`}
     >

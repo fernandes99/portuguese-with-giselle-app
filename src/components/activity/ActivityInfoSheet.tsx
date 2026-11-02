@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -22,6 +23,8 @@ export function ActivityInfoSheet({
   content,
   onClose,
 }: ActivityInfoSheetProps) {
+  const { t } = useTranslation();
+
   const bottomInset = useModalBottomInset();
 
   return (
@@ -34,7 +37,7 @@ export function ActivityInfoSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Fechar as instruções"
+          accessibilityLabel={t('lesson.exercise.closeInstructions')}
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -49,7 +52,7 @@ export function ActivityInfoSheet({
             </Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Fechar as instruções"
+              accessibilityLabel={t('lesson.exercise.closeInstructions')}
               onPress={onClose}
               hitSlop={12}
             >
@@ -63,7 +66,7 @@ export function ActivityInfoSheet({
             </ScrollView>
           ) : null}
 
-          <Button label="Entendi" onPress={onClose} />
+          <Button label={t('lesson.exercise.gotIt')} onPress={onClose} />
         </View>
       </View>
     </Modal>

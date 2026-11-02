@@ -3,6 +3,7 @@ import { Image, Pressable, Text, View } from 'react-native';
 
 import { ProgressBar } from '@/components/ProgressBar';
 import { colors } from '@/constants/theme';
+import { t } from '@/lib/i18n';
 import type { Course } from '@/services/courses';
 import {
   formatCourseMeta,
@@ -17,13 +18,13 @@ interface CourseCardProps {
 
 function getBadge(course: Course, isCompleted: boolean) {
   if (course.totalLessons === 0) {
-    return { label: 'Em breve', className: 'bg-gray-900/70' };
+    return { label: t('lesson.course.soon'), className: 'bg-gray-900/70' };
   }
   if (isCompleted) {
-    return { label: 'Concluído', className: 'bg-green-600' };
+    return { label: t('lesson.course.completed'), className: 'bg-green-600' };
   }
   if (course.isStarted) {
-    return { label: 'Em andamento', className: 'bg-blue-600' };
+    return { label: t('lesson.course.inProgress'), className: 'bg-blue-600' };
   }
   return null;
 }
@@ -97,8 +98,11 @@ export function CourseCard({ course, onPress }: CourseCardProps) {
           <View className="mt-1 gap-1.5">
             <ProgressBar percentage={percentage} />
             <Text className="font-poppins text-xs text-gray-500">
-              {course.completedLessons} de {formatLessons(course.totalLessons)}{' '}
-              · {percentage}%
+              {t('lesson.course.lessonsProgress', {
+                completed: course.completedLessons,
+                lessons: formatLessons(course.totalLessons),
+                percentage,
+              })}
             </Text>
           </View>
         ) : null}

@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Image,
@@ -24,6 +25,8 @@ import {
 } from '@/utils/course';
 
 export default function CourseScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { courseSlug } = useLocalSearchParams<{ courseSlug: string }>();
@@ -36,7 +39,7 @@ export default function CourseScreen() {
     data: course,
     error,
     refresh,
-  } = useApiQuery(fetchCourse, 'Erro ao carregar o curso.');
+  } = useApiQuery(fetchCourse, t('lesson.course.loadError'));
 
   const [openIds, setOpenIds] = useState<Set<string> | null>(null);
   const nextLessonSlug = course?.nextLesson?.slug ?? null;
@@ -75,7 +78,7 @@ export default function CourseScreen() {
   const backButton = (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Voltar"
+      accessibilityLabel={t('common.back')}
       onPress={() => router.back()}
       hitSlop={8}
       className="absolute left-4 h-10 w-10 items-center justify-center rounded-full bg-white/90"
@@ -93,7 +96,11 @@ export default function CourseScreen() {
             <Text className="text-center font-poppins text-base text-red-700">
               {error}
             </Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </>
         ) : (
           <ActivityIndicator size="large" color={colors.green} />
@@ -142,7 +149,7 @@ export default function CourseScreen() {
           <View className="gap-2 rounded-2xl border border-gray-100 bg-white p-4">
             <View className="flex-row items-center justify-between">
               <Text className="font-poppins-semibold text-sm text-gray-900">
-                Seu progresso
+                {t('lesson.course.yourProgress')}
               </Text>
               <Text className="font-poppins-bold text-sm text-green-700">
                 {percentage}%
@@ -150,14 +157,16 @@ export default function CourseScreen() {
             </View>
             <ProgressBar percentage={percentage} />
             <Text className="font-poppins text-xs text-gray-500">
-              {course.completedLessons} de {formatLessons(course.totalLessons)}{' '}
-              {course.completedLessons === 1 ? 'concluída' : 'concluídas'}
+              {t('entry.learn.courseProgress', {
+                count: course.completedLessons,
+                lessons: formatLessons(course.totalLessons),
+              })}
             </Text>
           </View>
 
           <View className="gap-3">
             <Text className="font-poppins-bold text-xl text-gray-900">
-              Conteúdo do curso
+              {t('lesson.course.content')}
             </Text>
             {course.modules.map((module, index) => (
               <ModuleSection
@@ -184,10 +193,10 @@ export default function CourseScreen() {
           <Button
             label={
               isCompleted
-                ? 'Rever curso'
+                ? t('lesson.course.review')
                 : course.isStarted
-                  ? 'Continuar'
-                  : 'Começar curso'
+                  ? t('common.continue')
+                  : t('lesson.course.start')
             }
             onPress={() => openLesson(nextLesson.slug)}
           />

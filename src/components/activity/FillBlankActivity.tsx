@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Keyboard,
   Platform,
@@ -72,6 +73,8 @@ export function FillBlankActivity({
   onProgress,
   onFinishedChange,
 }: FillBlankActivityProps) {
+  const { t } = useTranslation();
+
   const exercises = useMemo(
     () =>
       activity.exercises
@@ -137,7 +140,7 @@ export function FillBlankActivity({
       <ActivityResult
         correct={correctBlanks}
         total={totalBlanks}
-        unit={totalBlanks === 1 ? 'lacuna' : 'lacunas'}
+        unit="blanks"
         onRetry={reset}
       />
     );
@@ -222,9 +225,11 @@ export function FillBlankActivity({
       />
 
       <Text className="text-center font-poppins-bold text-xl text-gray-900">
-        {exercise.answers.length > 1
-          ? 'Complete as lacunas'
-          : 'Complete a frase'}
+        {t(
+          exercise.answers.length > 1
+            ? 'lesson.exercise.completeBlanks'
+            : 'lesson.exercise.completeSentence'
+        )}
       </Text>
 
       {/* Palavra por palavra, para a frase quebrar de linha em volta dos campos */}
@@ -297,7 +302,9 @@ export function FillBlankActivity({
                   inputs.current[part.index] = input;
                 }}
                 autoFocus={index === 0 && part.index === 0}
-                accessibilityLabel={`Lacuna ${part.index + 1}`}
+                accessibilityLabel={t('lesson.exercise.blank', {
+                  number: part.index + 1,
+                })}
                 value={value}
                 onChangeText={(text) => type(part.index, text)}
                 onFocus={() => setFocusedSlot(part.index)}
@@ -342,7 +349,7 @@ export function FillBlankActivity({
           visible={isFeedbackOpen}
           isCorrect={feedback.isCorrect}
           isLast={feedback.isLast}
-          answerLabel="Resposta certa:"
+          answerLabel={t('lesson.exercise.correctAnswer')}
           answer={<SentenceAnswer parts={feedback.exercise.parts} />}
           onContinue={goNext}
           onDismiss={focusFirstInput}

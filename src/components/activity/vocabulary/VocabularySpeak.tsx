@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Linking,
@@ -36,11 +37,6 @@ interface VocabularySpeakProps {
   onUnavailable: (reason: PronunciationUnavailableReason) => void;
 }
 
-const HINTS = {
-  too_short: 'Segure o botão enquanto fala.',
-  cancelled: 'Gravação cancelada.',
-};
-
 // Falar a palavra: segurar o microfone, falar e soltar, com a conferência da
 // tela de vocabulário
 export function VocabularySpeak({
@@ -51,6 +47,8 @@ export function VocabularySpeak({
   onSkip,
   onUnavailable,
 }: VocabularySpeakProps) {
+  const { t } = useTranslation();
+
   const { stop: stopAudio } = useActivityAudio();
   const { state, metering, requestPermission, pressIn, release } =
     usePronunciationRecorder(question.vocabularyId, {
@@ -91,8 +89,7 @@ export function VocabularySpeak({
       {state.phase === 'denied' ? (
         <View className="gap-3">
           <Text className="font-poppins text-sm text-red-500">
-            Permita o acesso ao microfone nas configurações para falar a
-            palavra.
+            {t('lesson.vocabulary.micDenied')}
           </Text>
           <View className="flex-row flex-wrap gap-2">
             <Pressable
@@ -102,7 +99,7 @@ export function VocabularySpeak({
             >
               <Ionicons name="settings-outline" size={18} color={colors.gray} />
               <Text className="font-poppins-semibold text-sm text-gray-700">
-                Abrir configurações
+                {t('lesson.vocabulary.openSettings')}
               </Text>
             </Pressable>
             <Pressable
@@ -112,7 +109,7 @@ export function VocabularySpeak({
             >
               <Ionicons name="refresh" size={18} color={colors.gray} />
               <Text className="font-poppins-semibold text-sm text-gray-700">
-                Tentar de novo
+                {t('common.retry')}
               </Text>
             </Pressable>
           </View>
@@ -123,7 +120,7 @@ export function VocabularySpeak({
             <View className="h-14 flex-row items-center justify-center gap-2">
               <ActivityIndicator color={colors.darkGreen} />
               <Text className="font-poppins text-sm text-gray-500">
-                Conferindo...
+                {t('lesson.vocabulary.checking')}
               </Text>
             </View>
           ) : (
@@ -140,14 +137,18 @@ export function VocabularySpeak({
 
           {state.phase === 'idle' && state.hint ? (
             <Text className="text-center font-poppins text-sm text-gray-500">
-              {HINTS[state.hint]}
+              {t(`lesson.vocabulary.hints.${state.hint}`)}
             </Text>
           ) : null}
         </View>
       )}
 
       {state.phase !== 'checking' && state.phase !== 'result' ? (
-        <Button variant="link" label="Não posso falar agora" onPress={onSkip} />
+        <Button
+          variant="link"
+          label={t('lesson.vocabulary.cannotSpeak')}
+          onPress={onSkip}
+        />
       ) : null}
     </View>
   );

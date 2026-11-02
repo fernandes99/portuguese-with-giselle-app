@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Platform, Text, type TextInputInstance, View } from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
@@ -21,10 +22,7 @@ import { PremiumBadge } from '@/components/premium/PremiumBadge';
 import { PronunciationResult } from '@/components/vocabulary/PronunciationResult';
 import type { PronunciationUnavailableReason } from '@/hooks/usePronunciationRecorder';
 import { useVocabularyQueue } from '@/hooks/useVocabularyQueue';
-import type {
-  VocabularyActivity as VocabularyActivityData,
-  VocabularyExerciseType,
-} from '@/services/lesson';
+import type { VocabularyActivity as VocabularyActivityData } from '@/services/lesson';
 import type { PronunciationEvaluation } from '@/services/vocabulary';
 import {
   answerQuestion,
@@ -42,18 +40,6 @@ interface VocabularyActivityProps {
   // Avisa quando a atividade chega ao placar, e quando o aluno recomeça
   onFinishedChange: (finished: boolean) => void;
 }
-
-// O texto acima da pergunta, por tipo
-const EXERCISE_TITLES: Record<VocabularyExerciseType, string> = {
-  meaning_choice: 'Escolha o significado',
-  term_choice: 'Escolha a palavra',
-  listen_choice: 'Ouça e escolha a palavra',
-  listen_write: 'Ouça e escreva o que ouviu',
-  translate_write: 'Escreva em português',
-  match_pairs: 'Ligue os pares',
-  listen_example: 'Ouça a frase e escolha a tradução',
-  speak: 'Fale a palavra',
-};
 
 // Tempo do painel descer no Android, cujo Modal não avisa quando some (o
 // mesmo da atividade de completar)
@@ -77,6 +63,8 @@ export function VocabularyActivity({
   onProgress,
   onFinishedChange,
 }: VocabularyActivityProps) {
+  const { t } = useTranslation();
+
   const { stop } = useActivityAudio();
   const { queue, current, turn, apply, restart } = useVocabularyQueue(
     activity.questions
@@ -175,7 +163,7 @@ export function VocabularyActivity({
   }
 
   if (activity.questions.length === 0) {
-    return <EmptyState title="Esta atividade ainda não está disponível." />;
+    return <EmptyState title={t('lesson.vocabulary.unavailable')} />;
   }
 
   if (isFinished) {
@@ -183,8 +171,8 @@ export function VocabularyActivity({
       <ActivityResult
         correct={queue.firstTry}
         total={queue.total}
-        unit="de primeira"
-        message="Atividade concluída."
+        unit="firstTry"
+        message={t('lesson.vocabulary.completed')}
         onRetry={handleRetry}
       />
     );
@@ -202,7 +190,7 @@ export function VocabularyActivity({
         openFeedback({
           isCorrect,
           isLast: isLastQuestion && isCorrect,
-          answerLabel: 'Resposta certa:',
+          answerLabel: t('lesson.exercise.correctAnswer'),
           answer: (
             <VocabularyAnswer
               answer={question.answer}
@@ -280,7 +268,7 @@ export function VocabularyActivity({
 
       {current ? (
         <Text className="text-center font-poppins-bold text-xl text-gray-900">
-          {EXERCISE_TITLES[current.exerciseType]}
+          {t(`lesson.vocabulary.titles.${current.exerciseType}`)}
         </Text>
       ) : null}
 
@@ -288,9 +276,11 @@ export function VocabularyActivity({
         <View className="flex-row items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
           {unavailable === 'subscribers_only' ? <PremiumBadge /> : null}
           <Text className="flex-1 font-poppins text-sm text-amber-800">
-            {unavailable === 'daily_limit'
-              ? 'Você usou as conferências de pronúncia de hoje.'
-              : 'A verificação de pronúncia é exclusiva do Premium.'}
+            {t(
+              unavailable === 'daily_limit'
+                ? 'lesson.vocabulary.dailyLimit'
+                : 'lesson.vocabulary.premiumOnly'
+            )}
           </Text>
         </View>
       ) : null}

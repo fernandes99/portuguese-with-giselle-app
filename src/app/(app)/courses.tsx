@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -16,17 +17,19 @@ import { useApiQuery } from '@/hooks/useApiQuery';
 import { getCourses } from '@/services/courses';
 
 export default function CoursesScreen() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const {
     data: courses,
     error,
     refreshing,
     refresh,
-  } = useApiQuery(getCourses, 'Erro ao carregar os cursos.');
+  } = useApiQuery(getCourses, t('entry.learn.loadError'));
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <LessonHeader title="Cursos" />
+      <LessonHeader title={t('entry.learn.courses')} />
       <ScrollView
         contentContainerClassName="flex-grow gap-5 px-5 pb-8 pt-4"
         refreshControl={
@@ -39,13 +42,17 @@ export default function CoursesScreen() {
         }
       >
         <Text className="font-poppins text-base text-gray-600">
-          Escolha um curso e continue de onde parou.
+          {t('lesson.course.subtitle')}
         </Text>
 
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -64,7 +71,7 @@ export default function CoursesScreen() {
 
         {courses?.length === 0 ? (
           <Text className="text-center font-poppins text-base text-gray-600">
-            Nenhum curso disponível no momento.
+            {t('entry.learn.empty')}
           </Text>
         ) : null}
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { useActivityAudio } from '@/components/activity/ActivityAudio';
@@ -43,6 +44,8 @@ export function MultipleChoiceActivity({
   onProgress,
   onFinishedChange,
 }: MultipleChoiceActivityProps) {
+  const { t } = useTranslation();
+
   const exercises = useMemo(
     () => getAnswerableExercises(activity.exercises),
     [activity.exercises]
@@ -191,11 +194,11 @@ export function MultipleChoiceActivity({
           visible={isFeedbackOpen}
           isCorrect={feedback.isCorrect}
           isLast={feedback.isLast}
-          answerLabel={
+          answerLabel={t(
             allowsMultipleAnswers(feedback.exercise)
-              ? 'Respostas certas:'
-              : 'Resposta certa:'
-          }
+              ? 'lesson.exercise.correctAnswers'
+              : 'lesson.exercise.correctAnswer'
+          )}
           answer={<ChoiceAnswer exercise={feedback.exercise} />}
           onContinue={goNext}
         />

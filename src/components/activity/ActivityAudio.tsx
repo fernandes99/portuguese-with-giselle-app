@@ -13,6 +13,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -112,18 +113,22 @@ export function useActivityAudio() {
 
 interface AudioButtonProps {
   url: string;
-  // Com texto vira um botão largo ("Ouvir"); sem texto, um botão redondo
+  // Com texto vira um botão largo; sem texto, um botão redondo
   label?: string;
 }
 
 export function AudioButton({ url, label }: AudioButtonProps) {
+  const { t } = useTranslation();
+
   const { playingUrl, toggle } = useActivityAudio();
   const isPlaying = playingUrl === url;
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={isPlaying ? 'Pausar áudio' : 'Ouvir áudio'}
+      accessibilityLabel={t(
+        isPlaying ? 'lesson.exercise.pauseAudio' : 'lesson.exercise.listenAudio'
+      )}
       onPress={() => toggle(url)}
       hitSlop={6}
       className={`flex-row items-center justify-center gap-2 rounded-full bg-green-100 active:bg-green-50 ${label ? 'self-start px-4 py-2.5' : 'h-10 w-10'}`}
@@ -135,7 +140,7 @@ export function AudioButton({ url, label }: AudioButtonProps) {
       />
       {label ? (
         <Text className="font-poppins-semibold text-sm text-green-700">
-          {isPlaying ? 'Pausar' : label}
+          {isPlaying ? t('lesson.exercise.pause') : label}
         </Text>
       ) : null}
     </Pressable>

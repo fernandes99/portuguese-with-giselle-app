@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -41,6 +42,8 @@ export function ModuleSection({
   onToggle,
   onOpenLesson,
 }: ModuleSectionProps) {
+  const { t } = useTranslation();
+
   const total = module.lessons.length;
   const completed = module.lessons.filter(
     (lesson) => lesson.isCompleted
@@ -49,7 +52,7 @@ export function ModuleSection({
   const isCompleted = !isEmpty && completed === total;
 
   const summary = isEmpty
-    ? 'Em breve'
+    ? t('lesson.course.soon')
     : [
         `${completed}/${formatLessons(total)}`,
         module.duration > 0 ? `${module.duration} min` : null,

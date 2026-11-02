@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -126,6 +127,8 @@ interface ActivityFooterProps {
 // no modal, o "Pular atividade". Depois do placar, cada tela troca este
 // rodapé pelo FlowFooter, com o botão que avança.
 export function ActivityFooter({ skipLabel, onSkip }: ActivityFooterProps) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
   const { check } = useActivityFooterState();
   const { setFooterHeight } = useActivityFooterSetters();
@@ -143,7 +146,7 @@ export function ActivityFooter({ skipLabel, onSkip }: ActivityFooterProps) {
       >
         <Button
           size="lg"
-          label="Verificar"
+          label={t('lesson.exercise.check')}
           onPress={() => check?.onCheck()}
           disabled={!check || check.disabled}
         />

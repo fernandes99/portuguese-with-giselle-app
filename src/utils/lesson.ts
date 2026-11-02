@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n';
 import type { CourseOutline } from '@/services/lesson';
 
 // Onde a aula fica no curso: módulo, número dentro do módulo e duração
@@ -21,5 +22,7 @@ export function findLessonPosition(course: CourseOutline, lessonSlug: string) {
 
 // 4 -> "AULA 04"
 export function formatLessonNumber(number: number) {
-  return `AULA ${String(number).padStart(2, '0')}`;
+  return t('lesson.lesson.number', {
+    number: String(number).padStart(2, '0'),
+  });
 }

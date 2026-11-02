@@ -1,4 +1,5 @@
 import { type Ref, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Keyboard,
   Text,
@@ -37,6 +38,8 @@ export function VocabularyWrite({
   onInteract,
   onChecked,
 }: VocabularyWriteProps) {
+  const { t } = useTranslation();
+
   const { stop } = useActivityAudio();
   const [typed, setTyped] = useState('');
   const [result, setResult] = useState<boolean | null>(null);
@@ -85,18 +88,18 @@ export function VocabularyWrite({
           onSubmitEditing={check}
           submitBehavior="submit"
           editable={result === null}
-          placeholder="Escreva em português"
+          placeholder={t('lesson.vocabulary.writePlaceholder')}
           placeholderTextColor={colors.gray}
           autoCorrect={false}
           autoCapitalize="none"
           autoComplete="off"
           spellCheck={false}
           returnKeyType="done"
-          accessibilityLabel="Sua resposta"
+          accessibilityLabel={t('lesson.vocabulary.yourAnswer')}
           className={`rounded-2xl border-2 px-4 py-4 text-center font-poppins-medium text-xl text-gray-900 ${border}`}
         />
         <Text className="text-center font-poppins text-xs text-gray-400">
-          Acentos não contam.
+          {t('lesson.vocabulary.accentsIgnored')}
         </Text>
       </View>
 

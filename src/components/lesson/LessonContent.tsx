@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { HtmlContent } from '@/components/lesson/HtmlContent';
@@ -31,6 +32,8 @@ export function LessonContent({
   onToggleCompleted,
   onOpenNextLesson,
 }: LessonContentProps) {
+  const { t } = useTranslation();
+
   const nextLabel = nextLessonInfo
     ? [
         formatLessonNumber(nextLessonInfo.number),
@@ -48,7 +51,7 @@ export function LessonContent({
             <View className="flex-row items-center gap-1.5">
               <Ionicons name="time-outline" size={16} color={colors.gray} />
               <Text className="font-poppins-medium text-xs text-gray-600">
-                {lesson.duration} {lesson.duration === 1 ? 'minuto' : 'minutos'}
+                {t('lesson.lesson.minutes', { count: lesson.duration })}
               </Text>
             </View>
           ) : null}
@@ -102,7 +105,11 @@ export function LessonContent({
         <Text
           className={`font-poppins-semibold text-base ${lesson.isCompleted ? 'text-green-700' : 'text-white'}`}
         >
-          {lesson.isCompleted ? 'Aula concluída' : 'Marcar como concluída'}
+          {t(
+            lesson.isCompleted
+              ? 'lesson.lesson.completed'
+              : 'lesson.lesson.markCompleted'
+          )}
         </Text>
       </Pressable>
 
@@ -113,11 +120,13 @@ export function LessonContent({
       {nextLesson ? (
         <View className="gap-3 border-t border-gray-200 pt-5">
           <Text className="font-poppins-semibold text-lg text-gray-900">
-            A seguir
+            {t('lesson.lesson.upNext')}
           </Text>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`Próxima aula: ${nextLesson.title}`}
+            accessibilityLabel={t('lesson.lesson.nextLesson', {
+              title: nextLesson.title,
+            })}
             onPress={onOpenNextLesson}
             className="flex-row items-center gap-3 rounded-xl border border-gray-100 bg-white p-3 active:bg-gray-50"
           >

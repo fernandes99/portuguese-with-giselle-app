@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -27,6 +28,8 @@ interface CongratulationsProps {
 // Fim da aula guiada: comemoração, transcrição, recursos da aula e acesso às
 // discussões
 export function Congratulations({ lesson, onContinue }: CongratulationsProps) {
+  const { t } = useTranslation();
+
   const { user } = useAuth();
   const player = useAudioPlayer(completeSound);
   const [isDiscussionsOpen, setIsDiscussionsOpen] = useState(false);
@@ -57,10 +60,12 @@ export function Congratulations({ lesson, onContinue }: CongratulationsProps) {
           </Animated.View>
 
           <Text className="mt-2 text-center font-poppins-bold text-3xl leading-10 text-gray-900">
-            {firstName ? `Muito bem, ${firstName}!` : 'Muito bem!'}
+            {firstName
+              ? t('lesson.guided.congratsName', { name: firstName })
+              : t('lesson.guided.congrats')}
           </Text>
           <Text className="text-center font-poppins text-base text-gray-600">
-            Você completou a aula.
+            {t('lesson.guided.finished')}
           </Text>
 
           <View className="mt-1 flex-row items-center gap-2 rounded-full border border-green-100 bg-green-50 px-4 py-2">
@@ -93,7 +98,7 @@ export function Congratulations({ lesson, onContinue }: CongratulationsProps) {
         >
           <Ionicons name="chatbubbles-outline" size={20} color={colors.gray} />
           <Text className="font-poppins-semibold text-base text-gray-900">
-            Ver discussões da aula
+            {t('lesson.guided.seeDiscussions')}
           </Text>
         </Pressable>
       </ScrollView>

@@ -8,13 +8,6 @@ export type ChoiceAlternative = ChoiceExercise['alternatives'][number];
 // alternativas são só áudios; read: pergunta e alternativas em texto
 export type ChoicePromptKind = 'listen' | 'look' | 'pick-audio' | 'read';
 
-export const PROMPT_INSTRUCTIONS: Record<ChoicePromptKind, string> = {
-  listen: 'Selecione o que você ouve',
-  look: 'Selecione o que você vê',
-  'pick-audio': 'Selecione o áudio certo',
-  read: 'Escolha a resposta certa',
-};
-
 const LETTERS = 'ABCDEFGHIJ';
 
 export function getLetter(position: number) {

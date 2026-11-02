@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import {
   createDiscussion,
   type DiscussionThread,
@@ -27,7 +28,7 @@ export function useDiscussions(lessonId: string) {
         await signOut();
         return;
       }
-      setError(getErrorMessage(err, 'Erro ao carregar a discussão.'));
+      setError(getErrorMessage(err, t('lesson.discussions.loadError')));
     }
   }, [token, lessonId, signOut]);
 

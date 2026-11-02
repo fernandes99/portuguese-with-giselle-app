@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { ActivityCheck } from '@/components/activity/ActivityFooter';
@@ -55,6 +56,8 @@ export function DragDropActivity({
   onProgress,
   onFinishedChange,
 }: DragDropActivityProps) {
+  const { t } = useTranslation();
+
   // Montado uma vez: o banco de cada frase não pode ser embaralhado de novo
   // a cada atualização da aula
   const [exercises] = useState(() =>
@@ -112,7 +115,7 @@ export function DragDropActivity({
       <ActivityResult
         correct={correctBlanks}
         total={totalBlanks}
-        unit={totalBlanks === 1 ? 'lacuna' : 'lacunas'}
+        unit="blanks"
         onRetry={reset}
       />
     );
@@ -197,9 +200,11 @@ export function DragDropActivity({
       />
 
       <Text className="text-center font-poppins-bold text-xl text-gray-900">
-        {exercise.answers.length > 1
-          ? 'Complete as lacunas'
-          : 'Complete a frase'}
+        {t(
+          exercise.answers.length > 1
+            ? 'lesson.exercise.completeBlanks'
+            : 'lesson.exercise.completeSentence'
+        )}
       </Text>
 
       {/* Palavra por palavra, para a frase quebrar de linha em volta das lacunas */}
@@ -225,8 +230,11 @@ export function DragDropActivity({
               accessibilityRole="button"
               accessibilityLabel={
                 value
-                  ? `Lacuna ${part.index + 1}: ${value}. Toque para devolver ao banco`
-                  : `Lacuna ${part.index + 1}, vazia`
+                  ? t('lesson.exercise.blankFilled', {
+                      number: part.index + 1,
+                      value,
+                    })
+                  : t('lesson.exercise.blankEmpty', { number: part.index + 1 })
               }
               onPress={() => clearSlot(part.index)}
               disabled={isChecked || !value}
@@ -276,7 +284,7 @@ export function DragDropActivity({
           visible={isFeedbackOpen}
           isCorrect={feedback.isCorrect}
           isLast={feedback.isLast}
-          answerLabel="Resposta certa:"
+          answerLabel={t('lesson.exercise.correctAnswer')}
           answer={<SentenceAnswer parts={feedback.exercise.parts} />}
           onContinue={goNext}
         />

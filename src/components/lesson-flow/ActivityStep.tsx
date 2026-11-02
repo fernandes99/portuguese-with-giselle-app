@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { ActivityAudioProvider } from '@/components/activity/ActivityAudio';
@@ -22,12 +23,14 @@ export function ActivityStep({
   onProgress,
   onFinishedChange,
 }: ActivityStepProps) {
+  const { t } = useTranslation();
+
   return (
     // A key evita que o áudio de uma atividade vaze para a seguinte
     <ActivityAudioProvider key={activity.id}>
       <View className="grow gap-4">
         <Text className="font-poppins-semibold text-xs uppercase tracking-widest text-green-700">
-          Atividade {number} de {total}
+          {t('lesson.activities.position', { number, total })}
         </Text>
 
         <ActivityExercises

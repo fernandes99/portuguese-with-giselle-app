@@ -1,5 +1,6 @@
 import { Stack, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -34,6 +35,8 @@ export function GuidedLesson({
   setCompleted,
   saveActivityProgress,
 }: GuidedLessonProps) {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { lesson } = data;
 
@@ -70,16 +73,18 @@ export function GuidedLesson({
 
   const confirmExit = useCallback(() => {
     Alert.alert(
-      'Sair da aula?',
-      isReview
-        ? 'A aula continua concluída. Você pode recomeçar quando quiser.'
-        : 'Você vai recomeçar esta aula do início na próxima vez.',
+      t('lesson.guided.exitConfirm'),
+      t(isReview ? 'lesson.guided.exitReview' : 'lesson.guided.exitRestart'),
       [
-        { text: 'Continuar na aula', style: 'cancel' },
-        { text: 'Sair', style: 'destructive', onPress: () => router.back() },
+        { text: t('lesson.guided.stay'), style: 'cancel' },
+        {
+          text: t('lesson.guided.leave'),
+          style: 'destructive',
+          onPress: () => router.back(),
+        },
       ]
     );
-  }, [router, isReview]);
+  }, [router, isReview, t]);
 
   // Voltar do Android: confirma a saída no meio da aula e, no parabéns, faz
   // o mesmo que o "Continuar"
@@ -122,9 +127,7 @@ export function GuidedLesson({
       }
       setIsDone(true);
     } catch (err) {
-      setError(
-        getErrorMessage(err, 'Erro ao concluir a aula. Tente novamente.')
-      );
+      setError(getErrorMessage(err, t('lesson.lesson.completeError')));
     } finally {
       setIsSaving(false);
     }
@@ -201,7 +204,7 @@ export function GuidedLesson({
             disabled={needsVideo}
             onDisabledPress={() =>
               setToast((current) => ({
-                text: 'Inicie o vídeo da aula para continuar.',
+                text: t('lesson.guided.startVideo'),
                 id: (current?.id ?? 0) + 1,
               }))
             }

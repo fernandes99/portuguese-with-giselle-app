@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
@@ -70,13 +71,15 @@ export function LessonHeader({
   // Botão de voltar cinza e sem borda (HeaderButton `filled`)
   filled?: boolean;
 }) {
+  const { t } = useTranslation();
+
   const router = useRouter();
 
   return (
     <View className="flex-row items-center gap-3 px-4 py-2">
       <HeaderButton
         icon="arrow-back"
-        label="Voltar"
+        label={t('common.back')}
         filled={filled}
         onPress={() => router.back()}
       />
@@ -126,6 +129,8 @@ export function ClassicLesson({
   setCompleted,
   saveActivityProgress,
 }: ClassicLessonProps) {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<LessonTabKey>('content');
@@ -175,9 +180,7 @@ export function ClassicLesson({
     try {
       await setCompleted(!data.lesson.isCompleted);
     } catch (err) {
-      setActionError(
-        getErrorMessage(err, 'Erro ao concluir a aula. Tente novamente.')
-      );
+      setActionError(getErrorMessage(err, t('lesson.lesson.completeError')));
     } finally {
       setIsSaving(false);
     }
@@ -196,7 +199,7 @@ export function ClassicLesson({
         right={
           <HeaderButton
             icon="list"
-            label="Ver todas as aulas do curso"
+            label={t('lesson.lesson.seeAll')}
             onPress={() => setIsOutlineOpen(true)}
           />
         }

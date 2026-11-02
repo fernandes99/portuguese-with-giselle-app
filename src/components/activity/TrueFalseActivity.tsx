@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import {
@@ -36,21 +37,23 @@ interface StatementFeedback {
 }
 
 const OPTIONS = [
-  { value: true, label: 'Verdadeiro', icon: 'checkmark-circle-outline' },
-  { value: false, label: 'Falso', icon: 'close-circle-outline' },
+  { value: true, icon: 'checkmark-circle-outline' },
+  { value: false, icon: 'close-circle-outline' },
 ] as const;
 
 function getOptionLabel(value: boolean) {
-  return value ? 'Verdadeiro' : 'Falso';
+  return value ? 'lesson.exercise.true' : 'lesson.exercise.false';
 }
 
 // Áudio ou imagem de um exercício ou de uma afirmação
 function StatementMedia({ file }: { file: ActivityFile | null }) {
+  const { t } = useTranslation();
+
   return (
     <>
       {isAudio(file) ? (
         <View className="items-center">
-          <AudioButton url={file.url} label="Ouvir" />
+          <AudioButton url={file.url} label={t('lesson.exercise.listen')} />
         </View>
       ) : null}
       {isImage(file) ? (
@@ -73,6 +76,8 @@ export function TrueFalseActivity({
   onProgress,
   onFinishedChange,
 }: TrueFalseActivityProps) {
+  const { t } = useTranslation();
+
   const statements = useMemo(
     () => getStatements(activity.exercises),
     [activity.exercises]
@@ -112,7 +117,7 @@ export function TrueFalseActivity({
       <ActivityResult
         correct={correctCount}
         total={total}
-        unit={total === 1 ? 'afirmação' : 'afirmações'}
+        unit="statements"
         onRetry={reset}
       />
     );
@@ -173,13 +178,13 @@ export function TrueFalseActivity({
       />
 
       <Text className="text-center font-poppins-bold text-xl text-gray-900">
-        Verdadeiro ou falso?
+        {t('lesson.exercise.trueOrFalse')}
       </Text>
 
       {hasText ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Ler o texto da atividade"
+          accessibilityLabel={t('lesson.exercise.readTextLabel')}
           onPress={() => setIsTextOpen(true)}
           className="flex-row items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 active:bg-gray-50"
         >
@@ -192,10 +197,10 @@ export function TrueFalseActivity({
           </View>
           <View className="flex-1">
             <Text className="font-poppins-semibold text-sm text-gray-900">
-              Ler o texto
+              {t('lesson.exercise.readText')}
             </Text>
             <Text className="font-poppins text-xs text-gray-500">
-              Você vai precisar dele para responder.
+              {t('lesson.exercise.readTextHint')}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.gray} />
@@ -225,7 +230,7 @@ export function TrueFalseActivity({
 
           return (
             <Pressable
-              key={option.label}
+              key={t(getOptionLabel(option.value))}
               accessibilityRole="radio"
               accessibilityState={{ checked: isSelected, disabled: isChecked }}
               disabled={isChecked}
@@ -234,7 +239,7 @@ export function TrueFalseActivity({
             >
               <Ionicons name={option.icon} size={30} color={style.icon} />
               <Text className="font-poppins-semibold text-base text-gray-900">
-                {option.label}
+                {t(getOptionLabel(option.value))}
               </Text>
             </Pressable>
           );
@@ -251,10 +256,10 @@ export function TrueFalseActivity({
           visible={isFeedbackOpen}
           isCorrect={feedback.isCorrect}
           isLast={feedback.isLast}
-          answerLabel="Resposta certa:"
+          answerLabel={t('lesson.exercise.correctAnswer')}
           answer={
             <Text className="font-poppins-medium text-base text-gray-900">
-              {getOptionLabel(feedback.statement.isTrue)}
+              {t(getOptionLabel(feedback.statement.isTrue))}
             </Text>
           }
           onContinue={goNext}

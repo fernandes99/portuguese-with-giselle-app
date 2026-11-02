@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { ActivityInfoSheet } from '@/components/activity/ActivityInfoSheet';
@@ -30,6 +31,8 @@ export function ExerciseHeader({
   content,
   counter,
 }: ExerciseHeaderProps) {
+  const { t } = useTranslation();
+
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const hasInfo = Boolean(title.trim() || content?.trim());
   const answeredCount = index + (isChecked ? 1 : 0);
@@ -45,7 +48,7 @@ export function ExerciseHeader({
       {hasInfo ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Ver as instruções da atividade"
+          accessibilityLabel={t('lesson.exercise.seeInstructions')}
           onPress={() => setIsInfoOpen(true)}
           hitSlop={8}
           className="flex-row items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1.5 active:bg-gray-50"
@@ -56,7 +59,7 @@ export function ExerciseHeader({
             color={colors.gray}
           />
           <Text className="font-poppins-medium text-xs text-gray-600">
-            Instruções
+            {t('lesson.exercise.instructions')}
           </Text>
         </Pressable>
       ) : null}

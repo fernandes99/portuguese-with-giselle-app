@@ -13,6 +13,7 @@ import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDiscussions } from '@/hooks/useDiscussions';
 import { getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import {
   DISCUSSION_MAX_LENGTH,
   type DiscussionAuthor,
@@ -31,7 +32,7 @@ function getInitials(name: string | null) {
 }
 
 function getDisplayName(author: Pick<DiscussionAuthor, 'name'>) {
-  return author.name?.trim() || 'Aluno';
+  return author.name?.trim() || t('lesson.discussions.student');
 }
 
 function Avatar({
@@ -98,7 +99,7 @@ function Composer({
       await onPublish(trimmed);
       setContent('');
     } catch (err) {
-      setError(getErrorMessage(err, 'Erro ao publicar o comentário.'));
+      setError(getErrorMessage(err, t('lesson.discussions.publishError')));
     } finally {
       setIsPublishing(false);
     }
@@ -125,7 +126,7 @@ function Composer({
         {onCancel ? (
           <Pressable accessibilityRole="button" onPress={onCancel} hitSlop={8}>
             <Text className="font-poppins-medium text-sm text-gray-600">
-              Cancelar
+              {t('common.cancel')}
             </Text>
           </Pressable>
         ) : null}
@@ -143,7 +144,7 @@ function Composer({
             <ActivityIndicator size="small" color={colors.white} />
           ) : null}
           <Text className="font-poppins-semibold text-sm text-white">
-            Publicar
+            {t('lesson.discussions.publish')}
           </Text>
         </Pressable>
       </View>
@@ -175,13 +176,13 @@ function Comment({
           {author.isTeacher ? (
             <View className="rounded bg-green-600 px-1.5 py-0.5">
               <Text className="font-poppins-bold text-[10px] tracking-widest text-white">
-                PROFESSORA
+                {t('lesson.discussions.teacher')}
               </Text>
             </View>
           ) : null}
           <Text className="ml-auto font-poppins text-xs text-gray-500">
             {formatTimeAgo(comment.createdAt)}
-            {comment.isEdited ? ' · editado' : ''}
+            {comment.isEdited ? t('lesson.discussions.edited') : ''}
           </Text>
         </View>
         <Text className="font-poppins text-sm leading-5 text-gray-700">
@@ -189,13 +190,15 @@ function Comment({
         </Text>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Responder a ${getDisplayName(author)}`}
+          accessibilityLabel={t('lesson.discussions.replyTo', {
+            name: getDisplayName(author),
+          })}
           onPress={onReply}
           hitSlop={8}
           className="mt-1 self-start"
         >
           <Text className="font-poppins-semibold text-xs text-green-700">
-            Responder
+            {t('lesson.discussions.reply')}
           </Text>
         </Pressable>
       </View>
@@ -217,20 +220,20 @@ export function LessonDiscussions({ lessonId }: { lessonId: string }) {
     <View className="gap-6">
       <View className="gap-1">
         <Text className="font-poppins-semibold text-xs tracking-widest text-gray-500">
-          COMUNIDADE
+          {t('lesson.discussions.eyebrow')}
         </Text>
         <Text className="font-poppins-semibold text-2xl text-gray-900">
-          Discussão da aula
+          {t('lesson.discussions.title')}
         </Text>
         <Text className="font-poppins text-base text-gray-600">
-          Compartilhe dúvidas e pratique com outros alunos.
+          {t('lesson.discussions.subtitle')}
         </Text>
       </View>
 
       <View className="flex-row gap-3">
         <Avatar name={user?.name ?? null} image={user?.image} />
         <Composer
-          placeholder="Escreva uma dúvida ou comentário..."
+          placeholder={t('lesson.discussions.placeholder')}
           onPublish={(content) => publish(content)}
         />
       </View>
@@ -238,7 +241,7 @@ export function LessonDiscussions({ lessonId }: { lessonId: string }) {
       {error ? (
         <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
           <Text className="font-poppins text-sm text-red-700">{error}</Text>
-          <Button variant="link" label="Tentar de novo" onPress={reload} />
+          <Button variant="link" label={t('common.retry')} onPress={reload} />
         </View>
       ) : null}
 
@@ -246,7 +249,7 @@ export function LessonDiscussions({ lessonId }: { lessonId: string }) {
 
       {threads?.length === 0 ? (
         <Text className="text-center font-poppins text-sm text-gray-500">
-          Ainda não há comentários. Seja o primeiro a participar!
+          {t('lesson.discussions.empty')}
         </Text>
       ) : null}
 
@@ -280,7 +283,7 @@ export function LessonDiscussions({ lessonId }: { lessonId: string }) {
           {replyingTo?.threadId === thread.id ? (
             <View className="ml-6 gap-2">
               <Text className="font-poppins text-xs text-gray-500">
-                Respondendo a{' '}
+                {t('lesson.discussions.replyingTo')}{' '}
                 <Text className="font-poppins-semibold text-gray-700">
                   {getDisplayName(replyingTo.comment.author)}
                 </Text>
@@ -289,7 +292,7 @@ export function LessonDiscussions({ lessonId }: { lessonId: string }) {
                 <Composer
                   // Trocar de comentário respondido recomeça o campo
                   key={replyingTo.comment.id}
-                  placeholder="Escreva sua resposta..."
+                  placeholder={t('lesson.discussions.replyPlaceholder')}
                   // Numa resposta a outra resposta, a menção deixa claro
                   // para quem é, já que todas ficam no mesmo nível
                   initialValue={

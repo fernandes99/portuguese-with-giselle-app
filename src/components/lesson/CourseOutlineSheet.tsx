@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { CourseProgressHeader } from '@/components/lesson/CourseProgressHeader';
@@ -45,6 +46,8 @@ export function CourseOutlineSheet({
   onClose,
   onSelectLesson,
 }: CourseOutlineSheetProps) {
+  const { t } = useTranslation();
+
   const bottomInset = useModalBottomInset();
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
 
@@ -82,7 +85,7 @@ export function CourseOutlineSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Fechar a lista de aulas"
+          accessibilityLabel={t('lesson.lesson.closeList')}
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -93,11 +96,11 @@ export function CourseOutlineSheet({
         >
           <View className="mb-3 flex-row items-center justify-between">
             <Text className="font-poppins-semibold text-base text-gray-900">
-              Aulas
+              {t('lesson.lesson.lessons')}
             </Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Fechar a lista de aulas"
+              accessibilityLabel={t('lesson.lesson.closeList')}
               onPress={onClose}
               hitSlop={12}
             >

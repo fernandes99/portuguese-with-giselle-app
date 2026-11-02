@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 import { type ReactNode, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -33,6 +34,8 @@ export function ExerciseFeedbackSheet({
   onContinue,
   onDismiss,
 }: ExerciseFeedbackSheetProps) {
+  const { t } = useTranslation();
+
   const bottomInset = useModalBottomInset();
   const successPlayer = useAudioPlayer(successSound);
 
@@ -75,7 +78,9 @@ export function ExerciseFeedbackSheet({
             <Text
               className={`font-poppins-bold text-xl ${isCorrect ? 'text-green-700' : 'text-red-700'}`}
             >
-              {isCorrect ? 'Correto!' : 'Não foi dessa vez'}
+              {t(
+                isCorrect ? 'lesson.exercise.correct' : 'lesson.exercise.wrong'
+              )}
             </Text>
           </View>
 
@@ -96,7 +101,7 @@ export function ExerciseFeedbackSheet({
             className={`h-14 items-center justify-center rounded-2xl ${isCorrect ? 'bg-green-600 active:bg-green-700' : 'bg-red-500 active:bg-red-600'}`}
           >
             <Text className="font-poppins-semibold text-base text-white">
-              {isLast ? 'Ver resultado' : 'Continuar'}
+              {isLast ? t('lesson.exercise.seeResult') : t('common.continue')}
             </Text>
           </Pressable>
         </View>

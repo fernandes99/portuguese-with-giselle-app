@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -24,8 +25,10 @@ export function FlowHeader({
   progress,
   onClose,
   closeIcon = 'close',
-  closeLabel = 'Sair da aula',
+  closeLabel,
 }: FlowHeaderProps) {
+  const { t } = useTranslation();
+
   const value = useSharedValue(progress);
 
   useEffect(() => {
@@ -41,7 +44,7 @@ export function FlowHeader({
       {onClose ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={closeLabel}
+          accessibilityLabel={closeLabel ?? t('lesson.guided.exit')}
           onPress={onClose}
           hitSlop={12}
         >

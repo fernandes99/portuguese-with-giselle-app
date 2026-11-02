@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -22,20 +23,8 @@ interface LessonActivitiesProps {
   onProgress: (activityId: string, completed: boolean) => void;
 }
 
-const ACTIVITY_TYPE_LABELS: Record<Activity['type'], string> = {
-  multiple_choice: 'MÚLTIPLA ESCOLHA',
-  true_or_false: 'VERDADEIRO OU FALSO',
-  fill_blank: 'PREENCHER LACUNAS',
-  drag_drop: 'ARRASTAR E SOLTAR',
-  vocabulary: 'VOCABULÁRIO',
-};
-
 // intro: apresentação; número: atividade em andamento; summary: fechamento
 type Step = 'intro' | 'summary' | number;
-
-function formatCount(count: number) {
-  return `${count} ${count === 1 ? 'atividade' : 'atividades'}`;
-}
 
 function getSegmentClassName(position: number, current: number) {
   if (position < current) return 'bg-green-600';
@@ -49,6 +38,8 @@ export function LessonActivities({
   activities: allActivities,
   onProgress,
 }: LessonActivitiesProps) {
+  const { t } = useTranslation();
+
   // Atividades sem nenhum exercício (só com o enunciado no CMS) ficam de fora
   const activities = useMemo(
     () => allActivities.filter(isPlayableActivity),
@@ -67,7 +58,7 @@ export function LessonActivities({
   ).length;
 
   if (total === 0) {
-    return <EmptyState title="Nenhuma atividade disponível" />;
+    return <EmptyState title={t('lesson.activities.none')} />;
   }
 
   function goTo(next: Step) {
@@ -105,15 +96,24 @@ export function LessonActivities({
             color={isAllCompleted ? colors.green : colors.gray}
           />
           <Text className="text-center font-poppins-bold text-xl text-gray-900">
-            {isAllCompleted ? 'Atividades concluídas!' : 'Você chegou ao fim'}
+            {t(
+              isAllCompleted
+                ? 'lesson.activities.allDone'
+                : 'lesson.activities.reachedEnd'
+            )}
           </Text>
           <Text className="text-center font-poppins text-base text-gray-600">
-            {completedCount} de {formatCount(total)}{' '}
-            {completedCount === 1 ? 'concluída' : 'concluídas'}.
-            {isAllCompleted ? '' : ' Refaça as que faltam para concluir todas.'}
+            {t('lesson.activities.progress', {
+              count: completedCount,
+              activities: t('lesson.activities.count', { count: total }),
+            })}
+            .{isAllCompleted ? '' : ` ${t('lesson.activities.redoMissing')}`}
           </Text>
           <View className="mt-2 w-full">
-            <Button label="Voltar ao início" onPress={() => goTo('intro')} />
+            <Button
+              label={t('lesson.activities.backToStart')}
+              onPress={() => goTo('intro')}
+            />
           </View>
         </View>
         {runner}
@@ -134,14 +134,15 @@ export function LessonActivities({
       <View className="gap-5">
         <View className="gap-1">
           <Text className="font-poppins-semibold text-xs tracking-widest text-gray-500">
-            PRATIQUE O QUE APRENDEU
+            {t('lesson.activities.eyebrow')}
           </Text>
           <Text className="font-poppins-semibold text-2xl text-gray-900">
-            Atividades da aula
+            {t('lesson.activities.title')}
           </Text>
           <Text className="font-poppins text-base text-gray-600">
-            Esta aula tem {formatCount(total)}. Faça uma de cada vez para fixar
-            o conteúdo.
+            {t('lesson.activities.intro', {
+              activities: t('lesson.activities.count', { count: total }),
+            })}
           </Text>
         </View>
 
@@ -158,7 +159,7 @@ export function LessonActivities({
               </View>
               <View className="flex-1">
                 <Text className="font-poppins-semibold text-xs tracking-widest text-gray-500">
-                  {ACTIVITY_TYPE_LABELS[activity.type]}
+                  {t(`lesson.activities.types.${activity.type}`)}
                 </Text>
                 <Text
                   numberOfLines={2}
@@ -180,18 +181,20 @@ export function LessonActivities({
 
         {completedCount > 0 ? (
           <Text className="text-center font-poppins text-sm text-gray-600">
-            {completedCount} de {formatCount(total)}{' '}
-            {completedCount === 1 ? 'concluída' : 'concluídas'}
+            {t('lesson.activities.progress', {
+              count: completedCount,
+              activities: t('lesson.activities.count', { count: total }),
+            })}
           </Text>
         ) : null}
 
         <Button
           label={
             isAllCompleted
-              ? 'Refazer atividades'
+              ? t('lesson.activities.redo')
               : completedCount > 0
-                ? 'Continuar atividades'
-                : 'Iniciar atividades'
+                ? t('lesson.activities.resume')
+                : t('lesson.activities.start')
           }
           onPress={() => open(isAllCompleted ? 0 : firstPending)}
         />
@@ -218,6 +221,8 @@ function ActivityRunner({
   onProgress,
   onGoTo,
 }: ActivityRunnerProps) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
   // A atividade em andamento já chegou ao resultado
   const [isCurrentFinished, setIsCurrentFinished] = useState(false);
@@ -255,11 +260,14 @@ function ActivityRunner({
             <View className="gap-2 px-5 pb-2">
               <View className="flex-row items-center justify-between">
                 <Text className="font-poppins-semibold text-sm text-gray-900">
-                  Atividade {step + 1} de {total}
+                  {t('lesson.activities.position', {
+                    number: step + 1,
+                    total,
+                  })}
                 </Text>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Sair das atividades"
+                  accessibilityLabel={t('lesson.activities.exit')}
                   onPress={() => goTo('intro')}
                   hitSlop={10}
                 >
@@ -300,12 +308,18 @@ function ActivityRunner({
           teclado. No placar: o botão que avança. */}
             {isCurrentFinished ? (
               <FlowFooter
-                label={isLast ? 'Concluir' : 'Próxima atividade'}
+                label={t(
+                  isLast ? 'lesson.activities.finish' : 'lesson.activities.next'
+                )}
                 onPress={() => goTo(next)}
               />
             ) : (
               <ActivityFooter
-                skipLabel={isLast ? 'Pular e concluir' : 'Pular atividade'}
+                skipLabel={t(
+                  isLast
+                    ? 'lesson.activities.skipAndFinish'
+                    : 'lesson.activities.skip'
+                )}
                 onSkip={() => goTo(next)}
               />
             )}

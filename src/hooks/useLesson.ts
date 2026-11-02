@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import {
   getLesson,
   setActivityProgress,
@@ -34,9 +35,7 @@ export function useLesson(courseSlug: string, lessonSlug: string) {
         setLocked(true);
         return;
       }
-      setError(
-        getErrorMessage(err, 'Erro ao carregar a aula. Tente novamente.')
-      );
+      setError(getErrorMessage(err, t('lesson.lesson.loadError')));
     }
   }, [token, courseSlug, lessonSlug, signOut]);
 

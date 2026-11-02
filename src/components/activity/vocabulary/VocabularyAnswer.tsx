@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { AudioButton } from '@/components/activity/ActivityAudio';
@@ -14,6 +15,8 @@ export function VocabularyAnswer({
   answer,
   showExample,
 }: VocabularyAnswerProps) {
+  const { t } = useTranslation();
+
   return (
     <View className="gap-2">
       <View className="gap-0.5">
@@ -40,7 +43,10 @@ export function VocabularyAnswer({
         </View>
       ) : null}
       {answer.termAudioUrl ? (
-        <AudioButton url={answer.termAudioUrl} label="Ouvir" />
+        <AudioButton
+          url={answer.termAudioUrl}
+          label={t('lesson.exercise.listen')}
+        />
       ) : null}
     </View>
   );
