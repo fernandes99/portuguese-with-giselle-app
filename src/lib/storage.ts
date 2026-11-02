@@ -36,6 +36,21 @@ export function markWelcomeSeen() {
   return SecureStore.setItemAsync(WELCOME_KEY, '1');
 }
 
+const LANGUAGE_KEY = 'pwg.language';
+
+// O idioma escolhido fica no aparelho ao sair da conta
+export async function loadLanguage(): Promise<string | null> {
+  try {
+    return await SecureStore.getItemAsync(LANGUAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function saveLanguage(language: string) {
+  return SecureStore.setItemAsync(LANGUAGE_KEY, language);
+}
+
 const PUSH_ASKED_KEY = 'pwg.pushPermissionAsked';
 
 // O pedido de permissão de notificações aparece uma vez por aparelho. A marca

@@ -1,0 +1,15 @@
+export const common = {
+  noConnection: 'Sem conexão. Verifique sua internet e tente novamente.',
+  unknownError: 'Ocorreu um erro. Tente novamente.',
+  retry: 'Tentar de novo',
+  back: 'Voltar',
+  close: 'Fechar',
+  cancel: 'Cancelar',
+  save: 'Salvar',
+  continue: 'Continuar',
+  signOut: 'Sair',
+  modules_one: '{{count}} módulo',
+  modules_other: '{{count}} módulos',
+  lessons_one: '{{count}} aula',
+  lessons_other: '{{count}} aulas',
+};

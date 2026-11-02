@@ -1,0 +1,4 @@
+{
+  "NSMicrophoneUsageDescription": "Permite el acceso al micrófono para practicar la pronunciación.",
+  "NSSpeechRecognitionUsageDescription": "Permite el reconocimiento de voz para verificar tu pronunciación."
+}

@@ -1,5 +1,6 @@
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
+import i18n from '@/lib/i18n';
 import type { PracticeCorrection, PracticeMessage } from '@/services/practice';
 
 // Ainda não aparece no app
@@ -44,6 +45,11 @@ export interface SimulationList {
 
 // A última lista carregada, para a tela de um cenário abrir na hora
 let cachedList: SimulationList | null = null;
+
+// A lista veio no idioma da chamada
+i18n.on('languageChanged', () => {
+  cachedList = null;
+});
 
 export async function getSimulations(token: string) {
   cachedList = await api<SimulationList>(API_ROUTES.simulations, { token });

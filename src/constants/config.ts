@@ -59,6 +59,7 @@ export const API_ROUTES = {
     `/api/mobile/simulations/runs/${encodeURIComponent(runId)}/turns`,
   chatStyle: '/api/mobile/preferences/chat-style',
   chatLanguage: '/api/mobile/preferences/chat-language',
+  appLanguage: '/api/mobile/preferences/app-language',
   flashcards: '/api/mobile/flashcards',
   flashcard: (slug: string) =>
     `/api/mobile/flashcards/${encodeURIComponent(slug)}`,

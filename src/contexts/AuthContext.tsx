@@ -10,6 +10,7 @@ import {
 
 import { ApiError, setUnauthorizedHandler } from '@/lib/api';
 import { signOutFromGoogle } from '@/lib/google';
+import { changeAppLanguage, getAppLanguage, restoreLanguage } from '@/lib/i18n';
 import {
   clearPushToken,
   clearSession,
@@ -39,6 +40,13 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+// A escolha da conta vale em qualquer aparelho
+async function adoptAccountLanguage({ user }: Session) {
+  if (user.appLanguage && user.appLanguage !== getAppLanguage()) {
+    await changeAppLanguage(user.appLanguage);
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>('loading');
   const [session, setSession] = useState<Session | null>(null);
@@ -57,6 +65,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function restore() {
+      // Antes de tudo: a splash fica na tela enquanto o status é `loading`,
+      // e a primeira chamada já sai no idioma certo
+      await restoreLanguage();
+
       const stored = await loadSession();
       if (!stored) {
         setStatus('unauthenticated');
@@ -65,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       try {
         const fresh = await me(stored.token);
+        await adoptAccountLanguage(fresh);
         await saveSession(fresh);
         setSession(fresh);
         setStatus('authenticated');
@@ -85,6 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = useCallback(async (next: Session) => {
+    await adoptAccountLanguage(next);
     await saveSession(next);
     setSession(next);
     setStatus('authenticated');
@@ -113,6 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const fresh = await me(token);
+      await adoptAccountLanguage(fresh);
       await saveSession(fresh);
       setSession(fresh);
     } catch {

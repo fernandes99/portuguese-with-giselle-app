@@ -1,5 +1,6 @@
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
+import type { AppLanguage } from '@/lib/i18n';
 
 // Contrato em .specs/onboarding/architecture.md (o mesmo do site)
 
@@ -79,6 +80,8 @@ export interface PreferencesInput {
   level: PortugueseLevel;
   goal: LearningGoal;
   interests: string[];
+  // Só nas boas-vindas; a edição pelo Perfil não mexe no idioma do app
+  appLanguage?: AppLanguage;
 }
 
 export interface SavedPreferences {
@@ -117,4 +120,12 @@ export function saveExplanationLanguage(
     API_ROUTES.chatLanguage,
     { method: 'PUT', token, body: { explanationLanguage } }
   );
+}
+
+// Troca o idioma do app pelo Perfil; o da Gisa muda junto
+export function saveAppLanguage(token: string, language: AppLanguage) {
+  return api<{
+    appLanguage: AppLanguage;
+    explanationLanguage: ExplanationLanguage;
+  }>(API_ROUTES.appLanguage, { method: 'PUT', token, body: { language } });
 }

@@ -1,4 +1,5 @@
 import { API_URL } from '@/constants/config';
+import { getAppLanguage, t } from '@/lib/i18n';
 
 export class ApiError extends Error {
   // 0 quando a requisição nem chegou ao servidor
@@ -58,6 +59,8 @@ export async function api<T>(
       method,
       headers: {
         Accept: 'application/json',
+        // O backend responde os textos de interface neste idioma
+        'X-App-Language': getAppLanguage(),
         // Com FormData o fetch põe o Content-Type com o boundary
         ...(body !== undefined &&
           !formData && { 'Content-Type': 'application/json' }),
@@ -66,10 +69,7 @@ export async function api<T>(
       body: formData ?? (body !== undefined ? JSON.stringify(body) : undefined),
     });
   } catch {
-    throw new ApiError(
-      'Sem conexão. Verifique sua internet e tente novamente.',
-      0
-    );
+    throw new ApiError(t('common.noConnection'), 0);
   }
 
   const data = await response.json().catch(() => null);
@@ -84,9 +84,7 @@ export async function api<T>(
     // O backend responde erros como { error: string }, às vezes com
     // { code: string }
     const message =
-      typeof data?.error === 'string'
-        ? data.error
-        : 'Ocorreu um erro. Tente novamente.';
+      typeof data?.error === 'string' ? data.error : t('common.unknownError');
     throw new ApiError(
       message,
       response.status,

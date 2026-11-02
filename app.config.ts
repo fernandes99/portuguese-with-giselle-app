@@ -36,6 +36,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     bundleIdentifier: APP_ID,
     supportsTablet: true,
+    // Sem isso, o iPhone ignora as traduções de `locales`
+    infoPlist: { CFBundleAllowMixedLocalizations: true },
+  },
+  // Textos dos pedidos de permissão do iPhone, no idioma do aparelho
+  locales: {
+    pt: './locales/pt.json',
+    en: './locales/en.json',
+    es: './locales/es.json',
   },
   android: {
     package: APP_ID,
@@ -52,6 +60,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     'expo-font',
     'expo-web-browser',
+    'expo-localization',
     [
       'expo-audio',
       {

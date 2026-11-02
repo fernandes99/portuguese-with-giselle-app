@@ -1,6 +1,7 @@
 import type { ChatStyle } from '@/services/preferences';
 import { API_ROUTES } from '@/constants/config';
 import { api } from '@/lib/api';
+import type { AppLanguage } from '@/lib/i18n';
 
 export type Role = 'FREE_STUDENT' | 'PREMIUM_STUDENT' | 'ADMIN' | 'TEACHER';
 
@@ -16,6 +17,8 @@ export interface User {
   // null: o chat mostra a escolha do estilo da Gisa antes da conversa.
   // Ausente (backend antigo) conta como escolhido
   chatStyle?: ChatStyle | null;
+  // Preenchido, o app adota. null: a conta ainda não tem idioma gravado
+  appLanguage?: AppLanguage | null;
 }
 
 export interface Session {
