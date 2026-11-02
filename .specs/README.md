@@ -33,6 +33,7 @@ Iniciativas atuais:
 | [device-pronunciation](device-pronunciation/)   | Pronúncia pelo reconhecimento do Android e do iPhone, quando o site liga o motor do aparelho   |
 | [ranking](ranking/)                             | Ranking dos alunos pelo score, do mês e total, aberto pela aba Progresso                       |
 | [learning-path](learning-path/)                 | Trilha de A0 a A2 na aba Início: curso recomendado, selo do Premium e cadeado da aula          |
+| [app-translation](app-translation/)             | App em português, inglês e espanhol: idioma do celular, boas-vindas, troca no Perfil e textos  |
 
 ## Modelo de spec
 
