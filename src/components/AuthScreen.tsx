@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -24,7 +25,7 @@ interface AuthScreenProps {
 
 // Moldura das telas de login e cadastro: logo, título e o formulário.
 export function AuthScreen({
-  eyebrow = 'Área do aluno',
+  eyebrow,
   title,
   subtitle,
   error,
@@ -32,6 +33,8 @@ export function AuthScreen({
   footer,
   onBackToStart,
 }: AuthScreenProps) {
+  const { t } = useTranslation();
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Anel decorativo no canto, o mesmo da introdução */}
@@ -53,14 +56,14 @@ export function AuthScreen({
           {onBackToStart ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Voltar ao início"
+              accessibilityLabel={t('entry.auth.backToStart')}
               onPress={onBackToStart}
               hitSlop={12}
               className="flex-row items-center gap-1"
             >
               <Ionicons name="arrow-back" size={16} color={colors.gray} />
               <Text className="font-poppins-medium text-sm text-gray-500">
-                Início
+                {t('entry.auth.start')}
               </Text>
             </Pressable>
           ) : null}
@@ -69,7 +72,7 @@ export function AuthScreen({
         <View className="flex-1 justify-center py-8">
           <View className="mb-8 items-center">
             <Text className="font-poppins-semibold text-xs uppercase tracking-widest text-green-700">
-              {eyebrow}
+              {eyebrow ?? t('entry.auth.eyebrow')}
             </Text>
             <Text className="mt-2 text-center font-poppins-semibold text-3xl leading-10 text-gray-900">
               {title}

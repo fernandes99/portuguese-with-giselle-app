@@ -1,6 +1,7 @@
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 
 import { GOOGLE_IOS_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '@/constants/config';
+import { t } from '@/lib/i18n';
 
 // O Expo Go não tem o módulo nativo do Google Sign-In
 const isExpoGo =
@@ -8,9 +9,7 @@ const isExpoGo =
 
 export class GoogleUnavailableError extends Error {
   constructor() {
-    super(
-      'O login com Google não funciona no Expo Go. Use email e senha ou um development build.'
-    );
+    super(t('entry.auth.googleUnavailable'));
     this.name = 'GoogleUnavailableError';
   }
 }

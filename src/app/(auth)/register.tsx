@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { AuthDivider, AuthScreen } from '@/components/AuthScreen';
@@ -17,6 +18,7 @@ import { login, sendCode, verifyCodeAndRegister } from '@/services/auth';
 import { checkPassword } from '@/utils/password';
 
 export default function RegisterScreen() {
+  const { t } = useTranslation();
   const { signIn } = useAuth();
 
   const [name, setName] = useState('');
@@ -43,19 +45,19 @@ export default function RegisterScreen() {
     setError('');
 
     if (!email.trim()) {
-      setError('Email é obrigatório');
+      setError(t('entry.register.missingEmail'));
       return;
     }
     if (!isPasswordValid) {
-      setError('A senha não atende aos critérios de segurança.');
+      setError(t('entry.register.weakPassword'));
       return;
     }
     if (password !== confirmPassword) {
-      setError('As senhas não coincidem');
+      setError(t('entry.register.passwordMismatch'));
       return;
     }
     if (!acceptedTerms) {
-      setError('Você precisa aceitar os Termos e Política.');
+      setError(t('entry.register.termsRequired'));
       return;
     }
 
@@ -64,7 +66,7 @@ export default function RegisterScreen() {
       await requestCode();
       setStep('code');
     } catch (err) {
-      setError(getErrorMessage(err, 'Erro ao enviar código.'));
+      setError(getErrorMessage(err, t('entry.register.sendCodeError')));
     }
     setLoading(false);
   }
@@ -76,9 +78,9 @@ export default function RegisterScreen() {
     try {
       await requestCode();
       setCode('');
-      setNotice('Enviamos um novo código para o seu email.');
+      setNotice(t('entry.register.codeResent'));
     } catch (err) {
-      setError(getErrorMessage(err, 'Erro ao enviar código.'));
+      setError(getErrorMessage(err, t('entry.register.sendCodeError')));
     }
     setLoading(false);
   }
@@ -88,7 +90,7 @@ export default function RegisterScreen() {
     setNotice('');
 
     if (code.length !== 6) {
-      setError('Preencha todos os 6 dígitos.');
+      setError(t('entry.register.codeIncomplete'));
       return;
     }
 
@@ -96,7 +98,7 @@ export default function RegisterScreen() {
     try {
       await verifyCodeAndRegister(email.trim(), code);
     } catch (err) {
-      setError(getErrorMessage(err, 'Erro na verificação.'));
+      setError(getErrorMessage(err, t('entry.register.verifyError')));
       setLoading(false);
       return;
     }
@@ -104,7 +106,7 @@ export default function RegisterScreen() {
     try {
       await signIn(await login(email.trim(), password));
     } catch {
-      setError('Conta criada, mas erro ao fazer login.');
+      setError(t('entry.register.accountCreatedError'));
       setLoading(false);
     }
   }
@@ -119,8 +121,8 @@ export default function RegisterScreen() {
   if (step === 'code') {
     return (
       <AuthScreen
-        title="Verifique seu email"
-        subtitle={`Digite o código de 6 dígitos que enviamos para ${email.trim()}`}
+        title={t('entry.register.verifyTitle')}
+        subtitle={t('entry.register.verifySubtitle', { email: email.trim() })}
         error={error}
       >
         {notice ? (
@@ -133,20 +135,22 @@ export default function RegisterScreen() {
 
         <Button
           size="lg"
-          label={loading ? 'Verificando...' : 'Verificar e Criar Conta'}
+          label={t(
+            loading ? 'entry.register.verifying' : 'entry.register.verify'
+          )}
           onPress={handleVerify}
           loading={loading}
         />
         <View>
           <Button
             variant="link"
-            label="Reenviar código"
+            label={t('entry.register.resendCode')}
             onPress={handleResend}
             disabled={loading}
           />
           <Button
             variant="link"
-            label="← Voltar"
+            label={t('entry.register.backArrow')}
             onPress={handleBack}
             disabled={loading}
           />
@@ -157,35 +161,35 @@ export default function RegisterScreen() {
 
   return (
     <AuthScreen
-      title="Crie sua conta"
-      subtitle="Comece a aprender português hoje."
+      title={t('entry.register.title')}
+      subtitle={t('entry.register.subtitle')}
       error={error}
       footer={
         <Text className="font-poppins text-sm text-gray-600">
-          Já tem uma conta?{' '}
+          {t('entry.register.hasAccount')}{' '}
           <Link href="/login" className="font-poppins-semibold text-green-700">
-            Entrar
+            {t('entry.register.signIn')}
           </Link>
         </Text>
       }
     >
       <GoogleButton onPress={google.signInWithGoogle} disabled={busy} />
 
-      <AuthDivider label="ou cadastre-se com seu e-mail" />
+      <AuthDivider label={t('entry.register.divider')} />
 
       <TextField
-        label="Nome"
+        label={t('entry.register.name')}
         icon="person-outline"
-        placeholder="Seu nome"
+        placeholder={t('entry.register.namePlaceholder')}
         value={name}
         onChangeText={setName}
         autoComplete="name"
         textContentType="name"
       />
       <TextField
-        label="E-mail"
+        label={t('entry.auth.email')}
         icon="mail-outline"
-        placeholder="seu@email.com"
+        placeholder={t('entry.auth.emailPlaceholder')}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -195,9 +199,9 @@ export default function RegisterScreen() {
         textContentType="emailAddress"
       />
       <TextField
-        label="Senha"
+        label={t('entry.auth.password')}
         icon="lock-closed-outline"
-        placeholder="Mínimo 8 caracteres"
+        placeholder={t('entry.register.passwordPlaceholder')}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -207,9 +211,9 @@ export default function RegisterScreen() {
       />
       {password ? <PasswordRules password={password} /> : null}
       <TextField
-        label="Confirmar senha"
+        label={t('entry.register.confirmPassword')}
         icon="lock-closed-outline"
-        placeholder="Digite a senha de novo"
+        placeholder={t('entry.register.confirmPlaceholder')}
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
@@ -222,7 +226,7 @@ export default function RegisterScreen() {
         <Pressable
           accessibilityRole="checkbox"
           accessibilityState={{ checked: acceptedTerms }}
-          accessibilityLabel="Eu concordo com os Termos de Uso e Política de Privacidade"
+          accessibilityLabel={t('entry.register.acceptTerms')}
           onPress={() => setAcceptedTerms((value) => !value)}
           hitSlop={8}
           className={`mt-0.5 h-5 w-5 items-center justify-center rounded border ${acceptedTerms ? 'border-green-600 bg-green-600' : 'border-gray-400 bg-white'}`}
@@ -232,26 +236,28 @@ export default function RegisterScreen() {
           )}
         </Pressable>
         <Text className="flex-1 font-poppins text-sm text-gray-600">
-          Eu concordo com os{' '}
+          {t('entry.register.termsPrefix')}{' '}
           <Text
             className="text-green-600 underline"
             onPress={() => WebBrowser.openBrowserAsync(LINKS.terms)}
           >
-            Termos de Uso
+            {t('entry.register.termsOfUse')}
           </Text>{' '}
-          e{' '}
+          {t('entry.register.termsAnd')}{' '}
           <Text
             className="text-green-600 underline"
             onPress={() => WebBrowser.openBrowserAsync(LINKS.privacy)}
           >
-            Política de Privacidade
+            {t('entry.register.privacyPolicy')}
           </Text>
         </Text>
       </View>
 
       <Button
         size="lg"
-        label={loading ? 'Carregando...' : 'Criar conta'}
+        label={t(
+          loading ? 'entry.register.submitting' : 'entry.register.submit'
+        )}
         onPress={handleSubmit}
         loading={loading}
         disabled={!isPasswordValid || !acceptedTerms || busy}

@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { ProgressBar } from '@/components/ProgressBar';
@@ -15,6 +16,7 @@ interface LearnHeaderProps {
 
 // Topo da aba Aprender: curso selecionado e o progresso nele
 export function LearnHeader({ course, canSwitch, onSwitch }: LearnHeaderProps) {
+  const { t } = useTranslation();
   const { percentage } = getCourseProgress(course);
 
   return (
@@ -23,7 +25,9 @@ export function LearnHeader({ course, canSwitch, onSwitch }: LearnHeaderProps) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
-            canSwitch ? `${course.title}, trocar de curso` : course.title
+            canSwitch
+              ? t('entry.learn.switchCourse', { title: course.title })
+              : course.title
           }
           disabled={!canSwitch}
           onPress={onSwitch}
@@ -52,8 +56,10 @@ export function LearnHeader({ course, canSwitch, onSwitch }: LearnHeaderProps) {
       </View>
 
       <Text className="font-poppins text-xs text-gray-500">
-        {course.completedLessons} de {formatLessons(course.totalLessons)}{' '}
-        {course.completedLessons === 1 ? 'concluída' : 'concluídas'}
+        {t('entry.learn.courseProgress', {
+          count: course.completedLessons,
+          lessons: formatLessons(course.totalLessons),
+        })}
       </Text>
     </View>
   );

@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -37,6 +38,7 @@ const PARAMS_TIMEOUT = 6000;
 
 export default function LearnScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   // Preenchidos pela tela de parabéns da aula: o curso e a aula concluída
   const params = useLocalSearchParams<{
     course?: string;
@@ -50,7 +52,7 @@ export default function LearnScreen() {
     error,
     refreshing,
     refresh,
-  } = useApiQuery(getCourses, 'Erro ao carregar os cursos.');
+  } = useApiQuery(getCourses, t('entry.learn.loadError'));
 
   // null enquanto o aluno não escolhe: vale o curso em andamento
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
@@ -213,7 +215,11 @@ export default function LearnScreen() {
         {error ? (
           <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
             <Text className="font-poppins text-sm text-red-700">{error}</Text>
-            <Button variant="link" label="Tentar de novo" onPress={refresh} />
+            <Button
+              variant="link"
+              label={t('common.retry')}
+              onPress={refresh}
+            />
           </View>
         ) : null}
 
@@ -244,7 +250,7 @@ export default function LearnScreen() {
 
         {courses?.length === 0 ? (
           <Text className="text-center font-poppins text-base text-gray-600">
-            Nenhum curso disponível no momento.
+            {t('entry.learn.empty')}
           </Text>
         ) : null}
 

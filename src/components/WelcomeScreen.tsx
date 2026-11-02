@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Image,
   type ImageSourcePropType,
@@ -22,42 +23,16 @@ import logo from '@assets/logo.png';
 import { colors } from '@/constants/theme';
 
 interface Slide {
+  // Os textos ficam em entry.welcome.slides
+  id: 'teacher' | 'lessons' | 'progress';
   image: ImageSourcePropType;
   icon: keyof typeof Ionicons.glyphMap;
-  chip: string;
-  eyebrow: string;
-  title: string;
-  description: string;
 }
 
 const SLIDES: Slide[] = [
-  {
-    image: teacher,
-    icon: 'hand-left-outline',
-    chip: 'Com a professora Giselle',
-    eyebrow: 'Seja bem-vindo',
-    title: 'Aprenda português do Brasil',
-    description:
-      'Um curso feito para estrangeiros, com uma professora brasileira ao seu lado do básico à conversa.',
-  },
-  {
-    image: lessons,
-    icon: 'play-outline',
-    chip: 'Aulas onde você estiver',
-    eyebrow: 'Aprenda no seu ritmo',
-    title: 'Português que cabe na sua rotina',
-    description:
-      'Aulas curtas e objetivas, com atividades para praticar, no horário que funcionar melhor para você.',
-  },
-  {
-    image: groupClass,
-    icon: 'trophy-outline',
-    chip: 'Progresso constante',
-    eyebrow: 'Evolução visível',
-    title: 'Acompanhe cada conquista',
-    description:
-      'Veja seu progresso, mantenha sua sequência de estudos e tire dúvidas em cada aula.',
-  },
+  { id: 'teacher', image: teacher, icon: 'hand-left-outline' },
+  { id: 'lessons', image: lessons, icon: 'play-outline' },
+  { id: 'progress', image: groupClass, icon: 'trophy-outline' },
 ];
 
 interface WelcomeScreenProps {
@@ -66,6 +41,7 @@ interface WelcomeScreenProps {
 
 // Introdução da primeira abertura do app: slides com os benefícios do curso.
 export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
+  const { t } = useTranslation();
   const { width } = useWindowDimensions();
   const scrollRef = useRef<ScrollViewInstance>(null);
   const [index, setIndex] = useState(0);
@@ -95,7 +71,7 @@ export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
         />
         <Pressable accessibilityRole="button" onPress={onDone} hitSlop={12}>
           <Text className="font-poppins-medium text-sm text-gray-500">
-            Pular
+            {t('entry.welcome.skip')}
           </Text>
         </Pressable>
       </View>
@@ -110,7 +86,7 @@ export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
         className="flex-1"
       >
         {SLIDES.map((slide) => (
-          <View key={slide.title} style={{ width }} className="px-6 pt-5">
+          <View key={slide.id} style={{ width }} className="px-6 pt-5">
             <View className="flex-1">
               {/* Anel decorativo que escapa do canto da foto */}
               <View className="absolute -right-5 -top-5 h-40 w-40 rounded-full border-[18px] border-green-100" />
@@ -124,7 +100,7 @@ export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
                 <View className="absolute bottom-4 left-4 flex-row items-center gap-2 rounded-xl bg-gray-900/70 px-3 py-2.5">
                   <Ionicons name={slide.icon} size={16} color={colors.white} />
                   <Text className="font-poppins-semibold text-xs text-white">
-                    {slide.chip}
+                    {t(`entry.welcome.slides.${slide.id}.chip`)}
                   </Text>
                 </View>
               </View>
@@ -132,13 +108,13 @@ export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
 
             <View className="pb-2 pt-7">
               <Text className="font-poppins-semibold text-xs uppercase tracking-widest text-green-700">
-                {slide.eyebrow}
+                {t(`entry.welcome.slides.${slide.id}.eyebrow`)}
               </Text>
               <Text className="mt-2 font-poppins-semibold text-3xl leading-10 text-gray-900">
-                {slide.title}
+                {t(`entry.welcome.slides.${slide.id}.title`)}
               </Text>
               <Text className="mt-3 font-poppins text-base leading-6 text-gray-600">
-                {slide.description}
+                {t(`entry.welcome.slides.${slide.id}.description`)}
               </Text>
             </View>
           </View>
@@ -149,7 +125,7 @@ export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
         <View className="flex-row items-center gap-2">
           {SLIDES.map((slide, position) => (
             <View
-              key={slide.title}
+              key={slide.id}
               className={`h-2 rounded-full ${position === index ? 'w-6 bg-green-600' : 'w-2 bg-gray-300'}`}
             />
           ))}
@@ -159,7 +135,7 @@ export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
           {!isFirst && (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Voltar"
+              accessibilityLabel={t('common.back')}
               onPress={() => goTo(index - 1)}
               className="h-14 w-14 items-center justify-center rounded-2xl border border-gray-200 bg-white active:bg-gray-50"
             >
@@ -172,7 +148,7 @@ export function WelcomeScreen({ onDone }: WelcomeScreenProps) {
             className="h-14 flex-row items-center justify-center gap-2 rounded-2xl bg-green-600 px-6 active:bg-green-700"
           >
             <Text className="font-poppins-semibold text-base text-white">
-              {isLast ? 'Começar agora' : 'Próximo'}
+              {isLast ? t('entry.welcome.startNow') : t('entry.welcome.next')}
             </Text>
             <Ionicons name="chevron-forward" size={18} color={colors.white} />
           </Pressable>

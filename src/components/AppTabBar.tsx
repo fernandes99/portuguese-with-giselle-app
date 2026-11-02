@@ -1,5 +1,6 @@
 import type { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -20,6 +21,7 @@ export function AppTabBar({
   emitter,
   navigateToTab,
 }: TabBarProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
@@ -55,7 +57,9 @@ export function AppTabBar({
             accessibilityRole="tab"
             accessibilityState={{ selected: focused }}
             accessibilityLabel={
-              badge !== undefined ? `${label}, ${badge} não lidas` : label
+              badge !== undefined
+                ? t('entry.tabs.unread', { label, badge })
+                : label
             }
             onPress={onPress}
             onLongPress={onLongPress}

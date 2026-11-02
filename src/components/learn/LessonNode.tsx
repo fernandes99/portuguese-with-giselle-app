@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { type LayoutChangeEvent, Pressable, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -53,12 +54,6 @@ const STYLES = {
   },
 };
 
-const STATUS_LABEL = {
-  completed: 'concluída',
-  current: 'aula atual',
-  locked: 'trancada',
-};
-
 // Como a aula aparecia antes da transição
 const PREVIOUS_STATUS: Record<LessonTransition, LessonStatus> = {
   completing: 'current',
@@ -85,6 +80,7 @@ export function LessonNode({
   onRestart,
   onLayout,
 }: LessonNodeProps) {
+  const { t } = useTranslation();
   // Com transição, a aula começa no visual anterior e muda no meio da animação
   // Guarda qual transição já foi mostrada: assim a aula já aparece no visual
   // anterior no mesmo render em que a transição chega, sem piscar
@@ -132,7 +128,11 @@ export function LessonNode({
     <View onLayout={onLayout}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Aula ${lesson.number}: ${lesson.title}, ${STATUS_LABEL[lesson.status]}${isPremiumOnly ? ', do plano Premium' : ''}`}
+        accessibilityLabel={`${t('entry.learn.lessonLabel', {
+          number: lesson.number,
+          title: lesson.title,
+          status: t(`entry.learn.status.${lesson.status}`),
+        })}${isPremiumOnly ? t('entry.learn.lessonPremium') : ''}`}
         accessibilityState={{
           disabled: isLocked,
           expanded: lesson.status === 'completed' ? isExpanded : undefined,
@@ -190,7 +190,7 @@ export function LessonNode({
           <View className="flex-row items-center gap-2">
             <Ionicons name="checkmark-circle" size={18} color={colors.green} />
             <Text className="font-poppins-medium text-sm text-gray-600">
-              Você já concluiu esta aula
+              {t('entry.learn.lessonDone')}
             </Text>
           </View>
           <Pressable
@@ -200,7 +200,7 @@ export function LessonNode({
           >
             <Ionicons name="book-outline" size={18} color={colors.white} />
             <Text className="font-poppins-semibold text-base text-white">
-              Revisar
+              {t('entry.learn.review')}
             </Text>
           </Pressable>
           <Pressable
@@ -210,7 +210,7 @@ export function LessonNode({
           >
             <Ionicons name="refresh" size={18} color={colors.gray} />
             <Text className="font-poppins-semibold text-base text-gray-900">
-              Recomeçar lição
+              {t('entry.learn.restart')}
             </Text>
           </Pressable>
         </View>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, TextInput, View } from 'react-native';
 
 const CODE_LENGTH = 6;
@@ -11,6 +12,8 @@ interface CodeInputProps {
 // Um único campo invisível por cima das caixas: mantém o teclado numérico,
 // o colar e o preenchimento automático do código funcionando.
 export function CodeInput({ value, onChange }: CodeInputProps) {
+  const { t } = useTranslation();
+
   return (
     <View>
       <View className="flex-row justify-center gap-2">
@@ -26,7 +29,7 @@ export function CodeInput({ value, onChange }: CodeInputProps) {
         ))}
       </View>
       <TextInput
-        accessibilityLabel="Código de verificação"
+        accessibilityLabel={t('entry.register.codeLabel')}
         value={value}
         onChangeText={(text) =>
           onChange(text.replace(/\D/g, '').slice(0, CODE_LENGTH))

@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n';
 import type { CourseOutline } from '@/services/lesson';
 import { formatStudyTime } from '@/utils/format';
 
@@ -15,16 +16,12 @@ export function getCourseProgress(course: CourseOutline) {
   };
 }
 
-function plural(count: number, singular: string, pluralForm: string) {
-  return `${count} ${count === 1 ? singular : pluralForm}`;
-}
-
 export function formatModules(count: number) {
-  return plural(count, 'módulo', 'módulos');
+  return t('common.modules', { count });
 }
 
 export function formatLessons(count: number) {
-  return plural(count, 'aula', 'aulas');
+  return t('common.lessons', { count });
 }
 
 // "10 módulos · 30 aulas · 2h24". A duração some quando o CMS não a informa.

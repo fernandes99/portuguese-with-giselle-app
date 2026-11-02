@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -7,6 +8,8 @@ interface GoogleButtonProps {
 }
 
 export function GoogleButton({ onPress, disabled = false }: GoogleButtonProps) {
+  const { t } = useTranslation();
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -33,7 +36,7 @@ export function GoogleButton({ onPress, disabled = false }: GoogleButtonProps) {
         />
       </Svg>
       <Text className="font-poppins-semibold text-base text-gray-900">
-        Continuar com Google
+        {t('entry.auth.google')}
       </Text>
     </Pressable>
   );

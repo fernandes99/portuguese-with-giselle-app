@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { TextField } from '@/components/TextField';
@@ -12,11 +13,13 @@ interface NameStepProps {
 
 // Como o aluno quer ser chamado; o nome troca o nome da conta
 export function NameStep({ value, onChange, onSubmit }: NameStepProps) {
+  const { t } = useTranslation();
+
   return (
     <View className="gap-2">
       <TextField
-        label="Seu nome"
-        placeholder="Digite seu nome"
+        label={t('entry.preferences.nameLabel')}
+        placeholder={t('entry.preferences.namePlaceholder')}
         value={value}
         onChangeText={onChange}
         autoCapitalize="words"
@@ -29,7 +32,7 @@ export function NameStep({ value, onChange, onSubmit }: NameStepProps) {
         onSubmitEditing={onSubmit}
       />
       <Text className="font-poppins text-sm text-gray-500">
-        É assim que a professora vai te chamar nas aulas e no app.
+        {t('entry.preferences.nameHint')}
       </Text>
     </View>
   );

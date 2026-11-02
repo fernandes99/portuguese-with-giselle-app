@@ -1,5 +1,6 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Alert,
@@ -25,6 +26,7 @@ import { colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { useApiQuery } from '@/hooks/useApiQuery';
 import { ApiError, getErrorMessage } from '@/lib/api';
+import { changeAppLanguage, getAppLanguage } from '@/lib/i18n';
 import { KeyboardAvoidingView } from '@/lib/keyboard';
 import {
   getPreferences,
@@ -37,6 +39,7 @@ import {
   getGoalIcon,
   getInterestsLimitMessage,
   getMissingAnswerMessage,
+  getNativeAppLanguage,
   getPreferencesSteps,
   getStepInstruction,
   getStepPrompt,
@@ -44,9 +47,6 @@ import {
   type PreferencesMode,
   type PreferencesStep,
 } from '@/utils/preferences';
-
-const LOAD_ERROR = 'Não foi possível carregar as perguntas.';
-const SAVE_ERROR = 'Não foi possível salvar suas respostas.';
 
 interface PreferencesFlowProps {
   // onboarding: boas-vindas depois do login; edit: aberto pelo Perfil
@@ -65,8 +65,12 @@ export function PreferencesFlow({
   onDone,
   onCancel,
 }: PreferencesFlowProps) {
+  const { t } = useTranslation();
   const { token, user, signOut } = useAuth();
-  const { data, error, refresh } = useApiQuery(getPreferences, LOAD_ERROR);
+  const { data, error, refresh, reload } = useApiQuery(
+    getPreferences,
+    t('entry.preferences.loadError')
+  );
 
   const steps = getPreferencesSteps(mode);
   const [stepIndex, setStepIndex] = useState(0);
@@ -82,6 +86,8 @@ export function PreferencesFlow({
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const prefilled = useRef(false);
   const scrollRef = useRef<ScrollViewInstance>(null);
+  // Para "Outro idioma" desfazer o que outra opção tenha mudado
+  const startLanguage = useRef(getAppLanguage());
 
   const step = steps[stepIndex];
 
@@ -131,12 +137,27 @@ export function PreferencesFlow({
 
   const showToast = (text: string) => setToast({ text, id: Date.now() });
 
+  // Nas boas-vindas, o app muda na hora, e as opções dos próximos passos vêm
+  // de novo no idioma escolhido. Na edição, o idioma do app fica no Perfil.
+  const chooseNativeLanguage = async (id: NativeLanguage) => {
+    setNativeLanguage(id);
+    if (mode !== 'onboarding') {
+      return;
+    }
+
+    const language = getNativeAppLanguage(id) ?? startLanguage.current;
+    if (language !== getAppLanguage()) {
+      await changeAppLanguage(language);
+      reload();
+    }
+  };
+
   const confirmSignOut = useCallback(() => {
-    Alert.alert('Sair da conta?', undefined, [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Sair', style: 'destructive', onPress: signOut },
+    Alert.alert(t('entry.preferences.signOutConfirm'), undefined, [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('common.signOut'), style: 'destructive', onPress: signOut },
     ]);
-  }, [signOut]);
+  }, [signOut, t]);
 
   const goBack = useCallback(() => {
     if (stepIndex > 0) {
@@ -202,6 +223,7 @@ export function PreferencesFlow({
         level,
         goal,
         interests,
+        ...(mode === 'onboarding' && { appLanguage: getAppLanguage() }),
       });
       onDone(saved.name);
     } catch (err) {
@@ -209,7 +231,7 @@ export function PreferencesFlow({
         await signOut();
         return;
       }
-      setSaveError(getErrorMessage(err, SAVE_ERROR));
+      setSaveError(getErrorMessage(err, t('entry.preferences.saveError')));
       setSaving(false);
     }
   };
@@ -229,14 +251,22 @@ export function PreferencesFlow({
           <View className="flex-1 justify-center gap-3 px-6">
             <View className="gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
               <Text className="font-poppins text-sm text-red-700">{error}</Text>
-              <Button variant="link" label="Tentar de novo" onPress={refresh} />
+              <Button
+                variant="link"
+                label={t('common.retry')}
+                onPress={refresh}
+              />
             </View>
             {mode === 'edit' ? (
-              <Button variant="link" label="Voltar" onPress={goBack} />
+              <Button
+                variant="link"
+                label={t('common.back')}
+                onPress={goBack}
+              />
             ) : (
               <Button
                 variant="link"
-                label="Sair da conta"
+                label={t('entry.preferences.signOutAccount')}
                 onPress={confirmSignOut}
               />
             )}
@@ -261,10 +291,10 @@ export function PreferencesFlow({
         closeIcon={stepIndex === 0 ? 'close' : 'back'}
         closeLabel={
           stepIndex > 0
-            ? 'Voltar'
+            ? t('common.back')
             : mode === 'edit'
-              ? 'Fechar'
-              : 'Sair da conta'
+              ? t('common.close')
+              : t('entry.preferences.signOutAccount')
         }
       />
 
@@ -292,7 +322,10 @@ export function PreferencesFlow({
                   </Text>
                   {step === 'interests' ? (
                     <Text className="font-poppins-semibold text-sm text-green-700">
-                      {interests.length} de {interestsCount}
+                      {t('entry.preferences.interestsProgress', {
+                        selected: interests.length,
+                        total: interestsCount,
+                      })}
                     </Text>
                   ) : null}
                 </View>
@@ -307,7 +340,7 @@ export function PreferencesFlow({
                       emoji={option.emoji}
                       selected={nativeLanguage === option.id}
                       onPress={() =>
-                        setNativeLanguage(option.id as NativeLanguage)
+                        chooseNativeLanguage(option.id as NativeLanguage)
                       }
                     />
                   ))}
@@ -383,7 +416,11 @@ export function PreferencesFlow({
 
         <FlowFooter
           label={
-            step === 'welcome' ? 'Começar' : isLastStep ? 'Salvar' : 'Continuar'
+            step === 'welcome'
+              ? t('entry.preferences.start')
+              : isLastStep
+                ? t('common.save')
+                : t('common.continue')
           }
           onPress={next}
           disabled={!hasAnswer}

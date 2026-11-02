@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { ProgressBar } from '@/components/ProgressBar';
@@ -23,6 +24,7 @@ export function CourseSelectSheet({
   onClose,
   onSelect,
 }: CourseSelectSheetProps) {
+  const { t } = useTranslation();
   const bottomInset = useModalBottomInset();
 
   return (
@@ -35,7 +37,7 @@ export function CourseSelectSheet({
     >
       <View className="flex-1 justify-end">
         <Pressable
-          accessibilityLabel="Fechar a lista de cursos"
+          accessibilityLabel={t('entry.learn.closeCourses')}
           onPress={onClose}
           className="absolute inset-0 bg-black/30"
         />
@@ -46,11 +48,11 @@ export function CourseSelectSheet({
         >
           <View className="mb-3 flex-row items-center justify-between">
             <Text className="font-poppins-semibold text-base text-gray-900">
-              Cursos
+              {t('entry.learn.courses')}
             </Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Fechar a lista de cursos"
+              accessibilityLabel={t('entry.learn.closeCourses')}
               onPress={onClose}
               hitSlop={12}
             >
@@ -88,9 +90,10 @@ export function CourseSelectSheet({
                   </View>
                   <ProgressBar percentage={percentage} />
                   <Text className="font-poppins text-xs text-gray-500">
-                    {course.completedLessons} de{' '}
-                    {formatLessons(course.totalLessons)}{' '}
-                    {course.completedLessons === 1 ? 'concluída' : 'concluídas'}
+                    {t('entry.learn.courseProgress', {
+                      count: course.completedLessons,
+                      lessons: formatLessons(course.totalLessons),
+                    })}
                   </Text>
                 </Pressable>
               );

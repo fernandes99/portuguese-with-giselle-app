@@ -1,7 +1,8 @@
 import type { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 
-import type { PreferenceOption } from '@/services/preferences';
+import { type AppLanguage, t } from '@/lib/i18n';
+import type { NativeLanguage, PreferenceOption } from '@/services/preferences';
 import { getFirstName } from '@/utils/format';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -27,11 +28,18 @@ export function getPreferencesSteps(mode: PreferencesMode): PreferencesStep[] {
     : QUESTION_STEPS;
 }
 
+// O idioma do app que segue do idioma nativo; "Outro idioma" não escolhe um
+export function getNativeAppLanguage(
+  language: NativeLanguage
+): AppLanguage | null {
+  if (language === 'SPANISH') {
+    return 'es';
+  }
+  return language === 'ENGLISH' ? 'en' : null;
+}
+
 // Tamanho máximo do nome, o mesmo que o backend aceita
 export const NAME_MAX_LENGTH = 80;
-
-export const WELCOME_MESSAGE =
-  'Ninguém fica fluente de um dia para o outro. Um passo de cada vez, todos os dias, é o que vai fazer você falar português com confiança.';
 
 const GOAL_ICONS: Record<string, IconName> = {
   PROFESSIONAL: 'briefcase-outline',
@@ -69,24 +77,27 @@ export function getStepPrompt(
 ) {
   switch (step) {
     case 'language': {
-      const question = 'Qual é a sua língua nativa?';
+      const question = t('entry.preferences.prompt.languageQuestion');
       return mode === 'edit'
         ? question
-        : `Olá! Antes de começar, quero conhecer você. ${question}`;
+        : t('entry.preferences.prompt.languageGreeting', { question });
     }
     case 'name':
-      return 'Como você quer que eu te chame?';
+      return t('entry.preferences.prompt.name');
     case 'level': {
-      const question = 'Como você descreveria seu português hoje?';
+      const question = t('entry.preferences.prompt.levelQuestion');
       const firstName = getFirstName(name);
       return mode === 'edit' || !firstName
         ? question
-        : `Prazer, ${firstName}! ${question}`;
+        : t('entry.preferences.prompt.levelGreeting', {
+            name: firstName,
+            question,
+          });
     }
     case 'goal':
-      return 'Por que você quer aprender português?';
+      return t('entry.preferences.prompt.goal');
     case 'interests':
-      return 'Sobre quais temas você mais gosta de conversar?';
+      return t('entry.preferences.prompt.interests');
     case 'welcome':
       return '';
   }
@@ -98,12 +109,14 @@ export function getStepInstruction(
 ) {
   switch (step) {
     case 'level':
-      return 'Não existe resposta errada: as aulas se adaptam ao seu ritmo.';
+      return t('entry.preferences.instruction.level');
     case 'interests':
-      return `Escolha ${interestsCount} temas:`;
+      return t('entry.preferences.instruction.interests', {
+        count: interestsCount,
+      });
     case 'language':
     case 'goal':
-      return 'Escolha a opção que faz mais sentido pra você:';
+      return t('entry.preferences.instruction.choice');
     default:
       return null;
   }
@@ -115,19 +128,23 @@ export function getMissingAnswerMessage(
 ) {
   switch (step) {
     case 'name':
-      return 'Digite seu nome para continuar.';
+      return t('entry.preferences.missing.name');
     case 'interests':
-      return `Escolha ${interestsCount} temas para continuar.`;
+      return t('entry.preferences.missing.interests', {
+        count: interestsCount,
+      });
     default:
-      return 'Escolha uma opção para continuar.';
+      return t('entry.preferences.missing.choice');
   }
 }
 
 export function getInterestsLimitMessage(interestsCount: number) {
-  return `Você já escolheu ${interestsCount} temas. Desmarque um para trocar.`;
+  return t('entry.preferences.interestsLimit', { count: interestsCount });
 }
 
 export function getWelcomeTitle(name: string) {
   const firstName = getFirstName(name);
-  return firstName ? `Boas-vindas, ${firstName}!` : 'Boas-vindas!';
+  return firstName
+    ? t('entry.preferences.welcomeTitle', { name: firstName })
+    : t('entry.preferences.welcomeTitleNoName');
 }

@@ -1,5 +1,6 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
 
 import { AuthDivider, AuthScreen } from '@/components/AuthScreen';
@@ -13,6 +14,7 @@ import { getErrorMessage } from '@/lib/api';
 import { login } from '@/services/auth';
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const { signIn } = useAuth();
   const { showWelcome } = useWelcome();
 
@@ -28,7 +30,7 @@ export default function LoginScreen() {
     setError('');
 
     if (!email.trim() || !password) {
-      setError('Email e senha são obrigatórios');
+      setError(t('entry.login.missingFields'));
       return;
     }
 
@@ -36,39 +38,37 @@ export default function LoginScreen() {
     try {
       await signIn(await login(email.trim(), password));
     } catch (err) {
-      setError(
-        getErrorMessage(err, 'Ocorreu um erro ao fazer login. Tente novamente.')
-      );
+      setError(getErrorMessage(err, t('entry.login.error')));
       setLoading(false);
     }
   }
 
   return (
     <AuthScreen
-      title="Boas-vindas de volta"
-      subtitle="Entre na sua conta e continue aprendendo."
+      title={t('entry.login.title')}
+      subtitle={t('entry.login.subtitle')}
       error={error}
       onBackToStart={showWelcome}
       footer={
         <Text className="font-poppins text-sm text-gray-600">
-          Não tem uma conta?{' '}
+          {t('entry.login.noAccount')}{' '}
           <Link
             href="/register"
             className="font-poppins-semibold text-green-700"
           >
-            Criar conta gratuita
+            {t('entry.login.createAccount')}
           </Link>
         </Text>
       }
     >
       <GoogleButton onPress={google.signInWithGoogle} disabled={busy} />
 
-      <AuthDivider label="ou entre com seu e-mail" />
+      <AuthDivider label={t('entry.login.divider')} />
 
       <TextField
-        label="E-mail"
+        label={t('entry.auth.email')}
         icon="mail-outline"
-        placeholder="seu@email.com"
+        placeholder={t('entry.auth.emailPlaceholder')}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -78,9 +78,9 @@ export default function LoginScreen() {
         textContentType="emailAddress"
       />
       <TextField
-        label="Senha"
+        label={t('entry.auth.password')}
         icon="lock-closed-outline"
-        placeholder="Digite sua senha"
+        placeholder={t('entry.login.passwordPlaceholder')}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -93,7 +93,7 @@ export default function LoginScreen() {
 
       <Button
         size="lg"
-        label={loading ? 'Entrando...' : 'Entrar'}
+        label={t(loading ? 'entry.login.submitting' : 'entry.login.submit')}
         onPress={handleSubmit}
         loading={loading}
         disabled={busy}

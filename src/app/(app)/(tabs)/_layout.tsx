@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ColorValue } from 'react-native';
 
 import { AppTabBar } from '@/components/AppTabBar';
@@ -31,6 +32,7 @@ function tabIcon(active: IconName, inactive: IconName) {
 }
 
 export default function TabsLayout() {
+  const { t } = useTranslation();
   const { unread } = useTeacherChatUnread();
 
   return (
@@ -44,28 +46,28 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Início',
+          title: t('entry.tabs.home'),
           tabBarIcon: tabIcon('home', 'home-outline'),
         }}
       />
       <Tabs.Screen
         name="practice"
         options={{
-          title: 'Praticar',
+          title: t('entry.tabs.practice'),
           tabBarIcon: tabIcon('chatbubble', 'chatbubble-outline'),
         }}
       />
       <Tabs.Screen
         name="progress"
         options={{
-          title: 'Progresso',
+          title: t('entry.tabs.progress'),
           tabBarIcon: tabIcon('bar-chart', 'bar-chart-outline'),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Perfil',
+          title: t('entry.tabs.profile'),
           tabBarIcon: tabIcon('person', 'person-outline'),
           // Mensagens da professora ainda não lidas; o chat abre pelo Perfil
           tabBarBadge: unread > 0 ? formatUnread(unread) : undefined,

@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { LessonNode } from '@/components/learn/LessonNode';
@@ -39,6 +40,7 @@ export function LearnModule({
   onRestartLesson,
   onLessonLayout,
 }: LearnModuleProps) {
+  const { t } = useTranslation();
   // As medidas do módulo e das aulas chegam em ordem não garantida
   const moduleY = useRef<number | null>(null);
   const lessonYs = useRef(new Map<string, number>());
@@ -61,14 +63,16 @@ export function LearnModule({
     >
       <View className="mb-3 px-1">
         <Text className="font-poppins-semibold text-xs uppercase tracking-widest text-green-700">
-          Módulo {index + 1}
+          {t('entry.learn.module', { number: index + 1 })}
         </Text>
         <Text className="mt-1 font-poppins-bold text-xl text-gray-900">
           {module.title}
         </Text>
         <Text className="font-poppins text-sm text-gray-600">
-          {module.completedLessons}/{module.lessons.length}{' '}
-          {module.lessons.length === 1 ? 'aula concluída' : 'aulas concluídas'}
+          {t('entry.learn.moduleProgress', {
+            completed: module.completedLessons,
+            count: module.lessons.length,
+          })}
         </Text>
       </View>
 

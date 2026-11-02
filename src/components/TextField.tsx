@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Pressable,
   Text,
@@ -24,6 +25,7 @@ export function TextField({
   onBlur,
   ...props
 }: TextFieldProps) {
+  const { t } = useTranslation();
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -58,12 +60,14 @@ export function TextField({
         {secureTextEntry && (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={visible ? 'Ocultar senha' : 'Mostrar senha'}
+            accessibilityLabel={t(
+              visible ? 'entry.auth.hidePassword' : 'entry.auth.showPassword'
+            )}
             onPress={() => setVisible((value) => !value)}
             hitSlop={12}
           >
             <Text className="font-poppins-semibold text-xs text-gray-700">
-              {visible ? 'Ocultar' : 'Mostrar'}
+              {t(visible ? 'entry.auth.hide' : 'entry.auth.show')}
             </Text>
           </Pressable>
         )}
